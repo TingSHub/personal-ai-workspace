@@ -34,7 +34,7 @@ personal-ai-workspace/
 │   ├── projects/        # 项目登记索引
 │   ├── rules/           # 规则索引
 │   └── templates/       # 生成模板（唯一事实源）
-├── projects/            # 实际项目（每个独立 Git 仓库）
+├── projects/            # 实际项目（与 workspace 共用一个 Git 仓库）
 ├── .claude/skills/      # Manager Skills 与实际执行 Skills
 └── .codex/skills        # Codex 兼容入口（目录软链接 → ../.claude/skills）
 ```
@@ -60,10 +60,10 @@ personal-ai-workspace/
 - **资源可维护**：Resource Manager 记录来源、安装版本、调用、更新方法、注意事项、踩坑和资源目录内的辅助脚本，不修改外部安装实体；Agent 记录只存元信息
 - **经验是反馈闭环**：项目日志永不进入资产库；Experience Curator 提炼会改变未来项目行动的结论并判定归属，经用户确认后回写至目标 Workflow SOP 或 Skill/Agent 记录（by-name 回填 `experience_refs[]`），回写完成后归档至 `.ai/archive/experiences/`
 
-## 双 Git 层级
+## 统一 Git 仓库
 
-- 本仓库（`personal-ai-workspace/.git`）管理能力资产与注册元数据
-- `projects/*` 每个项目**独立 Git 仓库**，项目代码永不提交到本仓库（`.gitignore` 强制隔离）
+- 本仓库（`personal-ai-workspace/.git`）统一管理能力资产、注册元数据和 `projects/*` 项目源码
+- `projects/*` 是工作区内的项目目录，不包含独立 `.git`；运行产物、大文件和本地状态按根目录 `.gitignore` 排除
 
 ## 技术约束
 

@@ -22,4 +22,4 @@ rules:
   - 项目日志永不进入资产库；Experience 是反馈闭环：提炼 → 判定归属 → 回写（by-name 追加条目并回填 experience_refs[]）→ 归档至 .ai/archive/experiences/
   - 用户表达收尾、提交、结束或交付意图时，优先调用 task/closeout-and-commit；先候选与用户确认，再回写、清理最终表面和本地提交
   - 字段清单一律从 .ai/templates/ 读取填充，禁止内联字段定义
-  - 顶层仓库与 projects/* 物理隔离，项目代码永不提交到本仓库
+  - 工作区统一使用一个 Git 仓库，projects/* 下的项目源码由顶层仓库统一管理；运行产物和本地状态按根目录 .gitignore 排除
