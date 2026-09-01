@@ -50,9 +50,3 @@
 ### Known Issues
 
 {原资源 weakness + 项目特有降级路径、未实测项、执行证据要求；通用经验回写到对应 Skill/Agent 现有章节}
-
-## Evolution Log
-
-| 日期 | 变更 | 依据 |
-|---|---|---|
-| {YYYY-MM-DD} | {变更描述} | {Spec / 计划 / 经验 by-name} |

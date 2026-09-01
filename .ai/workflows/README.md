@@ -3,7 +3,7 @@
 ## 格式约定
 
 - 所有 Global / Project Workflow 一律使用 **Markdown SOP**（导演手册）格式，模板见 `.ai/templates/workflow.md.template`（字段清单一律从模板读取，禁止内联字段定义）。
-- SOP 六章节齐备：Mission / Input / Output / Principles / Phase[Goal / Required Resources / Input / Output / Quality Criteria / Known Issues] / Evolution Log。
+- SOP 结构固定为：Mission / Input / Output / Principles / Phase[Goal / Required Resources / Input / Output / Quality Criteria / Known Issues]；当前有效规则只写在这些运行章节中。
 - Required Resources 直接 by-name 列出 Skill/Agent（表格第二列固定裸小写 `skill` 或 `agent`），零中间层引用；Workflow Markdown 是流程唯一事实源。
 - 旧 YAML 版本已归档至 `.ai/archive/workflows/`（仅溯源，不构成执行契约）。
 

@@ -403,17 +403,3 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 ### Known Issues
 
 只在单家公司通过不算 Workflow 完成；必须保留第二家公司复用回归证据。
-
-## Evolution Log
-
-| Date | Change | Basis |
-|---|---|---|
-| 2026-09-01 | v1.1：压缩通用 Workflow/资源执行规则，保留账号规格、证据线、选题门和播客专属运行契约 | 小重构计划：Workflow / Skill / Agent 边界 |
-| 2026-08-22 | 建立长篇双人账号 Workflow，明确 host_analyst、逐句音频、图表优先和跨公司门禁 | 用户目标、参考节目蒸馏和既有资源 |
-| 2026-08-27 | 曾将 `podcast-v1-luheng` 切换为 CosyVoice3 zero-shot 进行 A/B；随后根据完整视频试听反馈恢复 VoxCPM2 continuation 作为当前稳定后端 | 中科曙光 opening canary、完整视频 A/B 与用户试听反馈 |
-| 2026-08-23 | Phase 1 增加同行比较资料契约与四条证据线：tushare-connector / earnings-reader / cninfo-connector / industry-analysis / industry-cycle-analysis / finance-report-analyzer / deep-research；同行原件、统一比较表和外部深研资料分目录 | 用户要求补齐同行比较并接入 deep-research；东山精密运行检查发现同行仅有 raw stock_basic/income，缺少统一报告期、三表和口径加工 |
-| 2026-08-24 | 历史音频基线曾沿用 VoxCPM2、情绪参考音频和逐句 WAV；当时只补可执行的语速/句内停顿计划 | 用户试听反馈；107 段 segments.json 的字速/停顿统计；podcast-audio-compiler 与 podcast-workflow 资源复核 |
-| 2026-08-24 | 固化通用视觉质量门禁：scene manifest、多 beat Scene、数据动效、紧凑目录、非空总结结尾、animation-map、snapshot 和 opening canary | `generic-video-visual-direction` Experience；东山精密 opening canary 与 Composition check 验证 |
-| 2026-08-25 | 历史 profile 曾固化 VoxCPM2 音频基线：整句级语速、自然停顿和现有情绪资产 | 用户试听反馈；opening canary A/B；podcast-audio-compiler 与 podcast-workflow 资源复核 |
-| 2026-08-26 | 增加基于财报新鲜度与经营重要性的内容主线决策；要求公司主线卡、财报角色和非模板化开场证据 | 用户反馈：财报新发布时可作为重点，其他情况下应服务于公司优势、护城河与未来前景 |
-| 2026-08-27 | Phase 1 增加公司动态与产品事实证据线；`multi-search` 质量优先使用 Tavily，`news-search` 仅作聚合补充；新增 event/product facts、source ledger、coverage report 和 fact-card-manifest 交接 | 用户要求补齐中科曙光近期新闻、获奖、产品型号和项目事实；Tavily 实测可用，搜索摘要必须回到原文核验 |

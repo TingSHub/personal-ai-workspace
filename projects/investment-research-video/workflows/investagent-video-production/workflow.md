@@ -449,13 +449,3 @@ HyperFrames Video Runtime
 Video QA
 → 验证时间、视觉、音频与内容一致性
 ```
-
-## Evolution Log
-
-| 日期 | 变更 | 依据 |
-|---|---|---|
-| 2026-09-01 | v2.3：将通用 Composition、Audio First、确定性渲染、资源选择和执行留痕规则迁入对应 Skill/Agent 资产记录；保留本 Workflow 的音频时间化链路和项目级门禁 | 小重构计划：Workflow / Skill / Agent 边界 |
-| 2026-08-17 | v1 创建：notes 口语化 → TTS → 字幕派生 → HyperFrames Composition → 渲染验证；Audio-First 与禁止多级 xfade 链 | 用户指令；27 页 deck → 859.7s 成片实测 |
-| 2026-08-19 | v2.0：重构为 Composition Timing & Render Workflow；删除视频阶段 Notes 改写和截图 Composition，新增 Validate、Audio Alignment、Timing Compile、HyperFrames Render、分层 QA 与确定性编译产物 | 用户重构 Spec；HyperFrames-native Finance Presentation 契约 |
-| 2026-08-19 | v2.1：明确 HyperFrames 是统一 Video Runtime，统一承载 Composition、Scene/Sub-composition、动画、视觉媒体、音频轨道、字幕与确定性执行；外部 Skill 限定为高质量 TTS 与已知文本 Forced Alignment 等补足能力 | 用户架构边界补充 |
-| 2026-08-19 | v2.2：区分 Presentation Composition Skeleton 与 Timing Compile 后的 Final Composition；将 One Scene, One Composition 改为 Scene-oriented Composition，并新增 HyperFrames Capability Adoption 优先级 | 用户架构顺序、Scene 粒度与能力演进补充 |

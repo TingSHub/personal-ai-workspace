@@ -130,7 +130,7 @@ Phase 1 的候选、文档计划、提交计划和用户明确确认。
 
 - 用户确认前不写正式资产；确认后只应用明确批准的条目。
 - Experience frontmatter 和索引符合模板，回写目标存在，`experience_refs[]` 使用 by-name。
-- Workflow 至少保持 Mission/Input/Output/Principles/Phase/Evolution Log 结构；Required Resources 均可解析。
+- Workflow 至少保持 Mission/Input/Output/Principles/Phase 运行结构；Required Resources 均可解析。
 - 不把通用规则写进某家公司或某个项目的专属 profile；项目事实留在项目记录。
 - 变更后立即记录受影响文件和原因，便于 Phase 3 读回。
 
@@ -249,9 +249,3 @@ scanner 是精确项扫描，不识别所有语义改写；commit 和 handoff �
 ### Known Issues
 
 宿主可能需要新会话才能发现刚安装的外部 Skill；这不阻止使用已验证的本地 scanner，但必须如实说明“激活未观测”。
-
-## Evolution Log
-
-| 日期 | 变更 | 依据 |
-|---|---|---|
-| 2026-08-23 | 创建通用收尾、经验沉淀、文档交付和本地提交流程；加入用户确认门与最终表面清理 | 用户提出的收尾流程；no-negative-echo `2dfbefdc41f9f728984096850d90a61e20054923`；Experience Curator；Workflow Registry |

@@ -39,7 +39,7 @@ description: 管理可复用 Workflow——按模板创建 Global/Project Workfl
 
 ## Validation
 
-- workflow.md 含 Mission/Input/Output/Principles/Phase/Evolution Log 六个章节
+- workflow.md 含 Mission/Input/Output/Principles/Phase 五类运行章节；不要求 Evolution Log 历史章节
 - 每个 Phase 含 Goal/Required Resources/Input/Output/Quality Criteria/Known Issues
 - Phase Output 包含项目相对路径和格式；多个资源并行执行时，产物必须能逐项识别其执行结果
 - Required Resources 每项均可解析到 `.ai/skills/` 或 `.ai/agents/`（by-name）

@@ -450,12 +450,3 @@ hyperframes CLI
 Video QA
 → 验证：视觉、音频与内容一致性
 ```
-
-## Evolution Log
-
-| 日期 | 变更 | 依据 |
-|---|---|---|
-| 2026-09-01 | v1.3：将通用 HyperFrames、财经边界、资源执行纪律迁入对应 Skill/Agent 资产记录；保留本项目路由、锁稿、产物和项目级 QA 门禁 | 小重构计划：Workflow / Skill / Agent 边界 |
-| 2026-08-20 | v1.0 创建：Phase 1 研究 + Phase 2 编辑（沿用 investagent-html-report）→ Phase 3 起 HyperFrames 技能体系接管（router → faceless-explainer 默认路由 → creative/core/animation/media-use → CLI 渲染 → QA）；确立 HyperFrames Purity、Editorial Lock、Audio First 与时长纪律 | 用户指令：investagent-video-production 纯度不足，从 Phase 2 后大量使用 HyperFrames 原生能力接管指导生成最终视频；调研确认 9 个 HyperFrames 技能已安装、环境齐备（Node 25 / FFmpeg / Chrome） |
-| 2026-08-20 | v1.1 试点回写：Phase 4/5 Known Issues 补充 TTS 降级路径（edge-tts + 空行分段坑）、init/check 项目约定（根 index.html、class="clip"、中文字体 @font-face、对比度修复）与确定性渲染验证方法 | 2026-08-20 茅台试点实测（经验: `hyperframes-cli-runtime-contract`、`video-pilot-media-degradation`，已回写并归档） |
-| 2026-08-22 | v1.2 播客形态规划：双形态（播客默认/解说可选）；Phase 3 双人对话稿、Phase 4 双人视觉 + 版式系统（蒸馏自参考视频）、TTS 双音色交替；引用通用 Workflow（voice-clone-from-tts / video-content-extraction） | 用户方向决策（播客工作流规划）；参考视频版式蒸馏定稿 |
