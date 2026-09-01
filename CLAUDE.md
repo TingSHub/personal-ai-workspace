@@ -12,7 +12,7 @@
 - Workflow 使用 Workflow Registry 索引（`.claude/skills/workflow-registry/`）
 - 创建新项目用 Project Registry（`.claude/skills/project-registry/`）
 - 字段清单一律从 `.ai/templates/` 模板读取填充，禁止内联字段定义
-- 顶层仓库与 `projects/*` 物理隔离：不将项目代码提交到本仓库
+- 工作区统一使用一个 Git 仓库，`projects/*` 下的项目源码由本仓库统一管理
 - 引用 Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径
 - 运行时状态（`.omc/`）永不提交；`.codex/skills` 是唯一目录级软链接，固定指向 `../.claude/skills`，禁止创建逐 Skill 二级链接
 - **默认调用路径**：Project → Workflow → Skill/Agent。Workflow 是 Markdown SOP 唯一事实源；阶段 Required Resources 必须真实执行并留下独立产物；下游只消费已验收产物。
@@ -30,4 +30,4 @@
 - `.ai/templates` — 生成模板（唯一事实源）
 - `.ai/rules` — 规则索引
 - `.claude/skills` — Registry Skills
-- `projects` — 实际项目（独立 Git）
+- `projects` — 实际项目（纳入本仓库统一管理）

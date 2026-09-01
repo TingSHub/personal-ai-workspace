@@ -12,7 +12,7 @@ A personal AI asset management and orchestration system. It manages reusable Wor
 - Index Workflows with the Workflow Registry (`.claude/skills/workflow-registry/`)
 - Create new projects with the Project Registry (`.claude/skills/project-registry/`)
 - Field lists always come from `.ai/templates/` templates; never inline field definitions
-- The top-level repo and `projects/*` are physically isolated: never commit project code to this repo
+- The workspace uses one Git repository: project source under `projects/*` is managed by this repository
 - Reference Workflows / Skills / Agents / Experiences by name, never by relative path
 - Runtime state (`.omc/`) is never committed; `.codex/skills` is one directory symlink to `../.claude/skills`
 - **Default call path**: Project → Workflow → Skill/Agent. The Workflow is the single source of truth as a Markdown SOP; each phase's Required Resources must actually run and leave an independent artifact; downstream steps consume only accepted artifacts.
@@ -30,7 +30,7 @@ A personal AI asset management and orchestration system. It manages reusable Wor
 - `.ai/templates` — templates (single source of truth)
 - `.ai/rules` — rules index
 - `.claude/skills` — manager and executable skills
-- `projects` — actual projects (independent git repos)
+- `projects` — actual projects managed inside this repository
 
 ## Known Limitations
 
