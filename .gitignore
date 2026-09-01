@@ -26,6 +26,7 @@ projects/*
 !projects/investment-research-video/**
 !projects/video-publish-review/
 !projects/video-publish-review/**
+projects/video-publish-review/.omc/
 projects/investment-research-video/outputs/
 projects/investment-research-video/logs/
 projects/investment-research-video/example/
