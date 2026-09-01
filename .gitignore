@@ -1,0 +1,72 @@
+# Workspace-wide local and generated state.
+.omc/
+**/.omc/
+.env
+.env.*
+*.pem
+*.key
+*.p12
+credentials*
+.venv*/
+**/.venv*/
+__pycache__/
+**/__pycache__/
+*.pyc
+node_modules/
+**/node_modules/
+
+# All nested Git metadata is archived outside this repository.
+**/.git/
+
+# The workspace is the single repository. Keep project source visible while
+# excluding generated/runtime material.
+projects/*
+!projects/README.md
+!projects/investment-research-video/
+!projects/investment-research-video/**
+projects/investment-research-video/outputs/
+projects/investment-research-video/logs/
+projects/investment-research-video/example/
+projects/investment-research-video/assets/voices/
+projects/investment-research-video/account-profile/evidence/voices/
+
+# Local/generated material outside the source tree.
+external/
+.ai/closeouts/
+.ai/archive/projects/
+
+# Large binary media and generated assets are kept outside Git.
+**/*.wav
+**/*.mp3
+**/*.m4a
+**/*.mp4
+**/*.mov
+**/*.avi
+**/*.mkv
+**/*.webm
+**/*.flac
+**/*.ogg
+**/*.otf
+**/*.ttf
+**/*.woff
+**/*.woff2
+**/*.zip
+**/*.tar.gz
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.webp
+**/*.pdf
+
+# Multi-search runtime artifacts.
+.claude/skills/multi-search/network_cache.json
+.claude/skills/multi-search/quota.json
+.skills_store_lock.json
+
+# Known large vendor/test assets.
+.claude/skills/investagent/skills/buffett-skills/bft.mp4
+.claude/skills/investagent/skills/QuantDinger/docs/screenshots/
+.claude/skills/investagent/skills/uzi-skill/docs/screenshots/
+.claude/skills/investagent/skills/TradingAgents/tests/
+experiments/video-resource-benchmark/vendors/

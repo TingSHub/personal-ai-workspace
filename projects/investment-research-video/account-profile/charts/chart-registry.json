@@ -1,0 +1,29 @@
+{
+  "version": "chart-registry-v1",
+  "render_runtime": "hyperframes-inline-svg",
+  "rules": {
+    "visual_priority": ["chart", "table", "text"],
+    "chart_first": true,
+    "fallback_policy": "Use a table only when the claim has no meaningful geometric relation; use prose only for context, caveats or synthesis.",
+    "facts_only": true,
+    "source_ids_required": true,
+    "unit_required": true,
+    "estimate_style": "dashed-line-and-footnote",
+    "no_target_price": true
+  },
+  "types": {
+    "kpi-strip": "2-4 objective opening facts; no causal conclusion",
+    "dumbbell": "two values or two periods where the gap is the argument",
+    "diverging-bar": "positive and negative values around a neutral axis",
+    "line": "same metric across time with explicit period and unit",
+    "multiline": "two comparable series with identical definition and period",
+    "horizontal-bar": "peer or segment comparison with a common unit",
+    "waterfall": "bridge from one financial state to another; every step labeled",
+    "stacked-bar": "composition of revenue, cost, ownership or assets",
+    "step-line": "ownership, policy or event-state changes over time",
+    "range-band": "guidance, estimates or uncertainty range; visibly labeled",
+    "flow-map": "business/industry chain with named actors and money direction",
+    "risk-matrix": "risk likelihood/impact only when both axes have evidence",
+    "validation-dashboard": "3-5 operating variables and their neutral verification status"
+  }
+}

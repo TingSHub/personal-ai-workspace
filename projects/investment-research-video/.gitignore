@@ -1,0 +1,21 @@
+# 运行时状态（永不提交）
+.omc/
+# 素材与测试产物(不提交)
+outputs/companies/*/*/example/*.mp4
+outputs/companies/*/*/example/*.wav
+outputs/companies/*/*/video/renders/draft*.mp4
+outputs/companies/*/*/video/audio-voxcpm/narration-full.wav
+outputs/companies/*/*/video/project/assets/audio/seg-*.mp3
+outputs/experiments/
+.venv*/
+__pycache__/
+*.pyc
+# 测试/临时产物
+outputs/companies/*/*/example/concat.txt
+outputs/companies/*/*/video/*/concat.txt
+outputs/companies/*/*/video/*/narration-full.wav
+outputs/companies/*/*/video/audio-voxcpm/
+outputs/companies/*/*/qa-final-html*/
+outputs/companies/*/*/video/audio/
+outputs/companies/*/*/video/renders/final.mp4
+outputs/companies/*/*/video/renders/draft.mp4

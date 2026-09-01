@@ -1,0 +1,94 @@
+{
+  "domestic_ok": true,
+  "overseas_ok": true,
+  "search_ok": true,
+  "has_proxy": false,
+  "proxy_url": "",
+  "domestic_count": 3,
+  "overseas_count": 3,
+  "search_count": 3,
+  "avg_latency_ms": 243,
+  "recommendation": "✓ 全网通畅 · Playwright 可抓境内+境外所有源",
+  "severity": "ok",
+  "probed_at": 1786866464.507432,
+  "checks": [
+    {
+      "domain": "push2.eastmoney.com",
+      "group": "domestic",
+      "reachable": true,
+      "latency_ms": 71,
+      "error": "",
+      "purpose": "东财 push2 · A 股行情主源"
+    },
+    {
+      "domain": "www.cninfo.com.cn",
+      "group": "domestic",
+      "reachable": true,
+      "latency_ms": 34,
+      "error": "",
+      "purpose": "巨潮 cninfo · 公告/行业 PE"
+    },
+    {
+      "domain": "stock.xueqiu.com",
+      "group": "domestic",
+      "reachable": true,
+      "latency_ms": 68,
+      "error": "",
+      "purpose": "雪球数据"
+    },
+    {
+      "domain": "query1.finance.yahoo.com",
+      "group": "overseas",
+      "reachable": true,
+      "latency_ms": 478,
+      "error": "",
+      "purpose": "Yahoo Finance · 美股数据"
+    },
+    {
+      "domain": "api.coingecko.com",
+      "group": "overseas",
+      "reachable": true,
+      "latency_ms": 468,
+      "error": "",
+      "purpose": "CoinGecko · 加密市场流动性"
+    },
+    {
+      "domain": "baike.baidu.com",
+      "group": "overseas",
+      "reachable": true,
+      "latency_ms": 34,
+      "error": "",
+      "purpose": "百度百科 · 公司词条（国内直连但海外代理可能反被拦）"
+    },
+    {
+      "domain": "duckduckgo.com",
+      "group": "search",
+      "reachable": true,
+      "latency_ms": 481,
+      "error": "",
+      "purpose": "DuckDuckGo · ddgs"
+    },
+    {
+      "domain": "www.baidu.com",
+      "group": "search",
+      "reachable": true,
+      "latency_ms": 14,
+      "error": "",
+      "purpose": "百度搜索"
+    },
+    {
+      "domain": "api.github.com",
+      "group": "search",
+      "reachable": true,
+      "latency_ms": 541,
+      "error": "",
+      "purpose": "GitHub API · 通用网络健康度"
+    }
+  ],
+  "local_proxy": {
+    "has_local_proxy": false,
+    "detected": [],
+    "hint": ""
+  },
+  "diagnostics": []
+}

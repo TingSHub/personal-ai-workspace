@@ -1,0 +1,359 @@
+{
+  "ticker": "000938.SZ",
+  "name": "紫光股份",
+  "overall_score": 61.8,
+  "verdict_label": "观望偏多 · 3 派看多 / 2 派看空",
+  "verdict_detail": "基本面 67.5 · 共识 53.2",
+  "fundamental_score": 67.5,
+  "panel_consensus": 53.2,
+  "school_lock": null,
+  "school_scores": {
+    "A": {
+      "group": "A",
+      "label": "经典价值派",
+      "desc": "巴菲特 / 格雷厄姆 / 费雪 / 芒格 一脉",
+      "n_members": 6,
+      "n_active": 6,
+      "consensus": 37.8,
+      "avg_score": 37.3,
+      "vote_consensus": 46.7,
+      "score_mean": 37.3,
+      "verdict": "谨慎",
+      "bullish": 1,
+      "neutral": 3,
+      "bearish": 2,
+      "skip": 0,
+      "dominant_signal": "neutral"
+    },
+    "B": {
+      "group": "B",
+      "label": "成长派",
+      "desc": "彼得·林奇 / 欧奈尔 / 蒂尔 / 伍德 一脉",
+      "n_members": 9,
+      "n_active": 9,
+      "consensus": 24.4,
+      "avg_score": 29.9,
+      "vote_consensus": 31.1,
+      "score_mean": 29.9,
+      "verdict": "回避",
+      "bullish": 1,
+      "neutral": 3,
+      "bearish": 5,
+      "skip": 0,
+      "dominant_signal": "bearish"
+    },
+    "C": {
+      "group": "C",
+      "label": "宏观派",
+      "desc": "索罗斯 / 达利欧 / 马克斯 一脉",
+      "n_members": 7,
+      "n_active": 7,
+      "consensus": 44.8,
+      "avg_score": 44.6,
+      "vote_consensus": 48.6,
+      "score_mean": 44.6,
+      "verdict": "谨慎",
+      "bullish": 1,
+      "neutral": 4,
+      "bearish": 2,
+      "skip": 0,
+      "dominant_signal": "neutral"
+    },
+    "D": {
+      "group": "D",
+      "label": "技术派",
+      "desc": "利弗莫尔 / Minervini / 达瓦斯 一脉",
+      "n_members": 4,
+      "n_active": 4,
+      "consensus": 100.0,
+      "avg_score": 93.0,
+      "vote_consensus": 100.0,
+      "score_mean": 93.0,
+      "verdict": "重仓",
+      "bullish": 4,
+      "neutral": 0,
+      "bearish": 0,
+      "skip": 0,
+      "dominant_signal": "bullish"
+    },
+    "E": {
+      "group": "E",
+      "label": "中式价投",
+      "desc": "段永平 / 张坤 / 朱少醒 / 冯柳 一脉",
+      "n_members": 7,
+      "n_active": 7,
+      "consensus": 63.9,
+      "avg_score": 58.0,
+      "vote_consensus": 65.7,
+      "score_mean": 58.0,
+      "verdict": "关注",
+      "bullish": 4,
+      "neutral": 1,
+      "bearish": 2,
+      "skip": 0,
+      "dominant_signal": "bullish"
+    },
+    "F": {
+      "group": "F",
+      "label": "A 股游资",
+      "desc": "龙虎榜顶流 23 位·章盟主/孙哥/赵老哥为代表",
+      "n_members": 24,
+      "n_active": 3,
+      "consensus": 88.4,
+      "avg_score": 75.7,
+      "vote_consensus": 86.7,
+      "score_mean": 75.7,
+      "verdict": "重仓",
+      "bullish": 2,
+      "neutral": 1,
+      "bearish": 0,
+      "skip": 21,
+      "dominant_signal": "bullish"
+    },
+    "G": {
+      "group": "G",
+      "label": "量化派",
+      "desc": "Simons / Thorp / Shaw 一脉",
+      "n_members": 4,
+      "n_active": 3,
+      "consensus": 65.2,
+      "avg_score": 59.0,
+      "vote_consensus": 66.7,
+      "score_mean": 59.0,
+      "verdict": "买入",
+      "bullish": 2,
+      "neutral": 0,
+      "bearish": 1,
+      "skip": 1,
+      "dominant_signal": "bullish"
+    },
+    "H": {
+      "group": "H",
+      "label": "科技领袖派",
+      "desc": "黄仁勋 / 马斯克 / Altman / Saylor 一脉",
+      "n_members": 4,
+      "n_active": 4,
+      "consensus": 7.0,
+      "avg_score": 18.0,
+      "vote_consensus": 15.0,
+      "score_mean": 18.0,
+      "verdict": "回避",
+      "bullish": 0,
+      "neutral": 1,
+      "bearish": 3,
+      "skip": 0,
+      "dominant_signal": "bearish"
+    },
+    "I": {
+      "group": "I",
+      "label": "AI 卡位/瓶颈猎手",
+      "desc": "Serenity · AI 供应链卡脖子/瓶颈点",
+      "n_members": 1,
+      "n_active": 1,
+      "consensus": 50.3,
+      "avg_score": 45.0,
+      "vote_consensus": 60.0,
+      "score_mean": 45.0,
+      "verdict": "关注",
+      "bullish": 0,
+      "neutral": 1,
+      "bearish": 0,
+      "skip": 0,
+      "dominant_signal": "neutral"
+    }
+  },
+  "dim_commentary": {
+    "0_basic": "基础信息：紫光股份（000938.SZ），— 行业。市值 106938386488.86，PE 33.93，PB 6.89。",
+    "1_financials": "财报：ROE 5.2%，营收同比 —，净利同比 —，净利率 3.4%。综合得分 6/10。",
+    "2_kline": "K线技术面：Stage 2 上升 · 均线 非多头 · MACD 死叉水上。",
+    "3_macro": "宏观环境：利率周期 利好（2026 货币政策）；汇率 利好（人民币走势）；地缘 中性（地缘风险）；大宗商品 中性（大宗周期）。得分 6/10。",
+    "4_peers": "同行对比：— 行业，—。得分 5/10。",
+    "5_chain": "产业链：上游 光纤光缆、基站设备、芯片供应商；下游 提供全栈智能化的信息通信（ICT）基础设施、云与智能平台，以及数字化转型及智能化升级解决方案。；客户集中度 —。",
+    "6_research": "券商研报：近期券商研报 60 篇，一致评级 买入 55 / 增持 5，目标价均值 —。",
+    "7_industry": "行业景气：所属 综合 · 行业 PE 加权 37.94 · 上市公司数 20 · 增速 —。",
+    "8_materials": "原材料：核心原料 紫光股份 (000938)财务指标_新浪财经_新浪网 - sina — 新浪财经紫光股份 (000938)行情中心,为您…；近期价格走势 —；占成本比例 —。",
+    "9_futures": "期货关联：关联合约 无直接关联品种；近期走势 套期保值全攻略：企业如何利用期货锁定大宗商品价格风险？ — 套期保值全攻略：企业如何利用期货锁定大宗商品价格风险？ 期货…；综合 行业与期货市场无强相关品种。",
+    "10_valuation": "估值分位：PE 5 年分位 5 年 88 分位，PB 5 年分位 99%。得分 9/10。",
+    "11_governance": "治理/减持：实控人 —；近期变动 —。",
+    "12_capital_flow": "资金面：资金面数据有限。",
+    "13_policy": "政策与监管：综合 2026 年政策检索：policy_dir: 1 条。",
+    "14_moat": "护城河：四力评分 无形资产 10/10、转换成本 5/10、网络效应 5/10、规模 8/10 · 综合 28/40。",
+    "15_events": "事件驱动：近期事件 6 条，含：2026-08-07 · 紫光股份：王洪学获提名非独立董事候选人；2026-08-05 · 千亿市值龙头，000938，炸板后又涨停；2026-08-05 · IT服务概念拉升，行业正迎来AI等主导的结构性扩张丨异动情报。",
+    "16_lhb": "龙虎榜：近期未上龙虎榜或非 A 股。",
+    "17_sentiment": "舆情：热度 —；情绪 乐观。",
+    "18_trap": "杀猪盘：🟢 安全 · 8 信号扫描命中 0/8（已扫 ddgs 24 条搜索结果）· 建议：数据正常，未发现明显推广痕迹。",
+    "19_contests": "实盘比赛：⚠️ XueQiu cubes 接口需登录（2026 起新政），未启用 → 0 cube。启用方式：export UZI_XQ_LOGIN=1 + python -m lib.xueqiu_browser login"
+  },
+  "institutional_modeling": {
+    "dcf_intrinsic": null,
+    "dcf_safety_margin_pct": null,
+    "dcf_verdict": null,
+    "lbo_irr_pct": null,
+    "lbo_verdict": null,
+    "comps_verdict": null,
+    "initiating_rating": null,
+    "target_price": null,
+    "upside_pct": null,
+    "ic_recommendation": null,
+    "bcg_position": null,
+    "industry_attractiveness": null
+  },
+  "detected_style": "balanced",
+  "style_label_cn": "中性兜底",
+  "style_explanation": "无明显风格倾向 · 全派系等权",
+  "style_diagnostics": {
+    "active_weight": 44.0,
+    "bullish_weight": 15.0,
+    "neutral_weight": 8.4,
+    "active_count": 44,
+    "bullish_count": 15,
+    "neutral_count": 14,
+    "bearish_count": 15,
+    "raw_consensus_old": 34.1,
+    "raw_fund_old": 67.5
+  },
+  "agent_reviewed": false,
+  "panel_insights": "",
+  "claude_narrative_stub": {
+    "_note": "以下字段是脚本生成的占位，Task 4 中 Claude 必须根据原始数据重写",
+    "needs_rewrite": [
+      "great_divide.punchline",
+      "dashboard.core_conclusion",
+      "debate.rounds[*].bull_say",
+      "debate.rounds[*].bear_say",
+      "buy_zones.*.rationale",
+      "risks[*]"
+    ]
+  },
+  "debate": {
+    "bull": {
+      "investor_id": "chanos",
+      "name": "吉姆·查诺斯",
+      "group": "C"
+    },
+    "bear": {
+      "investor_id": "wood",
+      "name": "木头姐",
+      "group": "B"
+    },
+    "rounds": [
+      {
+        "round": 1,
+        "bull_say": "看多核心：审计 clean · 无保留意见",
+        "bear_say": "看空核心：行业增速 0% < 20%，增长太慢"
+      },
+      {
+        "round": 2,
+        "bull_say": "审计 clean · 无保留意见 · OCF/净利 {ocf_to_net_income_ratio:.1f} · 比例合理 · CEO 不在 X/媒体过度推销",
+        "bear_say": "行业增速 0% < 20%，增长太慢 · 不在 ARK 五大创新平台范畴 · 营收增速 {rev_growth_3y:.0f}% 不够颠覆"
+      },
+      {
+        "round": 3,
+        "bull_say": "综合看，100 分，我的立场不变。",
+        "bear_say": "综合看，13 分，风险大于收益。"
+      }
+    ],
+    "punchline": "紫光股份 · ROE 历史与当前估值存在结构性分歧，等待方向明朗。"
+  },
+  "great_divide": {
+    "bull_avatar": "chanos",
+    "bear_avatar": "wood",
+    "bull_score": 100,
+    "bear_score": 13,
+    "bull_signal": "bullish",
+    "bear_signal": "bearish",
+    "punchline": "紫光股份 · ROE 历史与当前估值存在结构性分歧，等待方向明朗。"
+  },
+  "risks": [
+    "当前 PE 34x，估值偏高",
+    "资产负债率 82%，财务杠杆偏高",
+    "—行业竞争加剧风险",
+    "宏观经济或政策环境变化"
+  ],
+  "buy_zones": {
+    "value": {
+      "price": 31.78,
+      "rationale": "历史 PE 25 分位"
+    },
+    "growth": {
+      "price": 34.4,
+      "rationale": "PEG 合理区"
+    },
+    "technical": {
+      "price": 35.52,
+      "rationale": "MA60 支撑位"
+    },
+    "youzi": {
+      "price": 37.39,
+      "rationale": "当前情绪未破"
+    }
+  },
+  "friendly": {
+    "scenarios": {
+      "entry_price": 37.39,
+      "cases": [
+        {
+          "name": "最坏情况",
+          "probability": "5%",
+          "return": -107.0
+        },
+        {
+          "name": "偏差情况",
+          "probability": "25%",
+          "return": -50.5
+        },
+        {
+          "name": "合理情况",
+          "probability": "40%",
+          "return": 15.0
+        },
+        {
+          "name": "乐观情况",
+          "probability": "25%",
+          "return": 61.0
+        },
+        {
+          "name": "极致乐观",
+          "probability": "5%",
+          "return": 122.0
+        }
+      ]
+    },
+    "exit_triggers": [
+      "股价跌破 ¥32.25（60 日均线支撑位）→ 无条件止损",
+      "提供全栈智能化的信息通信（ICT）基础设施、云与智能平台，以及数字化转型及智能化升级解决方案。 季度指引下修 > 10% → 产业链逻辑动摇",
+      "连续两期业绩不及券商预期中位数 → 逻辑失效",
+      "拉萨天团 席位大额卖出 > 2 亿 → 顶级资金撤离信号",
+      "PE 站上 5 年 20 分位（≈ 50.33 × 1.15）→ 泡沫区获利了结"
+    ],
+    "similar_stocks": []
+  },
+  "fund_managers": [],
+  "dashboard": {
+    "core_conclusion": "紫光股份 · 61 分 · 观望偏多 · 3 派看多 / 2 派看空。51 位大佬里 15 人看多，YTD +49.3%。紫光股份 · ROE 历史与当前估值存在结构性分歧，等待方向明朗。",
+    "data_perspective": {
+      "trend": "Stage 2 上升",
+      "price": "¥37.39",
+      "volume": "—",
+      "chips": "非多头"
+    },
+    "intelligence": {
+      "news": "近期新闻 + 公告已采集",
+      "risks": [
+        "当前 PE 34x，估值偏高",
+        "资产负债率 82%，财务杠杆偏高",
+        "—行业竞争加剧风险"
+      ],
+      "catalysts": [
+        "季报窗口",
+        "行业事件"
+      ]
+    },
+    "battle_plan": {
+      "entry": "¥34.4",
+      "position": "50% 起步",
+      "stop": "¥31.78",
+      "target": "¥46.74"
+    }
+  }
+}
