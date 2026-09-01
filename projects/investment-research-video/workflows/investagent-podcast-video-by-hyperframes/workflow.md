@@ -46,6 +46,8 @@
 - 开场使用独立顺序 `COLD_OPEN → INTRO → T01`：冷开场负责客观数据钩子，INTRO 负责目录和主持人定位；不得用固定自我介绍替代冷开场。
 - 冷开场口播采用“事实反差 → 开放问题”：先用两个客观事实形成张力，再以“事实果真如此吗？”或同等开放问句收束；不得只罗列数据、先下结论或使用书面化的“利润快涨三倍”。
 - 逐句音频是唯一时间轴来源；不得按性别整段拼接或用字数估时。
+- **Script-first pause**：需要明显句内停顿时，优先在 Phase 2 改写为自然短句、真实追问或独立回应，让 TTS 依据上下文表达；句号只是软性韵律提示，不是确定的静音指令。
+- `target_rate_cps` 只允许作为单个 turn 的明确语速实验字段，不能作为全片或整段停顿的默认实现；局部固定停顿优先使用 `intra_turn_breaks`，且不同时改变该 turn 的自然语速。
 - `speaker alternation` 只是顺序门禁；对话关系必须由 `reply_to_turn_id`、`interaction_type`、`emotion` 和 `delivery` 表达。
 - 图表优先于表格，表格优先于大段文字；观众不可见内部字段不得进入 HTML。
 - Composition 默认使用 editorial-paper 视觉变体：暖纸面、衬线标题、深墨正文、红涨绿跌、细线结构和低圆角；只有 A/B 视觉实验才显式传入其他 --style。
@@ -236,10 +238,12 @@ Phase 1 已验收证据、已验收的 `company-intelligence` 事实资产、Pha
 - 除话题第一句外，每句有 `reply_to_turn_id` 和 `interaction_type`；不能靠交替 speaker 制造对话。
 - 情绪和 delivery 与回应关系共同生成；语气词服务于关系，不能机械重复。
 - Phase 2 输出 emotion、delivery 和 pause anchors；Phase 3 先运行 resolve_pacing_plan.py，再消费稳定基线的 turn 级 speech_rate、target_rate_cps 和 pause_after_ms，并在 segments.json/audio-qa.json 留痕。
+- Phase 2 对明显停顿必须先完成脚本表达设计：长句拆分、问答回合或自然承接优先；不得把“画面里、口播、字幕”等制作元话语写入 spoken text。若确需固定静音，才在受影响 turn 上声明 `intra_turn_breaks`。
 - 句首出现“对/嗯/没错/好”等短回应时，必须同时写入 `response_action=backchannel`、`backchannel`、`backchannel_target`、`filler_position=start`、`delivery=short_pause` 和正值 `pause_after_ms`；不能只把短词拼进普通长句。
 - 数字分别锁定事实、自然口播和紧凑画面表达；不改变口径和事实方向。
 - `human-understanding` 先把反馈转成约束；`finance-content-engineering` 直接改写 episode-draft；`humanizer-zh` 审校 episode-polished 并写回最终 episode.json。两者不能只更新 spoken-style-map，也不能在 Phase 3 随意改稿。
 - `spoken-polish-diff.json` 必须记录每个 changed turn 的 before/after；draft/final 的 speaker、topic_id、evidence_ids 不得变化。存在用户口语化反馈时，运行 `scripts/check_spoken_polish.py --require-change`，无实际文本变化不得写 PASS。
+- 明显停顿的脚本改写必须落在 `episode-draft`/`episode-polished`/最终 `episode.json` 的文本中；只修改 `spoken-style-map`、delivery 或口头说明而未改变实际 spoken text，不得写 PASS。
 - `check_podcast_dialogue.py` 必须阻断制作元话语（视频里、画面里、字幕里、必须说等）和其他公司名进入 spoken text；`check_spoken_polish.py` 对长篇稿件至少要求 10% turn 有实际 before/after 改写，不能用一两个虚词变化冒充全稿口语化。
 - 每个话题有 chart-spec 或明确 no-chart 理由；可选 `valuation_context` 话题只消费官方或券商材料，不出现买卖建议、仓位或目标价。
 - 话题排序必须服务于 `editorial_thesis`：至少一个话题解释公司优势/护城河，至少一个话题验证其兑现情况，至少一个话题讨论未来驱动和证伪条件；财报主线也不能把整期变成数字罗列。
@@ -285,13 +289,18 @@ Phase 2 必须使用项目通用脚本 `scripts/build_podcast_episode.py` 从 `e
 - 编译完成后必须运行 `scripts/build_caption_manifest.py`，从真实 `segments.json` 生成 `podcast/qa/captions.json` 和最终 `subtitles.srt`；Composition 只消费该 caption manifest，不直接把整段 turn 文本当作一条字幕。
 - 默认每个 turn 生成一条字幕 cue，起止时间来自该 turn 的真实音频；长文本由字幕容器自然换行，不用固定 20 字/40 字规则强制拆分。
 - `references/podcast-v1-luheng.md` 使用 VoxCPM2 continuation、`voice.zhiwei + voice.luheng`、自然停顿和 natural 后处理；不启用 CosyVoice3、IndexTTS 或其他 clone mode。
+- **缓存失效门禁**：音频缓存不得只按 `turn_id` 和 WAV 文件存在性复用。文本、speaker、voice/reference、emotion、prompt、TTS 参数或 pacing 变化时，必须使用内容寻址缓存或全新音频目录；`reused_segments` 必须能解释为同一 manifest 的安全复用。
 - 通过音色、发音、尾词残留、杂音、响度、断句和文件可解码检查。
 - TTS 完成后必须对最终 narration 或逐句 WAV 执行反向转写/已知文本对齐检查；`audio-qa.json` 必须记录转写文本、异常句、重生成次数和最终 PASS。发现乱码、漏词、重复词或句尾残留时，必须回到 Phase 3 重生成该 turn，不能只改字幕。
+- TTS 完成后必须追加独立 ASR（未知文本转写）检查；forced alignment 只能证明已知文本可对齐，不能证明实际音频说的是最终稿。独立 ASR、episode/segments/captions 文本比对和真实音频时长比对未完成时，不得进入视觉 Composition。
+- Phase 3/5 必须运行 `scripts/check_podcast_artifact_consistency.py`，检查 episode → segments → captions 的回合、文本、时间和可选音频时长一致性；该脚本不能替代独立 ASR。
 - 音频未通过不得进入视觉 Composition。
 
 ### Known Issues
 
 v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；后续 prompt、音量处理或情绪控制优化必须作为新 profile/实验版本，不得静默改变 v1。
+
+局部停顿实验曾因将 `target_rate_cps` 注入全部 turn 而把整片语速降低；TTS 对句号的停顿解释不具备确定性，脚本先行改写和独立 ASR 是当前更稳妥的质量路径。
 
 ## 回写条目（来源: cosyvoice3-production-backend-selection）
 
@@ -415,3 +424,11 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 ## 回写条目（来源: podcast-editorial-gate-and-audio-render-regression）
 
 - 一次人工 Topic Approval 后，主线与支撑章节关系由导演方案锁定；Phase 3 使用已知文本对齐，Phase 4/5 使用 pause-aware 全局时间线和独立动态事实卡 QA。
+
+## 回写条目（来源: podcast-script-first-pauses）
+
+- 需要明显句内停顿时，Phase 2 优先改写 spoken text（短句、追问、独立回应和自然承接）；TTS 只负责自然表达，句号不承担硬静音契约。
+- `target_rate_cps` 不得作为全片默认节奏控制；局部硬停顿才使用单个 turn 的 `intra_turn_breaks`，并保持自然语速。
+- 修改文本或 pacing 后，必须使用全新音频目录或内容寻址缓存；Phase 3/5 必须执行独立 ASR，并比对 episode → segments → captions。
+
+| 2026-09-01 | 回写 `podcast-script-first-pauses`：脚本先行停顿、局部 pacing 边界、缓存失效和独立 ASR 门禁 | 星网锐捷 2026-09-01 v2/v3 音频修复与用户试听反馈 |

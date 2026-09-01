@@ -2,7 +2,7 @@
 name: podcast-script-first-pauses
 description: 播客需要明显句内停顿时，优先改写口播句式并让TTS自然表达，避免用全回合目标字速替代局部停顿
 type: pitfall
-status: in-flight
+status: archived
 owner: investagent-podcast-video-by-hyperframes, podcast-audio-compiler
 asset: investagent-podcast-video-by-hyperframes, podcast-audio-compiler, podcast-workflow
 tags: [podcast, tts, pacing, pauses, script, asr, audio-qa]

@@ -35,6 +35,7 @@
 | `company-intelligence-news-product-facts` | investagent-podcast-video-by-hyperframes Phase 1/1.5/2/4/5；multi-search；editorial-director-agent | 2026-08-27 |
 | `podcast-editorial-gate-and-audio-render-regression` | investagent-podcast-video-by-hyperframes Phase 1.5/3/4/5；editorial-director-agent；podcast-audio-compiler；qwen3-forced-aligner | 2026-08-27 |
 | `cosyvoice3-production-backend-selection` | investagent-podcast-video-by-hyperframes Phase 3；podcast-v1-luheng；podcast-audio-compiler | 2026-08-27 |
+| `podcast-script-first-pauses` | investagent-podcast-video-by-hyperframes Phase 2/3/5；projects/investment-research-video/scripts/check_podcast_artifact_consistency.py | 2026-09-01 |
 
 ## 溯源说明
 
