@@ -24,6 +24,8 @@ projects/*
 !projects/README.md
 !projects/investment-research-video/
 !projects/investment-research-video/**
+!projects/video-publish-review/
+!projects/video-publish-review/**
 projects/investment-research-video/outputs/
 projects/investment-research-video/logs/
 projects/investment-research-video/example/
