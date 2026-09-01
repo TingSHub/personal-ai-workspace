@@ -96,26 +96,10 @@ video/{presentation_slug}/
 
 ## Principles
 
-- **Content Lock**：每个 Scene 的 `<aside class="notes">` 是最终口播文本唯一 Source of Truth。Video Workflow 不重新润色、不改写事实、不改变表达含义、不生成第二套 Script；只允许 TTS 所需的技术性读音处理。
-- **HTML First**：HyperFrames-native Presentation 是 Visual / Semantic Source of Truth，Video Workflow 在不复制视觉内容的前提下，将其 Composition Skeleton 编译为 Final Composition。
-- **HyperFrames Runtime First**：HyperFrames 是最终 Video Composition、Scene / Sub-composition、动画、视觉媒体、音频轨道、字幕和确定性执行的统一 Runtime，不只是最后一步的 Renderer。可由 HyperFrames 稳定完成且质量满足要求的能力，不拆到外部工具或第二套 Composition。
-- **Scene-oriented Composition**：默认让重要 Scene 对应独立 Composition / Sub-composition，以获得清晰的状态隔离、动画生命周期和 QA 边界；简单 Scene 可以在不损害确定性、可维护性和调试性的情况下共享 Composition。关键不是形式上的 1:1，而是状态隔离、seek-safe、易调试和易返工。Preview、Presenter 和 Video 仍共用同一套 Scene DOM/SVG、Notes 与 Reveal Semantics，不得另做一套 Video HTML。
-- **Audio First**：真实时间由音频决定：`Notes → TTS → Scene Duration → Alignment → Cue Timestamp`。Presentation Agent 决定 WHAT / HOW，Video Workflow 决定 WHEN。
-- **Deterministic Render**：核心动画必须可以被 HyperFrames seek，并在任意时间点得到可复现状态。
-- **No Screenshot Composition**：截图只允许用于 QA 对比、人工审片或回归证据，不得进入正式 Composition 的视觉源链路。
-- **No xfade Timeline**：禁止使用多级 FFmpeg `xfade` 作为主时间轴；FFmpeg 只用于编码检查、音视频 mux、抽帧 QA 和必要的最终封装。
-- **内容边界**：沿用 `investagent-html-report` 的企业研究边界，旁白、字幕和视频画面不得新增目标价、评级、买卖建议、仓位、交易策略或交易信号。
-- **External Skill Boundary**：外部 Skill 只补足 HyperFrames 不擅长、质量不足或需要专业能力的环节；本 Workflow 当前允许外置的主要环节是高质量中文 TTS 和已知文本 Forced Alignment。其余能力优先回到同一 HyperFrames Composition。
-- **HyperFrames Capability Adoption**：新增视频能力时，按以下顺序判断与落地：
-  1. HyperFrames Composition 原生能力；
-  2. HyperFrames 官方动画 / media / audio 能力；
-  3. 已验证的外部专业 Skill；
-  4. 最后才自建脚本或第二套媒体处理链。
-  不得因为已有旧脚本，就绕开 HyperFrames 已经稳定提供的能力。
-- **Best available resource**：在允许外置的环节中，按实际效果、输出质量、稳定性、依赖成本、维护成本和当前项目适配性选择 TTS 与 Alignment 资源，不因本地已有脚本而强制绑定。
-- **真实执行留痕**：每个 Phase 的 Required Resources 必须真实执行并留下独立产物；未执行资源不得写成已执行。
-- **只消费已验收产物**：下游 Phase 只消费通过上游 Quality Criteria 的 HTML、Notes、音频、Alignment 和 Timing Compile 产物。
-- **by-name 引用**：Workflow / Skill / Agent / Experience 一律使用 by-name 标识符，不使用相对路径作为资源名称。
+- 本 Workflow 只负责已验收 Presentation 的 TTS → Alignment → Timing Compile → Render → QA；不重新规划内容或视觉。
+- `<aside class="notes">` 与上游 Presentation Execution 是本 Workflow 的输入事实源；只允许 TTS 所需的技术性读音处理。
+- Final Composition 必须沿用上游视觉语义，真实时间由音频和 Alignment 编译注入，产物路径见 Output。
+- 企业研究边界、HyperFrames Composition 契约、Audio First、确定性渲染、外部 Skill 选择和执行留痕分别由 `boundary-rewrite`、`hyperframes-core`、`hyperframes-animation`、`hyperframes-cli`、`media-use` 及各资源记录负责。
 
 ## Phase 1: validate — Content Lock 与 Composition Preflight
 
@@ -470,6 +454,7 @@ Video QA
 
 | 日期 | 变更 | 依据 |
 |---|---|---|
+| 2026-09-01 | v2.3：将通用 Composition、Audio First、确定性渲染、资源选择和执行留痕规则迁入对应 Skill/Agent 资产记录；保留本 Workflow 的音频时间化链路和项目级门禁 | 小重构计划：Workflow / Skill / Agent 边界 |
 | 2026-08-17 | v1 创建：notes 口语化 → TTS → 字幕派生 → HyperFrames Composition → 渲染验证；Audio-First 与禁止多级 xfade 链 | 用户指令；27 页 deck → 859.7s 成片实测 |
 | 2026-08-19 | v2.0：重构为 Composition Timing & Render Workflow；删除视频阶段 Notes 改写和截图 Composition，新增 Validate、Audio Alignment、Timing Compile、HyperFrames Render、分层 QA 与确定性编译产物 | 用户重构 Spec；HyperFrames-native Finance Presentation 契约 |
 | 2026-08-19 | v2.1：明确 HyperFrames 是统一 Video Runtime，统一承载 Composition、Scene/Sub-composition、动画、视觉媒体、音频轨道、字幕与确定性执行；外部 Skill 限定为高质量 TTS 与已知文本 Forced Alignment 等补足能力 | 用户架构边界补充 |

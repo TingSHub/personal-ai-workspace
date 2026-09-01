@@ -29,8 +29,8 @@
 
 ## Principles
 
-- Workflow 是流程事实源；资源用 Skill/Agent by-name 引用，不复制外部资源正文。
-- Phase 的 Required Resources 必须真实执行并留下可识别产物；下游只消费已验收产物。
+- 本 Workflow 只负责账号规格 → 研究 → 编辑 → 对话 → 音频 → Composition → 渲染/QA 的项目顺序、运行参数和交接；资源通用调用规则由对应 Skill/Agent 资产记录负责。
+- Required Resources 仍按 by-name 引用；各 Phase 只消费已验收的上游产物，并在项目执行记录中留下本项目所需的资源和结果证据。
 - 账号资产先于公司内容；公司名、数字、话题、音频路径和图表数据来自 manifest。
 - 研究资料分为四条证据线：官方披露、结构化财务/行情、产业与周期研究、外部深度研究；任何一条线都不能静默替代另一条线。
 - 公司研究额外必须覆盖第五条证据线：公司动态与产品事实，包括近期公告/新闻、获奖、产品发布、具体型号、项目签约/中标/交付、标准制定和技术里程碑；没有命中时也必须留下覆盖报告和缺口状态。
@@ -302,7 +302,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 
 局部停顿实验曾因将 `target_rate_cps` 注入全部 turn 而把整片语速降低；TTS 对句号的停顿解释不具备确定性，脚本先行改写和独立 ASR 是当前更稳妥的质量路径。
 
-## 回写条目（来源: cosyvoice3-production-backend-selection）
+### Phase 3 profile constraints
 
 - 当前 `podcast-v1-luheng` 的生产后端为 VoxCPM2 continuation；后端切换前必须先通过同一 `COLD_OPEN + INTRO` canary 和人工试听。
 - 当前 profile 固定使用自然停顿、natural 后处理和 luheng 情绪参考资产；其他后端和 clone mode 属于独立实验分支。
@@ -408,6 +408,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 
 | Date | Change | Basis |
 |---|---|---|
+| 2026-09-01 | v1.1：压缩通用 Workflow/资源执行规则，保留账号规格、证据线、选题门和播客专属运行契约 | 小重构计划：Workflow / Skill / Agent 边界 |
 | 2026-08-22 | 建立长篇双人账号 Workflow，明确 host_analyst、逐句音频、图表优先和跨公司门禁 | 用户目标、参考节目蒸馏和既有资源 |
 | 2026-08-27 | 曾将 `podcast-v1-luheng` 切换为 CosyVoice3 zero-shot 进行 A/B；随后根据完整视频试听反馈恢复 VoxCPM2 continuation 作为当前稳定后端 | 中科曙光 opening canary、完整视频 A/B 与用户试听反馈 |
 | 2026-08-23 | Phase 1 增加同行比较资料契约与四条证据线：tushare-connector / earnings-reader / cninfo-connector / industry-analysis / industry-cycle-analysis / finance-report-analyzer / deep-research；同行原件、统一比较表和外部深研资料分目录 | 用户要求补齐同行比较并接入 deep-research；东山精密运行检查发现同行仅有 raw stock_basic/income，缺少统一报告期、三表和口径加工 |
@@ -416,19 +417,3 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 | 2026-08-25 | 历史 profile 曾固化 VoxCPM2 音频基线：整句级语速、自然停顿和现有情绪资产 | 用户试听反馈；opening canary A/B；podcast-audio-compiler 与 podcast-workflow 资源复核 |
 | 2026-08-26 | 增加基于财报新鲜度与经营重要性的内容主线决策；要求公司主线卡、财报角色和非模板化开场证据 | 用户反馈：财报新发布时可作为重点，其他情况下应服务于公司优势、护城河与未来前景 |
 | 2026-08-27 | Phase 1 增加公司动态与产品事实证据线；`multi-search` 质量优先使用 Tavily，`news-search` 仅作聚合补充；新增 event/product facts、source ledger、coverage report 和 fact-card-manifest 交接 | 用户要求补齐中科曙光近期新闻、获奖、产品型号和项目事实；Tavily 实测可用，搜索摘要必须回到原文核验 |
-
-## 回写条目（来源: company-intelligence-news-product-facts）
-
-- 公司动态/产品事实扫描成为 Phase 1 的第五证据线；Phase 1.5 必须把 fact_id 和 fact_role 交给内容导演，Phase 2/4 必须保留来源和视觉交接。
-
-## 回写条目（来源: podcast-editorial-gate-and-audio-render-regression）
-
-- 一次人工 Topic Approval 后，主线与支撑章节关系由导演方案锁定；Phase 3 使用已知文本对齐，Phase 4/5 使用 pause-aware 全局时间线和独立动态事实卡 QA。
-
-## 回写条目（来源: podcast-script-first-pauses）
-
-- 需要明显句内停顿时，Phase 2 优先改写 spoken text（短句、追问、独立回应和自然承接）；TTS 只负责自然表达，句号不承担硬静音契约。
-- `target_rate_cps` 不得作为全片默认节奏控制；局部硬停顿才使用单个 turn 的 `intra_turn_breaks`，并保持自然语速。
-- 修改文本或 pacing 后，必须使用全新音频目录或内容寻址缓存；Phase 3/5 必须执行独立 ASR，并比对 episode → segments → captions。
-
-| 2026-09-01 | 回写 `podcast-script-first-pauses`：脚本先行停顿、局部 pacing 边界、缓存失效和独立 ASR 门禁 | 星网锐捷 2026-09-01 v2/v3 音频修复与用户试听反馈 |

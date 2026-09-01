@@ -25,7 +25,7 @@
 
 ## 回写目标
 
-- investagent skill 记录（`.ai/skills/investagent/investagent.md`）注意事项分区，回写条目标记 `## 回写条目（来源: investagent-research-only-scope）`
+- investagent Skill 记录的现有注意事项/补充规则分区；回写时合并内容并通过 `experience_refs[]` 保留来源
 - investagent-html-report-v0.1 workflow SOP Phase 1 Known Issues（已随 v0.1 写入）
 
 ## 适用范围

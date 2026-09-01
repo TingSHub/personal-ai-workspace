@@ -41,7 +41,7 @@ scripts/resolve_pacing_plan.py        emotion/delivery/interaction → 确定性
 - QA 必须记录 backend、profile/override、停顿、后处理和缓存复用数。
 - 后端 A/B 必须使用同一 manifest，输出目录和 backend 明确隔离。
 
-## 回写条目（来源: podcast-editorial-gate-and-audio-render-regression）
+### 补充规则
 
 - TTS 完成后，对每个 turn 执行已知文本对齐或反向转写检查；QA 必须记录 turn 数、异常句和重生成闭环，不能只检查文件存在。
 - 全局时间线校验应将相邻 turn 间隔与 `pause_after_ms` 对照，避免把已记录停顿误判为时间线断裂。

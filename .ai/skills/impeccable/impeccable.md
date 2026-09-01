@@ -42,10 +42,10 @@ AI 前端设计质量 Skill：23 个设计命令（init / shape / critique / aud
 - 确定性检测（audit/detect）与 static-html-qa 维度互补：前者覆盖 a11y/对比度/间距节奏，后者覆盖 DOM 溢出/SVG 出界/数值一致性/内容边界；两者不可互相替代。
 - **detect 实战阈值（经验: impeccable-detect-quality-gate）**：`npx impeccable detect <html>` 无 LLM 即可跑，实测 32 项中 low-contrast（4.5:1）、tiny-text（≥12px）、side-tab、layout-transition 最常命中——预防起点：meta/来源字号 12px、弱化文本对比度 ≥4.6:1、容器内动画用 clip-path；flat-type-hierarchy 类按「发现项人工裁决、不阻塞 PASS」处理并写入执行记录。
 
-## 回写条目
+### 补充规则
 
 - 2026-08-19：注册并安装外部 Skill（`npx impeccable install --no-hooks`，实体 `.claude/skills/impeccable/`，SKILL.md version 4.1.1）；investagent-html-report Phase 3/4 注记为可选资源。
 
-## 回写条目（来源: impeccable-detect-quality-gate）
+### 补充规则
 
 - 2026-08-19：真实项目验证（investagent-html-report Phase 4，贵州茅台 600519）——detect 32 项全部归零/裁决；阈值与预防起点见注意事项。

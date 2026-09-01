@@ -1,6 +1,6 @@
 # Skill 资源元数据字段模板（V0.2.3 单文件 md 文档）
 # 字段清单一律从此模板读取填充，禁止内联字段定义
-# 管理实体：.ai/skills/{skill-name}/{skill-name}.md —— 纯 Markdown 文档：# 标题 + > 位置引用 + ## 元数据（表格，列对应以下字段）+ ## 调用说明 正文（作用/来源/用途/注意事项与踩坑/回写条目）
+# 管理实体：.ai/skills/{skill-name}/{skill-name}.md —— 纯 Markdown 文档：# 标题 + > 位置引用 + ## 元数据（表格，列对应字段）+ ## 调用说明 正文（作用/来源/用途/注意事项与踩坑）
 # 安装实体：.claude/skills/{skill-name}/SKILL.md（可加载定义，frontmatter 仅 name/description；辅助脚本在 .ai/skills/{skill-name}/scripts/）
 name: {skill-name}
 kind: skill

@@ -28,7 +28,7 @@
 
 ## 回写目标
 
-- html-ppt-skill 记录（`.ai/skills/html-ppt-skill/html-ppt-skill.md`）注意事项分区，回写条目标记 `## 回写条目（来源: html-ppt-longform-report）`
+- html-ppt-skill 记录的现有注意事项/补充规则分区；回写时合并内容并通过 `experience_refs[]` 保留来源
 - 「辅助脚本」行登记三个新脚本（用途 + 使用时机）
 - 「经验引用」行回填
 

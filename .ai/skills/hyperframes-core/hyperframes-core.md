@@ -19,3 +19,8 @@
 ## 调用说明
 
 提供 Composition 的结构、时间、媒体归属和确定性渲染契约。财经播客中它是 Scene、音频、字幕、章节和全局累计时间线的技术边界，不承担内容主线判断。
+
+## 跨 Workflow 使用边界
+
+- 使用 `data-*` 时序、tracks、clips 和 sub-compositions 表达正式时间轴；不得用截图或第二套 HTML 代替正式 Composition。
+- 真实时间应由已验收音频或上游明确的 timing contract 注入；内容、事实和章节顺序由上游编辑/导演产物决定。

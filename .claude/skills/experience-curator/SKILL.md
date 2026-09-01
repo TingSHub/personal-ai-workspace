@@ -23,15 +23,15 @@ Experience Curator 是 Experience 的唯一维护入口，职责是反馈闭环�
 3. 排除对话全文、普通命令输出、偶发错误、项目专属事实、无证据建议和可从官方文档直接重建的内容。
 4. 搜索已有 Experience，优先合并或修订，不创建重复主题。
 5. 按模板生成 Candidate，frontmatter 必填（`name` = 文件名 slug、`description` 一句话摘要 = 触发场景与行动、`type`、`status`、`owner`、`asset`、`tags`，字段清单从模板读取），正文写明适用/不适用范围、证据和验证时的资源 `installed_ref`。
-6. 明确建议更新哪个 Workflow SOP 或 Skill/Agent 记录；不要越权直接修改其他资产。
+6. 明确建议更新哪个 Workflow SOP 或 Skill/Agent 记录；通用规则优先归入 Skill/Agent 的现有原则、调用说明或注意事项，项目运行契约才归入 Workflow 现有章节；不要越权直接修改其他资产。
 7. **脚本化判定（常设）**：检查结论中是否有可机械化的检查/操作（引用可解析性、格式完整性、数字/禁用项出现、统计分布、口径一致性等）。凡"人工逐条核对"类操作，应生成通用脚本沉淀到对应 Skill/Agent 资源的 `scripts/` 目录（无 scripts 目录则创建），候选的回写目标中注明脚本。
 
 ## promote：确认后回写并归档
 
 1. 必须获得用户明确确认。
 2. 将 Candidate 追加到 `.ai/experiences/`（在途），并在 `.ai/experiences/README.md` 在途索引表登记一行（by-name / type / description / owner / 加入日期）。
-3. 按 by-name 回写目标资产：Workflow SOP 的 Known Issues / Quality Criteria、skill.yaml / agent.yaml 注意事项，并回填 `experience_refs[]`（by-name 引用已归档经验）。
-4. 回写条目只追加到目标资产带来源标记的分区（`## 回写条目（来源: {experience by-name}）`）；正文编辑/合并由 resource-manager 执行或复核，curator 与 resource-manager 不得同文件无分区直写。
+3. 按 by-name 回写目标资产：通用结论合并到 Skill/Agent 的现有原则、调用说明或注意事项；项目运行结论合并到 Workflow 已有的 Principles / Quality Criteria / Known Issues；并回填 `experience_refs[]`（by-name 引用已归档经验）。
+4. 不新增“回写条目”章节或其他经验专用章节；正文编辑/合并由 resource-manager 执行或复核，curator 与 resource-manager 不得同文件无分区直写。
 5. **脚本化沉淀（与回写同步）**：对 curate 第 7 步判定的脚本，生成并保存到对应资源的 `scripts/` 目录。脚本规范：纯标准库、单文件、参数化输入（文件路径/清单）、退出码语义（PASS=0 / 有发现=1 / 用法错误=2）、docstring 含用法与输出说明；在资源描述层「辅助脚本」行登记（用途 + 使用时机）；经验文件的回写目标包含脚本路径。
 6. 回写完成后将经验文件移入 `.ai/archive/experiences/`，同步维护索引：从 `.ai/experiences/README.md` 在途表删除该行，在 `.ai/archive/experiences/README.md` 归档映射表登记；`.ai/experiences/` 只存未完成回写的在途经验，不无限堆积。
 

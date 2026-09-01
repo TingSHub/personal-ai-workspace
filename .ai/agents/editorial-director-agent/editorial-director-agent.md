@@ -65,11 +65,11 @@
 - `social-media-skills`：采用 audience-first、候选池和人工决策闭环，不采用平台增长或发布策略作为财经研究判断。
 - `video-production-skill`：采用 production brief、阶段产物和 QC 留痕，不替换本项目的 HyperFrames、VoxCPM2 和财经证据链。
 
-## 回写条目（来源: company-intelligence-news-product-facts）
+### 补充规则
 
 - 读取 `event-facts.json` 和 `product-facts.json` 后，必须为每条采用事实指定 `fact_role`：opening、main_evidence、supporting_evidence、visual_only、background 或 omit。
 - 产品型号、奖项和里程碑只能证明能力或事件本身；订单金额、收入贡献和规模化结论必须有独立财务/订单证据。
 
-## 回写条目（来源: podcast-editorial-gate-and-audio-render-regression）
+### 补充规则
 
 - 主选题确认后保留其他候选为支撑或验证章节，并为每个机制指定唯一 `primary_topic_id`；相邻章节不得复述同一机制。

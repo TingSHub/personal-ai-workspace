@@ -33,17 +33,10 @@
 
 ## Principles
 
-- best_available_resource：按实际效果、输出质量、稳定性、依赖成本、维护成本和当前项目适配性选择资源，禁止 local first；来源不构成优先级
-- 真实执行留痕：Phase 的 Required Resources 必须真实执行并留下独立产物（含资源 by-name、验证时 installed_ref、资源原生或结构化执行产物）；未执行资源不得写成已执行；降级如实标注
-- 只消费已验收产物：下游 Phase 只消费通过 Quality Criteria 的上游产物
-- by-name 引用：Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径
-- **企业研究定位（荐股法律风险红线）**：本项目产出的是企业研究内容，不是荐股——**荐股有法律风险**。任何阶段的任何产物（研究交付物、findings-summary、deck、speaker script、视频口播）都不得构成推荐股票/买卖建议/目标价/操作区间/仓位/交易策略；「估值有安全边际 / 观察级标的 / 投资回报的胜负手 / 最有操作价值 / 安全边际要求更高」等投资决策倾向表述一律替换为中性研究表述：「估值处于历史较低区间 / 当前处于增长验证阶段 / 判断经营趋势的关键验证变量 / 最有跟踪价值 / 当前估值对增长假设更加敏感」
-- **Speaker Script 与 Slide Visual 语义一致原则**：Presentation Agent 在生成阶段完成 Oral Adaptation；`<aside class="notes">` 是该页最终口播文本的唯一 Source of Truth，后续视频 Workflow 不再重新润色或改写 Notes；若 Notes 需要改变核心观点或需要新的关键视觉支撑，必须回到 Presentation Agent 同步更新 Scene。
-- **内容边界（本项目为「企业研究内容生产」，非投资推荐）**：
-  - **不输出**：具体目标价（机构或自研一律不输出）、买卖评级（含机构评级分布）、买入/卖出/持有、操作区间、仓位、交易策略、短线信号、「是否值得买」结论
-  - **允许**：估值水平（PE/PB/股息率/历史分位）、不同增长假设对估值的影响（如 DCF 区间）、市场预期差异（如盈利一致预期——净利/EPS 预期可保留，价格目标不保留）、基本面验证指标、风险证伪条件
-- **不得展示**：AI 内部执行信息、Skill 调用过程、metadata、workflow 信息、内部置信度、证据编号/证据台账、未解决冲突、买卖建议；**避免「唯一/无懈可击/绝对/最优质」等过度确定性、营销化措辞**（「企稳确认/压力信号」类基本面验证信号允许保留，但不得写成「出现该信号即买卖」）
-- 不创建新 Agent 类型；不提前固定章节模板/Hook/Bull-Bear 格式/页面数量
+- 本 Workflow 只负责研究 → 编辑综合 → HTML 生成 → QA 的项目顺序和产物交接；通用资源纪律由各 Required Resource 的资产记录负责。
+- 本项目定位为企业研究内容，不是投资推荐；具体输出边界由 `boundary-rewrite` 与 `finance-content-engineering` 承接，Phase 级验收只检查本项目产物是否越界。
+- `<aside class="notes">` 是本项目页面口播文本的唯一 Source of Truth；需要改变核心观点或新增视觉支撑时，回到 Presentation Agent 阶段同步更新。
+- 不创建新 Agent 类型，不提前固定章节模板、Hook、Bull-Bear 格式或页面数量。
 
 ## Phase 1: research — 并行原生研究
 
@@ -304,6 +297,7 @@ Presentation Completeness Principle：压缩文字和次要证据，不压缩关
 | 日期 | 变更 | 依据 |
 |---|---|---|
 | 2026-08-16 | v0.1 创建：三 Skill 并行原生研究 + 冲突检查（无新 Agent）+ html-ppt-skill 自由生成 + QA；investagent 限定「研究+数据」范围；内容边界（企业研究内容生产，非投资推荐） | 用户 Spec（投研 HTML MVP Workflow）；经验: `investagent-research-only-scope`、`multi-source-conflict-check`、`html-ppt-longform-report` |
+| 2026-09-01 | v0.1.10：将通用资源纪律与财经表达规则归还 Skill/Agent 资产记录；本 Workflow 仅保留项目链路、产物和项目级门禁 | 小重构计划：Workflow / Skill / Agent 边界 |
 | 2026-08-16 | v0.1.2：P3 新增「一次内容规划」原则——每页同时产出 speaker script（`<aside class="notes">` 逐字稿，150-300 字，可含页面未展示的相关证据/背景，不得事后重写口播） | 用户方法论纠正（同源规划：HTML 视觉压缩 + speaker script 证据补充） |
 | 2026-08-16 | v0.1.4：notes 口语化与 Content Lock——用 finance-content-engineering script-polish 规则直接更新 notes（百分比直读/大数读法/短句/口语化），事实零漂移校验（禁止近似化）；完成后 notes 锁定为最终口播文本唯一 SoT（TTS 仅技术性处理、字幕由 notes 派生） | 用户指令（notes 为唯一 SoT + 口语化执行 + Content Lock） |
 | 2026-08-16 | v0.1.3：Speaker Script 与 Slide Visual 语义一致原则（细化 v0.1.2）——允许 TTS 前独立迭代润色；Research Materials 始终是 Source of Truth；修改核心观点/需新视觉支撑时同步更新 Slide，纯表达层修改无需 | 用户原则细化（语义一致 + 迭代润色边界） |

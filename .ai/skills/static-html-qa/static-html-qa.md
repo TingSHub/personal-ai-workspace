@@ -29,6 +29,11 @@
   4. （可选）`screenshot-fullpage.sh <html>` — 长文全页截图
 - 退出码契约：0=PASS / 1=有发现（人工裁决）/ 2=用法错误
 
+## 跨项目使用边界
+
+- 质检对象可以来自任意 HTML 生成器；项目 Workflow 只声明输入文件、期望数字和是否需要 Presenter/全页截图。
+- 本 Skill 负责发现问题和留下证据，不替项目决定内容、改写脚本或放宽财经边界；人工裁决必须记录在项目 QA 产物中。
+
 ## 注意事项与踩坑
 
 - 形态检测：存在 `.slide.is-active`/`.slide.active` 且页面不滚动 → 翻页模式（逐页检查+截图）；否则长文模式（fullPage）。
@@ -39,14 +44,14 @@
 - **notes 必须显式隐藏**：deck CSS 缺 `.notes{display:none}` 时，翻页检查会把 notes 当可见元素报溢出；S 演讲者模式由运行时单独读取，不依赖可见性。
 - dashi-ppt 生成的 deck 也要跑本套检查：其内置门禁（goal-spec/swiss/copy）是渲染前校验，不覆盖渲染后 SVG 布局（实测雷达图轴标签溢出由 qa-html-report.py 兜底发现）。
 
-## 回写条目（来源: html-ppt-longform-report）
+### 补充规则
 
 - 从 html-ppt-skill 抽离的质检三件套 + 截图脚本（2026-08-16）；原 html-ppt-skill 记录的「辅助脚本」行保留指向说明。
 
-## 回写条目（来源: multi-source-conflict-check）
+### 补充规则
 
 - 数值一致性校验（check-numbers.py）是多源研究 → 统一 HTML 链路的必跑项；SVG 坐标换算/转录必然引入错误，数字可信度是研究内容底线。
 
-## 回写条目（来源: deck-qa-implementation-pitfalls）
+### 补充规则
 
 - 2026-08-19：贵州茅台 Phase 4 三轮修复实证 transform 旋转/缩放 scroll 虚报与 notes 显式隐藏要求（见注意事项）。

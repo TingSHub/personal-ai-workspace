@@ -46,7 +46,7 @@ Qwen3-ForcedAligner-0.6B（qwen-asr 包）：**已知文本强制对齐**——T
 - 对齐质量与 TTS 清晰度强相关：Edge/Azure 系干净音频效果优秀；带 BGM 或混响音频需先分离
 - faster-whisper 与 torch cu130 的 libcublas 版本不匹配会 GPU 报错（ctranslate2 需 libcublas.so.12）——用 CPU int8 兜底
 
-## 回写条目（来源: podcast-editorial-gate-and-audio-render-regression）
+### 补充规则
 
 - 在逐句 TTS 生产中，优先对每个已知文本 turn 做短音频对齐，记录空结果、越界时间和异常 turn；逐句结果可直接作为音频 QA 的可追溯证据。
 

@@ -40,18 +40,18 @@
 
 按 `skill.yaml` 从 GitHub 更新安装实体；至少验证主题扫描入口，并逐项报告五个模块的实际可用结果。
 
-## 回写条目（来源: industry-research-methodology）
+### 补充规则
 
 - 环境齐备才编排：前置评估环境三件套（项目 .venv 依赖、外部 LLM key（如 DEEPSEEK_API_KEY）、Docker）可得性；实测打通前真实执行率约 40%，打通后约 90%。无 Docker/LLM key 时降级为真实数据 + 等效脚本的可复现输出，不得伪装完整执行。
 
-## 回写条目（来源: investagent-module-runtime-issues）
+### 补充规则
 
 - QuantDinger：完整模块依赖 Docker 全栈 + 私有 GHCR 镜像，镜像不可拉取时以透明 Python 脚本 + 真实数据等价执行回测并标注「非原生产物」；tushare daily 返回倒序，回测前须升序重排。
 - TradingAgents：yfinance 不识别 A 股代码需映射 .SS（如 600519.SH→600519.SS）；FRED_API_KEY 缺失时宏数据诚实降级为显式不可用，不伪造；StockTwits 403 / Reddit 429 属常见社交源限流。
 - UZI-Skill：`--depth lite --no-browser` 档可真实跑通 21 维数据采集（akshare 东财接口不可达时自动走东财历史 + 腾讯 + baostock 兜底）；雪球端点需登录导致部分字段 partial。
 - 关键历史财务数据不得用模型记忆，必须联网核实（实测初稿「2013-2015 净利下滑」为错误记忆，2025 年才是首次年度负增长）。
 
-## 回写条目（来源: investagent-research-only-scope）
+### 补充规则
 
 - **内容生产链路（企业研究/内容页面为最终产物）只跑「研究+数据」范围**：Buffett 定性评估 + UZI 22 维数据采集 + tushare 财务/行情采集；**跳过 TradingAgents 多Agent决策与 QuantDinger 回测**——完整流水线约 40% 模块产出的是内容边界禁止的持有建议/目标价/交易策略，启动时即明确范围，不跑完再裁剪（实测中途裁剪已浪费约 30 分钟执行预算，4 次 TradingAgents 尝试均无内容价值）。
 - findings-summary 同步收敛：不写决策/回测结论，执行状态如实标注「按项目内容边界排除」。

@@ -36,18 +36,18 @@ workspace 共享 internal skill：tushare 兼容 API 数据连接器（凭证/�
 - 财务接口在同一 `ts_code + end_date` 下可能返回重复记录。查询时尽量携带 `ann_date`、`f_ann_date`、`report_type`、`update_flag`，进入分析前按业务键去重；数值冲突时保留冲突并用法定财报复核，不直接累加或静默取第一条。
 - `free_cashflow` 等衍生字段必须先与 `n_cashflow_act` 和资本开支字段勾稽。无法解释时不要直接引用；如改用“经营现金流－购建长期资产支付现金”的近似口径，需在交付物中写明公式和限制。
 
-## 回写条目（来源: financial-analysis）
+### 补充规则
 
 - 端点可能降级：主端点（fast.xiaodefa.cn）三表/指标接口返空时，切换备用端点（tt.xiaodefa.cn）后可用。端点异常先验证端点与字段，再重试或回退，不直接判定数据缺失。
 
-## 回写条目（来源: financial-report-workflow）
+### 补充规则
 
 - 接口查询失败时重试 1-2 次（代理偶发连接错误）；`.env` 行内注释必须独立成行，否则会被旧客户端解析进 URL。
 
-## 回写条目（来源: industry-research-methodology）
+### 补充规则
 
 - tushare 兼容接口 `daily` 可能返回倒序数据，使用时注意排序（如回测场景需反转）。
 
-## 回写条目（来源: tushare-proxy-cashflow-distortion）
+### 补充规则
 
 - 代理现金流字段（尤其 OCF 总量）可能与法定披露严重不符（实测 269 亿 vs 官方半年报 706.91 亿，量级偏差）：关键现金流数字必须与法定财报交叉核验后才能引用；偏差超合理口径即弃用代理值、以官方披露为准并在交付物标注来源切换。

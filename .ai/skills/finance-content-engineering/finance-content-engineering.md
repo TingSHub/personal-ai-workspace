@@ -37,13 +37,10 @@
 - 财经化规则：事实约束（重要数字必须来源 + 时间范围 + 口径）、投资纪律（反标题党/反绝对化/反荐股，保留 Bull Case / Bear Case / 不确定性）、口播规则（280 字/分、单句宜 ≤25 字、大数读法、术语不失准）。
 - 三遍审校：Review 1 事实检查 → Review 2 表达检查 → Review 3 传播检查。
 - 不代替 Content Director：只输出资产（topic-options / polished-script），不做内容决策。
+- 应用于 speaker script、notes 或 narration 时，改写只能做表达层调整；不得新增、删除、近似化事实或改变结论强度。改写后必须运行 `scripts/check-fact-drift.py`。
+- `polished-script.md` 被下游锁定后，字幕和 TTS 只能从锁定文本派生；需要改变核心观点或事实时，退回内容导演/编辑阶段。
 
-## 回写条目（来源: huashu-test）
-
-本 Skill 即为 huashu 实测结论的产物（方法财经化重写）；`skill.yaml` 的 `experience_refs` 引用已归档经验 `huashu-test`。
-
-
-## 回写条目（来源: notes-spoken-polish）
+### 补充规则
 
 - script-polish 应用于 speaker script/notes 时：百分比直读（「营收负 1.2%」→「营收下降 1.2%」）、大数读法、单句 ≤25 字；**数字转中文读法允许（70→七十、两百/两千 用「两」、年份→去年/今年），近似化禁止（36.1% 不得写「超过三分之一」）**。
 - 改写后必跑 `scripts/check-fact-drift.py <旧版> <新版>`：removed 须为读法/指代、added 不允许、近似词对比式检测（约/左右/大概 等价组替换允许）。

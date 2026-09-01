@@ -48,21 +48,11 @@
 
 ## Principles
 
-- best_available_resource：按实际效果、输出质量、稳定性、依赖成本、维护成本和当前项目适配性选择资源，禁止 local first；来源不构成优先级
-- 真实执行留痕：Phase 的 Required Resources 必须真实执行并留下独立产物（含资源 by-name、验证时 installed_ref、该资源原生或结构化执行产物）；未执行资源不得写成已执行
-- 只消费已验收产物：下游 Phase 只消费通过 Quality Criteria 的上游产物
-- by-name 引用：Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径
-- **企业研究定位（荐股法律风险红线）**：本项目产出的是企业研究内容，不是荐股——**荐股有法律风险**。任何阶段的任何产物（研究交付物、findings-summary、Editorial Master、narration、字幕、视频画面）都不得构成推荐股票/买卖建议/目标价/操作区间/仓位/交易策略；「估值有安全边际 / 观察级标的 / 投资回报的胜负手 / 最有操作价值 / 安全边际要求更高」等投资决策倾向表述一律替换为中性研究表述：「估值处于历史较低区间 / 当前处于增长验证阶段 / 判断经营趋势的关键验证变量 / 最有跟踪价值 / 当前估值对增长假设更加敏感」
-- **内容边界（本项目为「企业研究内容生产」，非投资推荐）**：
-  - **不输出**：具体目标价（机构或自研一律不输出）、买卖评级（含机构评级分布）、买入/卖出/持有、操作区间、仓位、交易策略、短线信号、「是否值得买」结论
-  - **允许**：估值水平（PE/PB/股息率/历史分位）、不同增长假设对估值的影响（如 DCF 区间）、市场预期差异（如盈利一致预期——净利/EPS 预期可保留，价格目标不保留）、基本面验证指标、风险证伪条件
-- **不得展示**：AI 内部执行信息、Skill 调用过程、metadata、workflow 信息、内部置信度、证据编号/证据台账、未解决冲突、买卖建议；避免「唯一/无懈可击/绝对/最优质」等过度确定性、营销化措辞（「企稳确认/压力信号」类基本面验证信号允许保留，但不得写成「出现该信号即买卖」）
-- **HyperFrames Purity**：Phase 2 之后由 HyperFrames 技能体系统一指导——Composition、Scene/Sub-composition、动画、视觉媒体、音频轨道、字幕、配音与确定性执行均优先在同一 HyperFrames Composition 内完成。外部 Skill 只在 HyperFrames 明确不足且质量无法满足时补足；不得因为旧脚本或旧链路习惯绕开 HyperFrames 已稳定提供的能力（按 hyperframes 主技能入口指令加载领域子技能 hyperframes-core / -creative / -animation / -audio / -cli / -registry 与 media-use）
-- **Editorial Lock**：SCRIPT.md（narration）由 Editorial Master 派生并锁定，是全片口播文本唯一 Source of Truth；Phase 3 之后不再重新润色、改写事实、改变表达含义，不生成第二套 Script；字幕由 SCRIPT.md 派生，可断句和加时间，不得另写文案
-- **Audio First**：真实时间由音频决定——先定稿 narration → 生成 TTS 配音 → 按音频实际时长分配 Scene 时长 → 再写画面时序；禁止先设计画面后配音
-- **时长纪律**：faceless-explainer 创作路由的 sweet spot 为 30–90s，硬上限约 3 分钟；企业研究内容默认按「Editorial Thesis 最短完整叙事」压缩，不堆时长。内容超出上限时由 hyperframes router 裁决（拆 Scene / 分批 Composition / 更换路由），不得为塞内容无限拉长
-- **Deterministic Render**：核心动画必须可被 HyperFrames seek，任意时间点可得到可复现状态；不依赖 wall-clock、随机数、无限循环或截图后模拟 Reveal；FFmpeg 只用于编码检查、mux 与最终封装，禁止多级 xfade 作为主时间轴
-- 不创建新 Agent 类型；不提前固定章节模板/Hook/Bull-Bear 格式/页面数量；内容结构与信息服从 Editorial Master，不服从模板
+- 本 Workflow 只负责研究 → 编辑 → HyperFrames 路由/创作 → 渲染 → QA 的项目顺序与交接；通用执行纪律由所列 Skill/Agent 资产记录负责。
+- 项目产出仍是企业研究内容，不是投资推荐；Phase QA 必须检查目标价、评级、买卖建议、未解决冲突和内部执行信息没有进入公开产物。
+- `SCRIPT.md` 由 Editorial Master 派生并锁定，是全片口播文本唯一 Source of Truth；字幕只能从它派生。
+- 时长和形态由 HyperFrames router 根据 Editorial Thesis 与项目输入裁决；不在 Workflow 中写死内容模板。
+- 不创建新 Agent 类型；内容结构服从 Editorial Master，不服从固定页面或章节模板。
 
 ## Phase 1: research — 并行原生研究
 
@@ -217,14 +207,14 @@ hyperframes 主技能入口接管 Phase 2 已验收的 Editorial Master，完成
 - 路由裁决与时长规划有依据：目标长度落在所选 workflow 的合理区间；超长内容有明确拆分或路由方案，不遗留「先做出来再看」的悬浮决策
 - 视频计划中的每个 Scene 有一个核心观点，重要口播必须有可实现的视觉锚点
 
-## 回写条目（来源: `cangjie-skill` 蒸馏《叔晴多空局·紫光股份》,2026-08-21）
+### Phase 3 project constraints
 
 - **开场钩子门禁**：开场 Scene 必须通过 `video-hook-intro` 检查——极端对比数字(2-4 个,感知差距大)+ 悬念二选一问题(片尾必须兑现);每 Scene 始于「事实矛盾」立题(非修辞提问)
 - **数据降维检查**：SCRIPT 每个 Scene 至少一处降维翻译(`number-perception` 三阶:单位换算「每赚100块只有1块7」/生活类比/熟悉参照)或对比锚点(同行倍数/时间极值/预期分歧);数字零漂移、类比机制等价
 - **引述式表达(补回冲击)**：允许引述券商目标价/机构预测作为市场预期(标注「市场预期」+来源,口径一致),禁止自创目标价/评级/买卖建议(`boundary-rewrite` 三分类判定)
 - **多空局可选形态**：争议性选题(双方都有可辩护证据)可切换 `debate-rounds` 预编排——SCRIPT 写死双方论点 + 双音色 TTS 分饰 + 画面双方卡片交替;默认形态仍是叙事弧(企业研究定位)
 
-## 回写条目（来源: `podcast-workflow-plan`,2026-08-22 播客工作流规划）
+### Phase 3 podcast format constraints
 
 - **播客形态(默认)全流程设计**:
   - **Phase 3 双人对话稿**:按 `debate-rounds` skill 预编排——矛盾立题 → 回合交锋(「你这话没错,但…」/连环新证据/类比降维)→ 收束 → 双总结 → 互动钩子;每句带说话人标记(`[林知微]`/`[顾慎言]`),口语化规则不变
@@ -234,7 +224,7 @@ hyperframes 主技能入口接管 Phase 2 已验收的 Editorial Master，完成
   - **时长纪律放宽**:播客形态对话节奏可适当延长(参考 22 分钟多空局),仍保持 Audio First(Scene 时长 = 音频时长)
 - **引用通用 Workflow**:音色克隆 → `voice-clone-from-tts`(Global);参考视频解析(转写/抽帧/视觉分析)→ `video-content-extraction`(Global);本工作流只消费其产物
 
-## 回写条目（来源: `voxcpm-podcast-direction`,2026-08-21 用户方向决策）
+### Phase 3 podcast profile constraints
 
 - **形态变更:双人播客为默认形态(2026-08-21 起)**——从头到尾两位主持人对话(顾慎言=风险/反证视角 + 林知微=数据/趋势视角),替代单口解说叙事弧;`debate-rounds` 从"可选形态"升级为默认(叙事弧仍可选用)
 - **品牌音色资源(2026-08-22 定稿)**:林知微(女声)= 数据/趋势方,顾慎言(男声)= 风险/反证方;资源 key 和配方见顶层 `.ai/assets/voices/`;账号共享环境为 `/home/henry/personal-ai-workspace/.venv-voxcpm/`
@@ -303,14 +293,14 @@ Audio First：先按 SCRIPT.md 逐 Scene 合成配音，用真实音频时长确
 - media-use 的 TTS 生成后必须探针验证时长与可解码性；无法稳定生成时如实降级并记录，不伪装已生成
 - 旧实验参考实现：`projects/investment-research-system/experiments/listed-company-video-production/outputs/web/hyperframes/`（v1/v2 全源文件，Audio First + 手工插入音频的方法可复用）
 
-## 回写条目（来源: `video-pilot-media-degradation`）
+### Phase 4 media fallback constraints
 
 - **配音降级路径（2026-08-20 试点实测）**：media-use `resolve.mjs --doctor` 显示 heygen 缺失时，用项目已验证的 `scripts/tts-edge.py --notes <txt> --outdir video/audio --flat` + 08-19 的 `.venv-edge-tts`（EDGE_TTS_PYTHON 指定）；doctor 证据留痕，不伪装已生成
 - **tts-edge.py 按空行分段**：`--notes` 模式按 `\n\n` 分段，段间无空行会把全部旁白合成 1 段（实测 9 段 → 1 段 207.9s）——每 Scene 一段、段间必留空行，前缀 `P\d+:` 会被剥离
 - **时长裁决**：实测超路由裁决点 <4%（202.7 vs 195s）不拆分、记录裁决即可；叙事完整性优先于硬上限的轻微越界
 - **Audio First 验证**：视频总时长 == narration 总时长（ffprobe 双向核对）即 Scene 时长分配正确；分段响度 -19~-20dB 一致为通过
 
-## 回写条目（来源: `hyperframes-cli-runtime-contract`）
+### Phase 4 CLI constraints
 
 - **init 首次拉取 ~15 分钟**（onnxruntime-node postinstall 大体积运行时）；`--example=data-chart` 有缺陷（缺 index.html）但不影响项目骨架；预留时间或提前预拉取
 - **check/渲染命令在项目根运行**：主 composition 放根 `index.html`（`compositions/` 是 registry 子项）；传文件路径报 "Not a directory"
@@ -355,7 +345,7 @@ Audio First：先按 SCRIPT.md 逐 Scene 合成配音，用真实音频时长确
 - 渲染失败时先检查 Composition contract、资源路径、track 冲突与 seek 状态，不退回截图方案
 - 项目 pin 的 CLI 版本不会自动前进；恢复项目时按 hyperframes 主技能指引探测 `upgrade --check`，升级后必须 `check` 验证
 
-## 回写条目（来源: `hyperframes-cli-runtime-contract`）
+### Phase 5 render constraints
 
 - **中文字体需 `@font-face { src: local(...) }` 声明**：Noto Sans SC / PingFang SC / Microsoft YaHei 不在渲染器自动解析列表，不声明会回退泛型字体（check 报 font_family_without_font_face）
 - **对比度警告低成本修复**：ink-faint #9A9A9A→#8F8F8F（2.63:1→3:1+）、gold 上文字 #B08D57→#AC8A55（2.89:1→3:1+）
@@ -465,6 +455,7 @@ Video QA
 
 | 日期 | 变更 | 依据 |
 |---|---|---|
+| 2026-09-01 | v1.3：将通用 HyperFrames、财经边界、资源执行纪律迁入对应 Skill/Agent 资产记录；保留本项目路由、锁稿、产物和项目级 QA 门禁 | 小重构计划：Workflow / Skill / Agent 边界 |
 | 2026-08-20 | v1.0 创建：Phase 1 研究 + Phase 2 编辑（沿用 investagent-html-report）→ Phase 3 起 HyperFrames 技能体系接管（router → faceless-explainer 默认路由 → creative/core/animation/media-use → CLI 渲染 → QA）；确立 HyperFrames Purity、Editorial Lock、Audio First 与时长纪律 | 用户指令：investagent-video-production 纯度不足，从 Phase 2 后大量使用 HyperFrames 原生能力接管指导生成最终视频；调研确认 9 个 HyperFrames 技能已安装、环境齐备（Node 25 / FFmpeg / Chrome） |
 | 2026-08-20 | v1.1 试点回写：Phase 4/5 Known Issues 补充 TTS 降级路径（edge-tts + 空行分段坑）、init/check 项目约定（根 index.html、class="clip"、中文字体 @font-face、对比度修复）与确定性渲染验证方法 | 2026-08-20 茅台试点实测（经验: `hyperframes-cli-runtime-contract`、`video-pilot-media-degradation`，已回写并归档） |
 | 2026-08-22 | v1.2 播客形态规划：双形态（播客默认/解说可选）；Phase 3 双人对话稿、Phase 4 双人视觉 + 版式系统（蒸馏自参考视频）、TTS 双音色交替；引用通用 Workflow（voice-clone-from-tts / video-content-extraction） | 用户方向决策（播客工作流规划）；参考视频版式蒸馏定稿 |

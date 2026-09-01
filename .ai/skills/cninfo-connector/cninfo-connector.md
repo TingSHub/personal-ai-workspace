@@ -51,7 +51,7 @@ workspace 共享 internal skill：巨潮资讯（cninfo.com.cn）公告/年报�
 - 使用：`python3 <skill_dir>/scripts/check_archive.py --companies-root outputs/companies --company 东山精密 --ts-code 002384.SZ --period 2026H1 --document-type semiannual-report`
 - 退出码：`0` 已命中可复用文件；`1` 本地缺失，需要进入搜索/下载；`2` 参数或目录错误。
 
-## 回写条目（来源: financial-analysis）
+### 补充规则
 
 - 动态 orgId 构造优先（`gssz`/`gssh` + 股票代码），替代旧 cnfinancialscraper 的 orgId 硬编码（如 000938→9900013389 为错误值，正确为 gssz0000938）。
 - 东财 search 接口返回非 JSON，公告/年报检索应走巨潮官方接口，不依赖第三方搜索端点。

@@ -48,7 +48,7 @@
 - **来源与 QA**：关键事实保留轻量来源锚点；交付前必须完成 Semantic QA、HyperFrames Composition QA、内容边界、数值一致性、必要的 snapshot/render 和多视口 HTML QA。
 - **范围控制**：不修改 Editorial Master 核心内容，不替代 Financial Editor、Research Agent 或 Audio Timing；负责把内容交付为可被 HyperFrames 确定性渲染的视觉结构。
 
-## 回写条目
+### 补充规则
 
 - 2026-08-18：实体文档轻度压缩并规范 Markdown；保留 Editorial Master 边界、Scene/Core Message、Visual Evidence、Notes/Reveal、Presentation Handoff 和 QA 契约。
 - 2026-08-18：v0.3 增加 Presentation Completeness Principle，明确关键认知步骤优先于 Scene 数量，Reveal 不替代必要 Scene。

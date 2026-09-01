@@ -28,11 +28,11 @@
 - 踩坑：真实项目中 DuckDuckGo/Bing 路径可能受网络影响；质量检索优先验证 Tavily 结果并实际打开来源
 - 踩坑：行情/数据类网页多为 JS 渲染，摘要抓取常失败——记为失败尝试并回退聚合源，不得把搜索摘要伪装为已打开原始来源
 
-## 回写条目（来源: multi-search-total-failover）
+### 补充规则
 
 - 三引擎可能同时全挂（DuckDuckGo/Tavily 检测不可用 + Bing 爬虫缺 beautifulsoup4 依赖）：修复超过约 5 分钟即降级 WebSearch/WebFetch 直连，实测直连检索质量未受损、证据台账 opened 比例不受影响。
 
-## 回写条目（来源: company-intelligence-news-product-facts）
+### 补充规则
 
 - 公司新闻与产品事实发现使用 `prefer_quality=True` 优先 Tavily；搜索摘要仅用于发现候选，最终事实必须打开原文并记录事件日期、发布日期、来源级别和定位信息。
 - 新闻、奖项、型号和项目事实应与公司主线绑定后再交给脚本，不把搜索结果直接作为口播事实。

@@ -50,8 +50,3 @@
 ## Cover contract
 
 平台封面单独导出为 4:3 PNG（推荐 1440×1080），不进入正片时间轴；`cover.html` 作为可复现源文件保存。
-
-## 回写条目（来源: cosyvoice3-production-backend-selection）
-
-- CosyVoice3 zero-shot 保留为已验证的独立 A/B；当前 profile 以 VoxCPM2 continuation 为生产后端。
-- 任何后端切换仍需先通过同一 `COLD_OPEN + INTRO` canary、音频 QA 和人工试听。

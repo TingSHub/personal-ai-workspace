@@ -50,9 +50,9 @@
 ## Experience 反馈闭环
 
 1. 普通执行记录留在项目 `logs/`，永不进入资产库。
-2. Experience Curator 在项目完成时判断经验是否会改变未来 Workflow SOP、资源调用、质量检查或可复用脚本，并判定归属（回写到哪个 Workflow SOP 或 Skill/Agent 记录）。
+2. Experience Curator 在项目完成时判断经验是否会改变未来 Workflow SOP、资源调用、质量检查或可复用脚本，并判定归属（优先归入对应 Skill/Agent 的原则、调用说明或注意事项；确属项目运行契约时才归入 Workflow 现有章节）。
 3. 合格内容按模板生成 Candidate，暂存于项目 `experience-candidates/`。
-4. 用户确认后执行回写：向目标资产追加带 by-name 来源标记的回写条目（`## 回写条目（来源: {experience by-name}）`）并按 by-name 回填 `experience_refs[]`。
+4. 用户确认后执行回写：将结论合并进目标 Skill/Agent 的现有原则、调用说明或注意事项，或项目 Workflow 已有的 Principles、Quality Criteria、Known Issues 等章节；按 by-name 回填 `experience_refs[]`，不得新增“回写条目”章节。
 5. 回写完成后将经验文件移入 `.ai/archive/experiences/`；`.ai/experiences/` 只存未完成回写的在途经验，不无限堆积。
 6. Experience 记录适用边界、证据和验证时的资源 `installed_ref`；不保存对话全文、偶发错误或无证据建议。
 

@@ -39,10 +39,10 @@ Anti-Slop 前端设计 Skill（install name: `design-taste-frontend`）：布局
 - **图像生成指令冲突**：Section 4「有图像工具必须用生成图」与单文件自包含（内联 CSS/SVG、无 CDN、本地可打开）约束冲突时，以项目约束为准；金融长文报告不以营销图为主。
 - 与企业研究内容边界同向但需叠加：避免绝对化/营销化措辞与过度视觉冲击（与 impeccable 的 bolder/overdrive 同理，只取其克制侧）。
 
-## 回写条目
+### 补充规则
 
 - 2026-08-19：注册并安装外部 Skill（复制 SKILL.md 至 `.claude/skills/taste-skill/`，frontmatter 保持上游 `design-taste-frontend`）；investagent-html-report Phase 3 注记为可选资源。
 
-## 回写条目（来源: taste-skill-financial-editorial）
+### 补充规则
 
 - 2026-08-19：真实项目验证（investagent-html-report Phase 3 rerun，贵州茅台 600519）——Design Read + 克制 dials + palette-rotation（弃用暖纸色族改冷色 editorial）后通过全部 QA 门禁；生成 `scripts/check-em-dash.py` 作为零破折号机械化检查。

@@ -36,6 +36,4 @@
 - 内置 QA（lint/validate/auto-fix）与 static-html-qa 质检三件套可互补：web-ppt 自带 lint 覆盖其生成形态，static-html-qa 仍作为跨生成器统一质检兜底
 - 四阶段子技能为按需加载（references/ 与子目录 SKILL.md）——首次调用需通读主 SKILL.md 决策树
 
-## 回写条目
-
-（无——新注册资源，2026-08-16）
+（暂无补充规则；新注册资源，2026-08-16）

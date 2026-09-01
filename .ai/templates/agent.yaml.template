@@ -1,6 +1,6 @@
 # Agent 资源元数据字段模板（V0.2.3 单文件 md 文档）
 # 字段清单一律从此模板读取填充，禁止内联字段定义
-# 管理实体：.ai/agents/{agent-name}/{agent-name}.md —— 纯 Markdown 文档：# 标题 + > 位置引用 + ## 元数据（表格，列对应以下字段）+ ## 调用说明 正文（作用/实体位置/调用方式/注意事项与踩坑/回写条目）
+# 管理实体：.ai/agents/{agent-name}/{agent-name}.md —— 纯 Markdown 文档：# 标题 + > 位置引用 + ## 元数据（表格，列对应以下字段）+ ## 调用说明 正文（作用/实体位置/调用方式/注意事项与踩坑）
 # 实体定义：顶层 .agents/{agent-name}.md（可被加载执行，frontmatter 仅 name/description）
 # 只记录元信息（name/type/source/version/install/update 等），不复制 Agent 内部内容、不重复记录职责/方法论；正文是唯一内容载体
 name: {agent-name}

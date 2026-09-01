@@ -19,3 +19,8 @@
 ## 调用说明
 
 提供 HyperFrames 的开发、检查、快照、预览、渲染、批量渲染和诊断循环。必须在上游内容、音频和 Composition 通过各自门禁后执行 render；不能用 CLI 代替研究或内容导演。
+
+## 跨 Workflow 使用边界
+
+- 默认顺序为 `lint → check → snapshot/preview → render`；render 只能消费已验收的 Composition 和媒体。
+- FFmpeg 仅用于编码检查、mux、抽帧 QA 和必要封装；不得用多级 `xfade` 重建主时间轴。

@@ -37,7 +37,7 @@
 - 调用：`.venv/bin/python .ai/skills/industry-analysis/scripts/fetch_valuation_tushare.py 688017 --md`
 - 限制：依赖 pandas（项目 .venv）；脚本不可用时降级定性区间（高/中/低），禁止凭空给出具体数值；不提供 PEG；接口无数据时明确失败，不猜测数值。
 
-## 回写条目（来源: industry-research-methodology）
+### 补充规则
 
 - 估值分位优先用脚本取 Tushare 真实数据（`scripts/fetch_valuation_tushare.py`）；脚本不可用时降级定性区间（高/中/低），禁止凭空给出具体数值。实测真实分位可改变实质判断（如识别唯一低分位标的），并对口径异常（如 PE 489x）如实标注待核验。
 

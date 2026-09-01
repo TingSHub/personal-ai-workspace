@@ -24,7 +24,7 @@ tags: [{标签1}, {标签2}]
 ## 问题与归属判定
 
 - 问题：{遇到的真实问题或可复用结论}
-- 归属（owner）：{判定回写到哪个 Workflow SOP 的 Known Issues/Quality Criteria，或哪个 Skill/Agent 的注意事项（by-name）}
+- 归属（owner）：{优先判定回写到哪个 Skill/Agent 的原则、调用说明或注意事项；确属项目运行契约时，回写到 Workflow 现有 Principles/Quality Criteria/Known Issues（by-name）}
 
 ## 可复用结论（resolution）
 
@@ -32,7 +32,7 @@ tags: [{标签1}, {标签2}]
 
 ## 回写目标
 
-{by-name 引用：Workflow SOP 或 Skill/Agent 记录；回写条目标记 `## 回写条目（来源: {experience by-name}）`}
+{by-name 引用目标 Workflow SOP 或 Skill/Agent 记录；回写时合并到目标已有章节，不新增“回写条目”章节}
 
 ## 适用范围
 
