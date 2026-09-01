@@ -8,7 +8,7 @@
 
 ## Input
 
-- 源项目 `account-profile/published-works.md` 的发布条目（实际发布标题/平台/发布时间/视频路径/时长）
+- 源项目发布登记：`projects/<source-project>/account-profile/published-works.md`（workspace 相对路径；当前源项目为 investment-research-video，多账号扩展时按账号对应各自源项目），取其发布条目（实际发布标题/平台/发布时间/视频路径/时长）
 - 复盘触发时点：T+3 首次归因，T+7 增量复采出终版
 - 可选输入：评论区导出、单视频详情页截图（留存曲线/观众画像）
 
@@ -38,7 +38,7 @@
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| published-works.md 条目 | input | 必选 | 源项目 account-profile/ | 发布标题可能与工作标题不一致，以实际发布为准 |
+| published-works.md 条目 | input | 必选 | projects/&lt;source-project&gt;/account-profile/（workspace 相对路径，当前 investment-research-video） | 发布标题可能与工作标题不一致，以实际发布为准 |
 
 ### Input
 
@@ -130,7 +130,7 @@ Phase 1 已验收快照 JSON。
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
 | 评论区导出 | input | 可选 | douyin-creator-tools comments:export | 归因校验关键；零评论本身即证据 |
-| 视频脚本话题表 | input | 可选 | 源项目 manifest/SCRIPT | 话题级留存对照（留存曲线需人工补） |
+| 视频脚本话题表 | input | 可选 | projects/&lt;source-project&gt;/ 输出目录的 manifest/SCRIPT（workspace 相对路径） | 话题级留存对照（留存曲线需人工补） |
 
 ### Input
 

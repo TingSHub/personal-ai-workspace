@@ -19,14 +19,14 @@
 - duration: `393.75s`
 - report: `outputs/companies/中科曙光/official-information/603019.SH_2026H1_semiannual-report_20260826.pdf`
 - traffic_dir: `projects/video-publish-review/outputs/retrospectives/2026-08-28-zhongke-shuguang/`（复盘册：流量快照与归因报告，workspace 相对路径）
-- platform_url: 未登记（分享链接待补）
+- platform_url: `https://www.douyin.com/video/7678744509554953522`（aweme_id 7678744509554953522）
 
 ## 2026-09-01｜星网锐捷
 
 - status: `published`
 - title: `一个月涨超60%、三连板，星网锐捷涨的是什么？`
 - published_title: `一个月涨超60%、三连板，星网锐捷涨的是什么？`
-- platform: `未注明`
+- platform: `douyin`
 - published_at: `2026-09-01`
 - topic: `星网锐捷一个月涨超60%：涨的到底是什么？`
 - tags: `#星网锐捷 #国产算力 #人工智能 #数据中心 #交换机 #光通信 #财报解读 #投资研究`
@@ -37,4 +37,4 @@
 - audio_backend: `VoxCPM2 continuation`
 - duration: `384.633s`
 - report: `outputs/companies/星网锐捷/2026-09-01-audio-repair-v3/research-materials/research-intelligence.md`
-- platform_url: 未登记
+- platform_url: `https://www.douyin.com/video/7680355426122075392`（aweme_id 7680355426122075392）

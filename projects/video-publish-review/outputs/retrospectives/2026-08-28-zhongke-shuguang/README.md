@@ -17,7 +17,7 @@
 
 ## 登记缺口
 
-- platform_url 未登记（分享链接待补）
+- 无（platform_url 已补：https://www.douyin.com/video/7678744509554953522）
 
 ## 备注
 
