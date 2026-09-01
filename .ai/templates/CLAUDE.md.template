@@ -1,0 +1,32 @@
+# {Project Name} — Project Context
+
+## Project
+
+{项目名称}
+
+## Goal
+
+{项目目标}
+
+## Current Status
+
+{当前状态: planned / in_progress / done}
+
+## Workflow
+
+{引用的 Workflow by-name，例如 {workflow by-name}}
+
+## Required Resources
+
+{Workflow Phase 实际使用的 Skill/Agent by-name}
+
+## Development Rules
+
+- {规则 1}
+- Workflow Phase 的 Required Resources 必须真实执行并留下独立产物，下游只消费已验收产物
+- 字段清单一律从 workspace 的 `.ai/templates/` 读取填充
+- 项目执行记录写入 `logs/`，不直接进入资产库；项目结束时将可复用候选交给 Experience Curator
+
+## Known Issues
+
+- {已知问题}

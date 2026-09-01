@@ -1,0 +1,4 @@
+interface:
+  display_name: "产业供需周期分析"
+  short_description: "用可审计证据分析产业链、资本周期、有效供给和预期"
+  default_prompt: "Use $industry-cycle-analysis to analyze this industry with a freshness check, payer funding durability, order quality, node-specific capital-cycle diagnostics, production-control boundaries, cycle-adjusted valuation, an explicit relationship graph, an evidence ledger, and provisional conclusions when evidence is incomplete."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Quality Gate"
+  short_description: "Validate research, evidence, scripts, SRT, and material consistency"
+  default_prompt: "Validate the supplied research deliverables without generating or repairing research content."

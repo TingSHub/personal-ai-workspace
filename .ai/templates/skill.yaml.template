@@ -1,0 +1,26 @@
+# Skill 资源元数据字段模板（V0.2.3 单文件 md 文档）
+# 字段清单一律从此模板读取填充，禁止内联字段定义
+# 管理实体：.ai/skills/{skill-name}/{skill-name}.md —— 纯 Markdown 文档：# 标题 + > 位置引用 + ## 元数据（表格，列对应以下字段）+ ## 调用说明 正文（作用/来源/用途/注意事项与踩坑/回写条目）
+# 安装实体：.claude/skills/{skill-name}/SKILL.md（可加载定义，frontmatter 仅 name/description；辅助脚本在 .ai/skills/{skill-name}/scripts/）
+name: {skill-name}
+kind: skill
+description: {资源用途}
+source:
+  type: {external | internal | skillhub | github | other}
+  url: {来源 URL | 来源标识}
+  installed_ref: {版本号 | tag | commit SHA | internal}
+runtime: {claude | codex | both}
+invocation: {调用入口或方式}
+requirements:
+  - {稳定的环境或配置要求}
+update:
+  method: {git | reinstall | package-manager | manual | internal}
+  instructions: {如何获取并替换为新版本}
+  verify: {更新后最小验证方式}
+scripts:
+  - path: {资源目录内脚本路径}
+    purpose: {解决的问题和作用}
+    use_when: {使用条件}
+# experience_refs[]：回写追溯（by-name 引用已归档经验；对应 .ai/archive/experiences/ 下的经验文件）
+experience_refs:
+  - {experience by-name}

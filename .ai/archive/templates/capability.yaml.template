@@ -1,0 +1,50 @@
+# Capability 元数据模板（V0.2.0）
+# 字段清单一律从此模板读取填充，禁止内联字段定义
+# 位置：.ai/capabilities/{capability-name}/capability.yaml
+name: {capability-name}
+description: {可独立验收的能力结果}
+input: {输入契约}
+output: {输出契约}
+acceptance:
+  - {质量要求}
+# 先按当前项目适配性选择，再在同等适配候选中按预期结果质量排序；不使用综合评分
+selection:
+  principle: best_available_resource
+  evaluate:
+    - actual_effectiveness
+    - output_quality
+    - stability
+    - dependency_cost
+    - maintenance_cost
+  discovery_sources:
+    - workspace
+    - external_installed
+    - skill-hub
+    - find-skills
+    - agent-repository
+resources:
+  - name: {resource by-name}
+    kind: {skill | agent}
+    role: {execution | reference}
+    source: {来源类型与 URL 或 by-name 来源}
+    version: {installed_ref 或待验证版本}
+    strength: {已知优势}
+    weakness: {已知限制}
+    test_result: {真实项目证据或明确标注未实测}
+    recommended_usage: {最适用的任务边界与调用方式}
+    dependency_cost: {依赖准备与运行负担的定性说明}
+    maintenance_cost: {更新、兼容与维护负担的定性说明}
+execution_contract:
+  # required_resources 必须引用 role=execution 的资源；实际执行并留下独立产物，不能只参考其方法论
+  required_resources:
+    - {resource by-name}
+  # 可按任务相关性调用；一旦调用，同样必须在 Capability Result 记录实际产物
+  optional_resources:
+    - {resource by-name}
+  # 描述 Capability Result 必须具备的语义字段，不绑定文件模板或实现细节
+  required_outputs:
+    - {output field}
+  validation:
+    - {可确定检查的验收条件}
+experience_refs:
+  - {experience by-name}

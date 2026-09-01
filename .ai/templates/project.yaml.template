@@ -1,0 +1,8 @@
+# Project 元数据模板（V0.1.5）
+# 字段清单一律从此模板读取填充，禁止内联字段定义
+# 位置：projects/{project-name}/project.yaml（项目顶层）
+name: {project-name}
+description: {一句话描述}
+# workflows[]：本项目的 Project Workflow（by-name 引用 projects/{project-name}/workflows/ 下的 workflow）
+workflows:
+  - {workflow by-name}

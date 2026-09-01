@@ -1,0 +1,25 @@
+# Workflow 元数据模板（V0.1.5）
+# 字段清单一律从此模板读取填充，禁止内联字段定义
+# 两级位置：Global → .ai/workflows/{category}/{workflow-name}/；Project → projects/{project-name}/workflows/
+name: {workflow-name}
+goal: {目标}
+input: {输入}
+output: {输出}
+steps:
+  - id: {step-id}
+    purpose: {本步骤目的}
+    depends_on: []
+    # by-name 引用 .ai/capabilities/；默认由 Capability 选择 Skill/Agent
+    capabilities:
+      - {capability by-name}
+    acceptance:
+      - {项目可验证条件}
+    # 每次 Capability 执行都必须落独立产物；最终交付可直接填写其正式输出路径
+    capability_result:
+      path: {project-relative output path}
+      format: {markdown | srt | yaml | json | other}
+    # 仅用于用户指定资源、兼容验证或专用实现；通常保持 null
+    resource_override: null
+# experience_refs[]：引用的 Experience Knowledge（by-name 引用 .ai/experiences/ 下的经验文件）
+experience_refs:
+  - {experience by-name}

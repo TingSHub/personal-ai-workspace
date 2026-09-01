@@ -1,0 +1,11 @@
+# 项目登记记录模板（V0.1.5）
+# 字段清单一律从此模板读取填充，禁止内联字段定义
+# 位置：.ai/projects/{project-name}.yaml（登记索引，元数据；物理项目在 projects/{project-name}/）
+name: investment-research-video
+description: investagent 研究 → 企业研究 HTML/deck（含 speaker script）→ TTS 配音 → HyperFrames 视频 的完整内容生产链路
+workflows:
+  - investagent-html-report
+  - investagent-video-production
+  - investagent-video-by-hyperframes
+  - investagent-podcast-video-by-hyperframes
+registered: 2026-08-16

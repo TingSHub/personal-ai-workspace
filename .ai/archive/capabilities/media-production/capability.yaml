@@ -1,0 +1,53 @@
+name: media-production
+description: 将已验收内容资产转化为旁白、原创视觉、对齐字幕、可播放成片和发布包
+input:
+  content_package: 已通过门禁的脚本、字幕初稿和素材规划
+  delivery_context: 平台、画幅、时长、声音、视觉风格和发布要求
+output:
+  production_plan: 场景、节奏、运动、信息密度和朗读计划
+  narration_audio: 最终旁白音频与来源清单
+  visual_assets: 原创视觉、图表和资产清单
+  aligned_subtitles: 基于最终音频对齐的正式字幕
+  rendered_video: 可播放成片与渲染记录
+  publish_package: 成片、封面、文案、字幕和来源说明
+acceptance:
+  - 制作计划逐场景映射定稿脚本并定义节奏、运动、信息密度和朗读处理
+  - 旁白真实可播放且覆盖完整脚本，正式字幕基于最终音频声学对齐
+  - 视觉资产原创或来源清晰，数据图表保留期间、单位和证据映射
+  - 成片同时含视频流和音频流，字幕可见，画面不退化为简单PPT翻页
+  - 发布包只包含通过质量门的最终版本，并记录文件指纹、来源和用途
+selection:
+  principle: best_available_resource
+  evaluate: [actual_effectiveness, output_quality, stability, dependency_cost, maintenance_cost]
+  discovery_sources: [workspace, external_installed, skill-hub, find-skills, agent-repository]
+resources:
+  - name: codex-video-pipeline
+    kind: skill
+    role: execution
+    source: https://github.com/zoglmk/codex-video-pipeline
+    version: aab79717ad692dd0b4d770778be28a2fa2b09a6e
+    strength: HyperFrames渲染、声学字幕凭据、素材来源、封面和发布包形成完整外部链路
+    weakness: 依赖较多且当前上市公司案例尚未完成完整环境配置和端到端实跑
+    test_result: 脚本编译、unittest、doctor和项目门禁工具已验证；真实成片待验证
+    recommended_usage: HyperFrames、配音和字幕提供方齐备时优先用于完整视频生产
+    dependency_cost: FFmpeg、HyperFrames、声学字幕、图像生成及可选 Pexels，高
+    maintenance_cost: 多工具链兼容维护，高
+  - name: video-production-executor
+    kind: agent
+    role: execution
+    source: workspace internal agent profile
+    version: internal
+    strength: 能按项目契约组织 FFmpeg、Node、Python、TTS和图表工具并保留落盘证据
+    weakness: 不是独立媒体引擎，最终质量取决于实际配置的提供方和工具
+    test_result: 资源与工作流契约已验证；当前真实成片仍缺完整提供方实跑证据
+    recommended_usage: 需要按项目现有工具组合执行或作为外部流水线的受控编排层
+    dependency_cost: 依任务配置而变，中至高
+    maintenance_cost: 需跟踪本地工具与项目输出契约，中
+execution_contract:
+  required_resources: []
+  optional_resources: [codex-video-pipeline, video-production-executor]
+  required_outputs: [production_plan, narration_audio, visual_assets, aligned_subtitles, rendered_video, publish_package]
+  validation:
+    - 每个制作动作记录实际工具、资源版本、输入版本、文件指纹和验证结果
+    - 成片通过 ffprobe、播放抽查、字幕凭据和来源检查后才能进入发布包
+experience_refs: [research-master-content-pipeline]

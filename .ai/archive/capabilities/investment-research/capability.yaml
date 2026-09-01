@@ -1,0 +1,122 @@
+name: investment-research
+description: 将产业、商业模式、财务质量、估值与风险证据综合为可复核的上市公司投资研究
+input:
+  company: 公司名称、证券代码与上市市场
+  source_base: 已验收的数据、法定披露和证据底稿
+  research_scope: 研究问题、边界、截止日和所需模块
+output:
+  research_scope: 主体、边界、截止日、模块和排除项
+  research_modules: 行业、商业、财务与估值的独立研究结果
+  evidence_ledger: 关键结论的claim、source、date、confidence和notes账本
+  investment_thesis: Bull、Base、Bear逻辑、风险、跟踪指标和证伪条件
+  research_intelligence_document: 完整、统一口径、可追溯且不为传播压缩的长期研究底稿
+acceptance:
+  - 行业边界、产业链、竞争、周期与价值迁移结论有来源和证伪条件
+  - 商业模式、护城河、管理层、资本配置和客户粘性区分事实、框架判断与缺口
+  - 三表相互勾稽，异常信号与已证实舞弊严格区分
+  - 当前、历史、同行和情景估值使用真实数据并写明假设与成立条件
+  - Bull、Base、Bear Case、风险和跟踪指标均回指上游证据，不新增无来源事实
+  - 十章完整覆盖公司、行业、竞争、业务、护城河、财务、投资逻辑、风险、估值和跟踪指标；缺失项显式保留
+  - 最终底稿统一公司、报告期、单位、数字、证据编号、版本和免责声明，不按视频时长或阅读时间压缩
+selection:
+  principle: best_available_resource
+  evaluate: [actual_effectiveness, output_quality, stability, dependency_cost, maintenance_cost]
+  discovery_sources: [workspace, external_installed, skill-hub, find-skills, agent-repository]
+resources:
+  - name: investagent
+    kind: skill
+    role: execution
+    source: https://github.com/tohnee/investagent
+    version: tree-sha256:51aa7c2823bd
+    strength: 产业链、个股、价值投资、多空辩论和量化验证的一体化外部投研能力
+    weakness: 完整质量依赖市场数据、模型配置和 Docker；各模块完成度必须分别披露
+    test_result: 已验证主题扫描和多个子 Skill；当前上市公司案例未完成五模块端到端实跑
+    recommended_usage: 环境齐备且需要跨模块深度研究、辩论或回测交叉验证时优先评估
+    dependency_cost: 多模型、数据和 Docker 配置，高
+    maintenance_cost: 上游子模块多、兼容面广，高
+  - name: industry-analysis
+    kind: skill
+    role: execution
+    source: https://github.com/bellisji233/industry-analysis-skill
+    version: tree-sha256:a2a363fca3d9
+    strength: 六阶段产业链、高价值环节、公司卡位、估值和 Bear Case 方法完整
+    weakness: 对成熟消费行业的技术路线式下钻可能偏重，需按行业收敛
+    test_result: 紫光股份及四家公司批量案例均完成行业模块、原生HTML和真实估值序列
+    recommended_usage: A股产业链、行业竞争、公司卡位和估值主路径
+    dependency_cost: 联网研究与 Tushare 估值数据，中
+    maintenance_cost: 需跟踪外部 Skill 与本地估值辅助脚本，中
+  - name: buffett
+    kind: skill
+    role: execution
+    source: https://github.com/tohnee/investagent
+    version: tree-sha256:51aa7c2823bd
+    strength: 商业模式、护城河、管理层、资本配置和财务质量框架完整
+    weakness: 技术行业必须由产业研究校准，不能单独判断技术护城河持续性
+    test_result: 四家公司均实跑 Full Company Path；消费品牌解释力最强，技术公司保留边界
+    recommended_usage: 公司商业质量和长期价值判断
+    dependency_cost: 需要已验收财报、公告和行业输入，低至中
+    maintenance_cost: 随 investagent 上游更新，中
+  - name: earnings-reader
+    kind: skill
+    role: execution
+    source: skillhub pack finance-financial-report-analysis
+    version: v1.0.0
+    strength: A股利润表、资产负债表、现金流和盈利质量的结构化解读
+    weakness: 依赖上游数据完整性，行业因果仍需其他资源补充
+    test_result: 紫光股份及四家公司批量案例均完成三表交叉分析
+    recommended_usage: 财务模块主路径
+    dependency_cost: 需要连续报告期三表，低
+    maintenance_cost: 上游 pack 更新负担低至中
+  - name: industry-cycle-analysis
+    kind: skill
+    role: execution
+    source: https://github.com/YE-coding/industry-cycle-analysis
+    version: tree-sha256:9e9b5dd25f8e
+    strength: 供需、产能、价格、库存、利润和资本开支周期及证据就绪门槛严格
+    weakness: 非周期行业增量有限，公开连续序列不足时只能降级判断
+    test_result: 宁德时代案例严格校验0告警；其他案例按相关性选择并保留数据缺口
+    recommended_usage: 周期、制造和资本开支驱动行业的专项研究
+    dependency_cost: 需要连续产业数据和联网来源，中至高
+    maintenance_cost: 方法稳定，数据源维护成本中
+  - name: deep-analysis
+    kind: skill
+    role: execution
+    source: https://github.com/tohnee/investagent
+    version: tree-sha256:51aa7c2823bd
+    strength: DCF、Comps、三表模型等多模型估值交叉验证
+    weakness: 数据契约和模型依赖较重，不能宣称执行未实际完成的模型
+    test_result: 已完成资源级最小估值验证；当前批量案例未作为主路径调用
+    recommended_usage: 数据与模型环境齐备的深度估值复核
+    dependency_cost: 数据与模型环境，高
+    maintenance_cost: 随 investagent 更新，高
+  - name: financial-fraud-index
+    kind: skill
+    role: execution
+    source: skillhub pack finance-financial-report-analysis
+    version: tree-sha256:620e79e02f98
+    strength: 将异常拆分为明确异常、弱信号、缺失证据和进一步尽调项
+    weakness: PDF或审计文本不足时只能输出降级评估，不能证明舞弊事实
+    test_result: 多个真实财报案例完成量化或文本增强版风险边界检查
+    recommended_usage: 财务完整性与舞弊风险专项分支
+    dependency_cost: 完整版需要年报、附注和审计文本，中
+    maintenance_cost: 规则与报告格式维护成本中
+  - name: research-intelligence-agent
+    kind: agent
+    role: execution
+    source: workspace internal agent profile
+    version: internal-v1
+    strength: 按专业专长编排多个执行资源，消解冲突并形成十章完整研究底稿与Evidence Ledger
+    weakness: 不替代专业研究资源取证；结果仍受来源完整性和实际执行模块约束
+    test_result: 紫光股份已用历史执行模块与法定披露完成十章迁移验证，并显式标注未执行资源和数据缺口
+    recommended_usage: 上市公司完整研究的负责人和最终综合者，不用于内容传播或视频生成
+    dependency_cost: 需要已验收来源及适配资源的独立结果，中
+    maintenance_cost: 与研究文档、证据账本和质量门契约同步，中
+execution_contract:
+  required_resources: [research-intelligence-agent]
+  optional_resources: [investagent, industry-analysis, buffett, earnings-reader, industry-cycle-analysis, deep-analysis, financial-fraud-index]
+  required_outputs: [research_scope, research_modules, evidence_ledger, investment_thesis, research_intelligence_document]
+  validation:
+    - 每个实际研究模块记录执行资源、版本、输入证据、结果和降级，不能由主 Agent 模拟未执行资源
+    - 所需模块均有独立 Capability Result，最终底稿只消费已验收模块和来源底稿
+    - Evidence Ledger 的关键结论均具备claim、source、date、confidence和notes，无法证实的内容进入缺口而非正文事实
+experience_refs: [industry-research-methodology, financial-analysis, financial-report-workflow, research-master-content-pipeline]

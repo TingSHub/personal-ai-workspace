@@ -1,0 +1,42 @@
+# Dependencies
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Cache and output
+.cache/
+output/
+*.html
+*.png
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# QuantDinger specific
+skills/QuantDinger/backend_api_python/.env
+skills/QuantDinger/node_modules/
+
+# TradingAgents
+skills/TradingAgents/.env
+skills/TradingAgents/.tradingagents/

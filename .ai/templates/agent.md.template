@@ -1,0 +1,96 @@
+# Agent 通用模板（V0.3）
+
+> 参考：agency-agents-zh（jnMetaCode）Agent 格式 + 本项目管理结构（描述层 md 文档）
+> 用途：Internal Agent（职责型）与外部登记 Agent（人设型）的统一骨架——**大致模板，不限制过死**；Internal Agent 侧重职责与契约，外部 Agent 保留人设风格。
+> 字段清单以 `.ai/templates/agent.yaml.template` 为准（禁止内联字段定义）；本模板定义正文结构。
+
+## 一、文件位置
+
+- **实体（可加载定义）**：顶层 `.agents/{agent-name}.md`——frontmatter（name/description）最小化 + 完整职责正文
+- **描述层（管理资产）**：`.ai/agents/{agent-name}/{agent-name}.md`——元数据表格（来源/版本/调用/要求/更新/经验引用）+ 调用说明
+
+## 二、实体 frontmatter（可加载定义）
+
+```markdown
+---
+name: {agent-name}            # 英文 kebab-case（内部）；外部人设 agent 可保留中文名
+description: {一句话：何时使用、做什么}
+# 可选（外部人设 agent 参考）：emoji: 🔍 / color: green
+---
+```
+
+## 三、实体正文结构（骨架，按 Agent 类型取舍）
+
+```markdown
+# {agent-name}
+
+## 定位（Internal 必填；外部人设 agent 可改为人设背景段）
+{一两句：是什么角色、解决什么问题、不是什么}
+
+## 输入
+{Internal 必填：输入契约（目录/文件/参数）}
+{外部人设 agent 可选：通用场景描述}
+
+## 核心使命（外部人设 agent 风格）
+{负责什么、产出什么、为谁服务}
+
+## 关键规则
+{编号列表：不可妥协的纪律——事实回指、边界、合规等}
+
+## 技术交付物 / 工作流
+{Internal：工作流步骤 + 输出契约（目录/文件/字段）}
+{外部人设 agent：能力清单分类（日常操作/专项分析/报告输出）}
+
+## 边界（禁止）
+{明确不做的事——越界行为清单}
+
+## 验收
+- 我读取什么：…
+- 我的职责：…
+- 我输出什么：…
+- 我不做什么：…
+```
+
+## 四、描述层结构（管理资产）
+
+```markdown
+# {agent-name}
+
+> 管理资产：`.ai/agents/{agent-name}/{agent-name}.md`；安装实体：`.agents/{agent-name}.md`
+
+## 元数据
+| 字段 | 值 |
+|---|---|
+| kind | agent |
+| 来源 | internal · workspace internal agent profile / github · {repo}（{path}）|
+| installed_ref | internal / {commit SHA} |
+| runtime | both |
+| 调用入口 | {何时由谁调用} |
+| 要求 | {稳定的模型/工具/权限/环境要求} |
+| 更新 | {git/internal} · {更新方式}；验证：{最小验证} |
+| 辅助脚本 | {scripts/ 下的脚本及用途，无则 —} |
+| 经验引用 | {by-name 引用已归档经验，无则 —} |
+
+## 作用
+{一句话}
+
+## 实体位置（可加载定义）
+- `.agents/{agent-name}.md`——完整职责
+
+## 调用方式
+{输入输出、调用场景}
+
+## 注意事项与踩坑
+{已知限制、纪律、降级路径}
+
+## 回写条目
+{## 回写条目（来源: {experience by-name}）——经验沉淀时追加，无则留空节}
+```
+
+## 五、注册流程（resource-manager 执行）
+
+1. 检查 `.ai/agents/` 与 `.agents/` 避免重名/重复能力
+2. 外部来源先获取到 `/tmp/`，检查 README、依赖、LICENSE、版本标识，不直接 clone 到 workspace
+3. 按本模板生成实体（`.agents/`）+ 描述层（`.ai/agents/`）
+4. 记录实际 installed_ref（tag/commit SHA）
+5. 更新 `.ai/archive/experiences/README.md` 或相关 Workflow Required Resources（如适配）

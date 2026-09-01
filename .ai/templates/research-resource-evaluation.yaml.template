@@ -1,0 +1,17 @@
+# Research Resource Evaluation 模板
+# 位置：项目 docs/research-resource-evaluation.yaml
+resources:
+  - name: {resource by-name}
+    source: {安装来源或上游URL}
+    version: {installed_ref/tag/commit/未安装候选版本}
+    research_scope: {最适用的研究范围}
+    strengths:
+      - {已验证优势}
+    weaknesses:
+      - {已知限制}
+    methodology: {方法论摘要，只引用不复制Skill内容}
+    evidence_requirement: {输入证据和引用要求}
+    output_quality: {输出质量与适用边界}
+    tested_company: {真实测试公司或未测试}
+    test_result: {真实执行结果；reference/not-run必须明确}
+    recommended_usage: {在Research Intelligence Agent中的分工}

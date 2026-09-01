@@ -1,0 +1,83 @@
+name: data-acquisition
+description: 为专业分析获取、核验并组织可追溯的市场数据、法定披露、网络来源和证据底稿
+input:
+  subject: 公司、证券、行业或研究问题
+  scope: 市场、报告期、字段、来源类型和时效要求
+output:
+  source_base: 带主体、日期、单位和口径的数据与证据底稿
+  source_ledger: 带来源等级、标题、发布方、日期、链接或文档定位的证据账本
+  gaps_and_degradations: 冲突、缺失、推算、接口降级和待验证事项
+acceptance:
+  - 主体、代码、市场、期间、币种、单位和字段口径明确
+  - 关键结论使用实际打开的原始来源，时间敏感信息同时记录事件日期和发布日期
+  - 法定披露不仅下载成功，而且正文可检索、可定位并能复核关键数据
+  - 冲突值、缺失值、接口降级、推算值和待验证结论显式记录
+  - 每条重要证据保留来源等级、标题、发布方、日期、链接或文档定位
+selection:
+  principle: best_available_resource
+  evaluate: [actual_effectiveness, output_quality, stability, dependency_cost, maintenance_cost]
+  discovery_sources: [workspace, external_installed, skill-hub, find-skills, agent-repository]
+resources:
+  - name: cninfo-connector
+    kind: skill
+    role: execution
+    source: workspace internal
+    version: internal
+    strength: A股法定公告与年报的动态 orgId 检索、PDF 下载和原文核验
+    weakness: 部分公司或查询组合会返回空结果，需要法定披露备用路径
+    test_result: 紫光股份、浪潮信息、贵州茅台等真实项目已下载披露；宁德时代与胜宏科技记录过降级
+    recommended_usage: A股财报、公告和关键冲突值的法定披露复核
+    dependency_cost: 仅需网络，低
+    maintenance_cost: 需跟踪巨潮接口变化，中
+  - name: tushare-connector
+    kind: skill
+    role: execution
+    source: workspace internal
+    version: internal
+    strength: A股行情、估值、三表和历史序列覆盖稳定且字段可控
+    weakness: 依赖兼容端点和凭证，原始披露文本不在覆盖范围
+    test_result: 四家公司批量验证均取得非空行情与财务数据，宁德时代取得1359行日频数据
+    recommended_usage: A股结构化行情、财务、估值和同行数据主路径
+    dependency_cost: 需要 TUSHARE_TOKEN、端点和网络，中
+    maintenance_cost: 需跟踪接口字段与权限变化，中
+  - name: marketpulse
+    kind: skill
+    role: execution
+    source: skillhub pack finance-financial-report-analysis
+    version: v1.0.2
+    strength: 美股及全球市场行情、SEC、新闻、分析师和机构活动覆盖广
+    weakness: 依赖外部 AISA 凭证，A股法定披露不是优势
+    test_result: 已安装并完成资源级最小验证；当前A股视频案例未实测
+    recommended_usage: 美股或全球标的的数据与披露获取
+    dependency_cost: 需要 AISA_API_KEY 和网络，中
+    maintenance_cost: 依赖第三方 API 与 pack 更新，中
+  - name: tushare-data
+    kind: skill
+    role: execution
+    source: skillhub pack finance-financial-report-analysis
+    version: v1.1.16
+    strength: 中文自然语言驱动的数据清洗、比较、筛选和导出
+    weakness: 与底层 connector 有能力重叠，复杂任务仍需核对字段与接口权限
+    test_result: 已安装并完成最小行情验证；真实案例主路径使用 tushare-connector
+    recommended_usage: 需要交互式筛选、清洗或导出的 A股数据任务
+    dependency_cost: 需要 Tushare 兼容凭证和网络，中
+    maintenance_cost: 随上游 pack 更新，中
+  - name: multi-search
+    kind: skill
+    role: execution
+    source: https://github.com/Nex-ZMH/Agent-websearch-skill
+    version: tree-sha256:6535cb0b3ab7
+    strength: 多引擎切换、配额管理和联网检索降级路径
+    weakness: 公司级查询可能受引擎可用性影响，搜索摘要不能替代原文
+    test_result: 紫光股份找到有效事件并完成交叉验证；批量案例均如实记录搜索降级
+    recommended_usage: 法定披露之外的行业、事件和新闻补充检索
+    dependency_cost: 需要网络，部分引擎需要凭证，中
+    maintenance_cost: 多引擎接口变化带来中等维护负担
+execution_contract:
+  required_resources: []
+  optional_resources: [cninfo-connector, tushare-connector, marketpulse, tushare-data, multi-search]
+  required_outputs: [source_base, source_ledger, gaps_and_degradations]
+  validation:
+    - 独立 Capability Result 存在并记录实际执行的资源、版本、数据日期、单位、口径和降级
+    - 至少执行一个适配当前市场的 execution 资源，关键冲突回到原始来源复核
+experience_refs: [financial-analysis, financial-report-workflow, industry-research-methodology]

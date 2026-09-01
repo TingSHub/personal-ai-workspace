@@ -1,0 +1,47 @@
+---
+name: {experience-name}
+description: {一句话摘要——什么情境触发、改变什么行动;检索相关性判断以此为准(obsidian-skills「描述即触发」思想)}
+type: {methodology | quality-check | resource-lesson | script | pitfall}
+status: {in-flight | archived}
+owner: {回写目标资产 by-name,逗号分隔;无明确回写目标则留待判定}
+asset: {关联 Workflow/Skill/Agent by-name,逗号分隔}
+tags: [{标签1}, {标签2}]
+---
+
+# Experience: {experience-name}
+
+> Experience 是反馈，不是永久知识库：合格经验先判定归属，回写至 Workflow SOP 或 Skill/Agent 记录（by-name 回填 `experience_refs[]`），**回写完成后归档**至 `.ai/archive/experiences/`；`.ai/experiences/` 只存未完成回写的在途经验，不无限堆积。
+> frontmatter 是机器检索层（name/type/status/owner/asset/tags 供 LLM 精确过滤），正文是人读细节；两者以正文为准。
+
+## 来源证据
+
+{项目、运行记录/交付物证据、验证时相关资源 installed_ref；缺证据的结论不得沉淀}
+
+## 触发场景
+
+{什么情况下需要这条经验}
+
+## 问题与归属判定
+
+- 问题：{遇到的真实问题或可复用结论}
+- 归属（owner）：{判定回写到哪个 Workflow SOP 的 Known Issues/Quality Criteria，或哪个 Skill/Agent 的注意事项（by-name）}
+
+## 可复用结论（resolution）
+
+{经项目验证的结论；只写能改变未来流程、资源选择、调用方法、质量检查或可复用脚本的内容}
+
+## 回写目标
+
+{by-name 引用：Workflow SOP 或 Skill/Agent 记录；回写条目标记 `## 回写条目（来源: {experience by-name}）`}
+
+## 适用范围
+
+{适用的项目、任务或资源版本（含 installed_ref）}
+
+## 不适用范围
+
+{边界和反例；不能套用的场景}
+
+## 关联资产
+
+{Workflow / Skill / Agent by-name 引用}

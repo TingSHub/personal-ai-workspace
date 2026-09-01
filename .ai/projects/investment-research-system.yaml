@@ -1,0 +1,7 @@
+name: investment-research-system
+description: 上市公司研究内容生产系统——从统一证据链研究母稿持续派生长短视频、字幕和素材清单
+workflows:
+  - listed-company-research-production
+  - listed-company-research-video-production
+  - listed-company-video-production
+registered: 2026-08-09

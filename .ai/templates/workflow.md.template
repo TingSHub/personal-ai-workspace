@@ -1,0 +1,58 @@
+# Workflow: {workflow-name}
+
+> 位置: {Global: .ai/workflows/{category}/{name}/ | Project: projects/{project-name}/workflows/{name}/}
+
+## Mission
+
+{goal 转述：本 Workflow 解决什么问题、产出什么、为谁服务}
+
+## Input
+
+{input 契约：本 Workflow 启动所需的全部输入字段，含必填/可选语义}
+
+## Output
+
+{output 契约 + 正式输出路径：产物清单、格式与约定落盘位置}
+
+## Principles
+
+- best_available_resource：按实际效果、输出质量、稳定性、依赖成本、维护成本和当前项目适配性选择资源，禁止 local first；来源不构成优先级
+- 真实执行留痕：Phase 的 Required Resources 必须真实执行并留下独立产物（含资源 by-name、验证时 installed_ref、该资源原生或结构化执行产物）；未执行资源不得写成已执行
+- 只消费已验收产物：下游 Phase 只消费已通过 Quality Criteria 的上游产物，不消费私有推理或平行报告
+- by-name 引用：Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径
+
+## Phase {N}: {step-id} — {purpose 一句话}
+
+### Goal
+
+{本 Phase 的目标与完成定义}
+
+### Required Resources
+
+| Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
+|---|---|---|---|
+| {resource-by-name} | {skill|agent} | {必选|可选} | {source / installed_ref} | {recommended_usage 摘要 + test_result 要点} |
+
+注：Type 列固定为裸小写 `skill` 或 `agent`。
+
+### Input
+
+{输入契约，继承上游 Phase 已验收产物与任务参数}
+
+### Output
+
+{产物清单（含项目相对路径与格式），继承原步骤产物路径}
+
+### Quality Criteria
+
+{原 acceptance 逐条继承 + execution_contract.validation + required_outputs}
+
+### Known Issues
+
+{原资源 weakness + 经验沉淀结论：降级路径、未实测项、执行证据要求}
+
+## Evolution Log
+
+| 日期 | 变更 | 依据 |
+|---|---|---|
+| {YYYY-MM-DD} | {变更描述} | {Spec / 计划 / 经验 by-name} |

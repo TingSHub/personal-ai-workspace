@@ -1,0 +1,82 @@
+name: listed-company-video-production
+goal: 消费已验收内容资产，生成通过独立媒体质量门的可播放成片与发布包
+input:
+  upstream_workflow: 固定按名称引用listed-company-research-video-production
+  research_intelligence_document: 必填，最终一致性复核依据
+  content_package: 必填，已验收的策划、脚本、字幕初稿和素材规划
+  company_name: 必填
+  stock_code: 必填
+  company_output_id: 必填，必须与上游Workflow一致
+  video_project_id: 必填，用于区分选题或版本
+  delivery_context: 可选，平台、时长、画幅、声音和视觉风格
+output:
+  production_plan: production-plan.md
+  narration_audio: audio/voice/final-narration.wav
+  visual_assets: assets/
+  subtitle_final: captions/subtitle-final.srt
+  preview_video: render/preview.mp4
+  video_quality_report: qc/video-quality-report.md
+  publish_package: 产出/
+steps:
+  - id: plan-media-production
+    purpose: 固化场景、节奏、运动、信息密度、视觉任务和朗读处理，不改写上游内容
+    depends_on: []
+    capabilities: [media-production]
+    acceptance:
+      - 计划覆盖完整定稿脚本并明确场景时长、运动方式、视觉任务和关键数字保护项
+      - 对已安装外部完整流水线与 workspace 编排资源按效果、质量、稳定性和成本做任务级选择
+    capability_result:
+      path: outputs/companies/{company_output_id}/video-production/{video_project_id}/production-plan.md
+      format: markdown
+    resource_override: null
+
+  - id: produce-media-assets
+    purpose: 生成最终旁白、原创视觉和基于最终音频声学对齐的正式字幕
+    depends_on: [plan-media-production]
+    capabilities: [media-production]
+    acceptance:
+      - 旁白真实可播放且覆盖全部脚本，不新增脚本外事实
+      - 图表和视觉可映射到素材规划与研究证据，不使用来源不明素材
+      - 正式SRT基于最终音频对齐，序号、时间码、编码和关键数字合法
+    capability_result:
+      path: outputs/companies/{company_output_id}/video-production/{video_project_id}/media-assets-manifest.md
+      format: markdown
+    resource_override: null
+
+  - id: render-preview
+    purpose: 组合最终音频、视觉和字幕，渲染可播放预览视频并记录参数与文件指纹
+    depends_on: [produce-media-assets]
+    capabilities: [media-production]
+    acceptance:
+      - MP4同时包含视频流和音频流，字幕可见，时长与旁白基本一致
+      - 画面包含图表、示意或连续运动层次，不退化为简单PPT翻页
+    capability_result:
+      path: outputs/companies/{company_output_id}/video-production/{video_project_id}/render/preview.mp4
+      format: other
+    resource_override: null
+
+  - id: validate-media
+    purpose: 对预览视频执行独立只读质量验收并把问题归因到上游产物
+    depends_on: [render-preview]
+    capabilities: [quality-assurance]
+    acceptance:
+      - 报告覆盖内容一致性、视觉可读性、字幕同步、音频自然度、媒体流和素材来源
+      - 每项发现包含PASS/WARN/FAIL、文件位置、责任产物和回退步骤
+      - 阻断项为零后才允许打包
+    capability_result:
+      path: outputs/companies/{company_output_id}/video-production/{video_project_id}/qc/video-quality-report.md
+      format: markdown
+    resource_override: null
+
+  - id: package-publish-assets
+    purpose: 将已通过质量门的最终视频、横竖封面、发布文案、字幕和来源说明整理为发布包
+    depends_on: [validate-media]
+    capabilities: [media-production]
+    acceptance:
+      - 发布包只含质量报告对应的最终版本，文件名、来源、用途和指纹完整
+      - 横竖封面分别排版且移动端可读，不混入未通过质量门的素材
+    capability_result:
+      path: outputs/companies/{company_output_id}/video-production/{video_project_id}/产出/
+      format: other
+    resource_override: null
+experience_refs: [research-master-content-pipeline]

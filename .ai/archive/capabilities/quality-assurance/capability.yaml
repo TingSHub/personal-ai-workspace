@@ -1,0 +1,64 @@
+name: quality-assurance
+description: 对研究、内容和媒体交付物执行独立、只读、可回退的专业质量门禁
+input:
+  artifacts: 待验收的研究模块、Research Intelligence Document、内容资产或媒体文件
+  source_of_truth: 对应阶段的已冻结事实源与上游 Capability Result
+  release_criteria: 项目发布标准和允许的降级边界
+output:
+  deterministic_results: 可重复的格式、版本、媒体和跨文件检查结果
+  semantic_results: 事实、因果、风险、表达和视觉语义复核结果
+  release_status: PASS、WARN或FAIL及放行条件
+  issue_ownership: 每个问题对应的责任产物
+  return_steps: 明确的上游回退步骤
+acceptance:
+  - 生产者与放行者分离；门禁只检查和归因，不补研究、不生成内容、不直接修复上游产物
+  - 研究事实、数字、证据、风险、版本和免责声明一致且可追溯
+  - Research Intelligence十章、Bull/Base/Bear和Evidence Ledger字段完整；内容结构、禁语、字幕格式、素材来源和底稿边界检查完整
+  - 媒体层覆盖字幕同步、音频自然度、视觉可读性、媒体流、时长和版权来源
+  - 每项发现给出 PASS、WARN 或 FAIL、文件位置、责任产物和明确回退步骤
+selection:
+  principle: best_available_resource
+  evaluate: [actual_effectiveness, output_quality, stability, dependency_cost, maintenance_cost]
+  discovery_sources: [workspace, external_installed, skill-hub, find-skills, agent-repository]
+resources:
+  - name: research-quality-gate
+    kind: skill
+    role: execution
+    source: workspace internal skill
+    version: internal
+    strength: Research Intelligence十章与证据账本，以及内容跨文件数字、禁语、SRT和素材的确定性与语义双门禁
+    weakness: 不检查真实视频播放体验，媒体层需独立 reviewer
+    test_result: 紫光股份与四家公司批量案例均执行；贵州茅台首次失败后回退修复，最终全部零阻断
+    recommended_usage: 研究和内容资产发布前的主质量门
+    dependency_cost: Python标准库与同版资产，低
+    maintenance_cost: 随输出契约维护规则，中
+  - name: video-quality-reviewer
+    kind: agent
+    role: execution
+    source: workspace internal agent profile
+    version: internal
+    strength: 与生产执行分离，覆盖视频、音频、字幕同步、视觉和素材来源
+    weakness: 当前真实成片案例不足，视觉判断仍需人工或视觉模型参与
+    test_result: Agent契约和检查清单已验证；真实上市公司成片待端到端验证
+    recommended_usage: 预览视频生成后的独立媒体质量复核
+    dependency_cost: 需要最终媒体资产与 ffprobe，中
+    maintenance_cost: 与媒体工具和发布标准同步，中
+  - name: codex-video-pipeline
+    kind: skill
+    role: execution
+    source: https://github.com/zoglmk/codex-video-pipeline
+    version: aab79717ad692dd0b4d770778be28a2fa2b09a6e
+    strength: doctor、caption gate、项目验证和发布包门禁提供可重复的外部确定性检查
+    weakness: 不能替代研究语义复核，完整门禁依赖其生产栈产物
+    test_result: 脚本和单元测试已通过；真实上市公司完整发布包未实测
+    recommended_usage: 使用该外部流水线生产时同步执行其确定性门禁，与独立语义复核组合
+    dependency_cost: 对既有流水线产物低，跨流水线适配中
+    maintenance_cost: 随外部流水线版本更新，中
+execution_contract:
+  required_resources: []
+  optional_resources: [research-quality-gate, video-quality-reviewer, codex-video-pipeline]
+  required_outputs: [deterministic_results, semantic_results, release_status, issue_ownership, return_steps]
+  validation:
+    - 独立质量报告记录实际执行资源、版本、全部输入文件及时间轴或版本状态
+    - 阻断项为零且所需语义复核完成后才允许放行；WARN必须有明确接受依据
+experience_refs: [research-master-content-pipeline, financial-report-workflow, industry-research-methodology]

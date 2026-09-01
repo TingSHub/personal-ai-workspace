@@ -1,0 +1,24 @@
+{
+  "evaluated_at": "2026-07-18T21:54:27+08:00",
+  "baseline": "Demo commit 1bed2cb using v1.5.0 contract",
+  "candidate": "v1.6.0 contract and audited reports",
+  "industries": ["AI算力", "液冷", "光伏", "铜"],
+  "assertions_per_industry": 12,
+  "baseline_passed": 25,
+  "baseline_total": 48,
+  "baseline_pass_rate": 52.1,
+  "candidate_passed": 48,
+  "candidate_total": 48,
+  "candidate_pass_rate": 100.0,
+  "improvement_percentage_points": 47.9,
+  "required_improvement_percentage_points": 20.0,
+  "result": "pass",
+  "assertion_groups": [
+    "节点与证据基础",
+    "阶段状态分离",
+    "行业事件时间线",
+    "分层资本市场代理",
+    "未来资金情景六字段",
+    "已定价/未定价与免责声明"
+  ]
+}

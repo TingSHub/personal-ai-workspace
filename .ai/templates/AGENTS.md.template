@@ -1,0 +1,32 @@
+# {Project Name} — Project Context
+
+## Project
+
+{project name}
+
+## Goal
+
+{project goal}
+
+## Current Status
+
+{planned / in_progress / done}
+
+## Workflow
+
+{referenced workflow by name, e.g. {workflow by-name}}
+
+## Required Resources
+
+{Skill/Agent used by the workflow Phases, by name}
+
+## Development Rules
+
+- {rule 1}
+- Workflow Phase Required Resources must actually run and leave independent artifacts; downstream phases consume only accepted artifacts
+- Field lists always come from the workspace `.ai/templates/`
+- Project execution records go to `logs/` and never enter the asset library directly; at completion, send reusable candidates to Experience Curator
+
+## Known Issues
+
+- {known issue}

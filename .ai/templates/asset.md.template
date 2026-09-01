@@ -1,0 +1,25 @@
+# Asset: {resource_key}
+
+> 位置: .ai/assets/{kind}/{name}/
+
+## 元数据
+
+| 字段 | 值 |
+|---|---|
+| resource_key | {稳定资源 key，例如 voice.zhiwei} |
+| kind | {voices / fonts / images / music / icons} |
+| description | {资源用途} |
+| source | {来源标识或 URL} |
+| version | {版本、日期或文件指纹} |
+| license | {许可证、授权状态或使用边界} |
+| files | {同目录本体文件和许可证} |
+| requirements | {格式、运行环境或调用要求} |
+| verification | {最小验证方式和结果} |
+
+## 调用说明
+
+{如何被项目 account-profile 通过 resource_key 选择；如何被 Workflow 或脚本消费。}
+
+## 注意事项
+
+{已知限制、候选边界、不可静默替代的情况。}

@@ -1,0 +1,55 @@
+name: listed-company-research-production
+goal: 从公司输入生成通过独立质量门的完整 Research Intelligence Document，作为长期可复用研究资产
+input:
+  company_name: 必填，上市公司正式名称
+  stock_code: 必填，证券代码与上市地后缀
+  company_output_id: 必填，稳定的公司输出标识，例如000938-ziguang
+  research_goal: 可选；缺失时执行完整上市公司研究，不设置篇幅、视频或传播约束
+output:
+  source_base: 已验收的数据、披露和证据底稿
+  research_modules: 实际执行资源留下的独立 Capability Result 与执行回执
+  evidence_ledger: claim、source、date、confidence、notes完整的证据账本
+  research_intelligence_document: 十章完整、未为传播压缩的长期研究底稿
+  quality_report: 独立研究质量门报告
+steps:
+  - id: acquire-and-verify-sources
+    purpose: 核验公司主体与研究边界，取得行情、三表、公告、同行和行业来源，并记录冲突、缺失与降级
+    depends_on: []
+    capabilities: [data-acquisition]
+    acceptance:
+      - 公司名称、代码、上市地、研究边界和数据截止日唯一明确
+      - 至少执行一个适配市场的数据资源，关键披露正文可检索定位
+      - 数据、来源、日期、单位、口径、证据等级和降级完整记录
+    capability_result:
+      path: outputs/companies/{company_output_id}/research_modules/source-base-result.md
+      format: markdown
+    resource_override: null
+
+  - id: execute-research-intelligence
+    purpose: 由 research-intelligence-agent 作为研究负责人，按最佳可用资源及各自专长执行行业、竞争、业务、护城河、财务、估值、情景和风险研究，再综合为完整底稿
+    depends_on: [acquire-and-verify-sources]
+    capabilities: [investment-research]
+    acceptance:
+      - research-intelligence-agent 与每个实际 execution 资源均记录名称、来源、版本、输入、产物、结果和降级；未执行资源不写成已测试
+      - 不简单平均或拼接外部报告；冲突结论按来源层级、日期与口径核验，无法消解者并列披露
+      - 十章覆盖公司概览、行业、竞争、业务、护城河、完整三表、Bull/Base/Bear、风险、估值和跟踪指标
+      - 所有关键结论进入 Evidence Ledger；无来源市场空间、预测和经验判断不得写成事实
+      - 研究内容不因视频长度、用户阅读时间或传播目的而删减，复杂信息和数据缺口均保留
+    capability_result:
+      path: outputs/companies/{company_output_id}/research-intelligence-document.md
+      format: markdown
+    resource_override: null
+
+  - id: validate-research-intelligence
+    purpose: 对来源、资源执行回执、十章正文和 Evidence Ledger 执行独立只读门禁，不在门禁内补研究或修复内容
+    depends_on: [execute-research-intelligence]
+    capabilities: [quality-assurance]
+    acceptance:
+      - 确定性检查与语义复核均完成，发现包含位置、责任产物和回退步骤
+      - 关键结论可追溯，无模块外事实、数字冲突、风险弱化或把缺失数据伪装成结论
+      - 十章、Bull/Base/Bear和Evidence Ledger必填字段齐全，阻断项为零后才允许交给Content Production
+    capability_result:
+      path: outputs/companies/{company_output_id}/research-quality-report.md
+      format: markdown
+    resource_override: null
+experience_refs: [financial-analysis, financial-report-workflow, industry-research-methodology, research-master-content-pipeline]

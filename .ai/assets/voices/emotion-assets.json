@@ -1,0 +1,112 @@
+{
+  "status": "PASS",
+  "speakers": [
+    "luheng",
+    "shenyan",
+    "zhiwei"
+  ],
+  "emotions": [
+    "curious",
+    "firm",
+    "skeptical",
+    "thoughtful"
+  ],
+  "clips": [
+    {
+      "speaker": "luheng",
+      "emotion": "curious",
+      "text": "等等，这里有个问题……为什么收入增长了，利润却没有同步跟上？",
+      "file": ".ai/assets/voices/luheng/emotion/curious.wav",
+      "duration_seconds": 5.6,
+      "sha256": "35f9477679bd0d3445933b42933701ba72b38f6cb5e5c2ffa4a5b3b832703e1d"
+    },
+    {
+      "speaker": "luheng",
+      "emotion": "firm",
+      "text": "这一点可以明确：增长已经发生，但质量还需要连续数据来验证。",
+      "file": ".ai/assets/voices/luheng/emotion/firm.wav",
+      "duration_seconds": 5.6,
+      "sha256": "0e5b28dd7565f8b37c9df5f3400fbf169811d9a7f006a7a15ad60b5e2fe502a1"
+    },
+    {
+      "speaker": "luheng",
+      "emotion": "skeptical",
+      "text": "先别急着下结论。收入看起来漂亮，但利润和现金流还得继续核对。",
+      "file": ".ai/assets/voices/luheng/emotion/skeptical.wav",
+      "duration_seconds": 6.56,
+      "sha256": "d4adb4da39b3e38179f882ed8363fb5aa75a17b84a8d20a56bde1ee8c48bf2a3"
+    },
+    {
+      "speaker": "luheng",
+      "emotion": "thoughtful",
+      "text": "我更愿意把这件事放回时间里看。下一期数据，可能比今天的结论更重要。",
+      "file": ".ai/assets/voices/luheng/emotion/thoughtful.wav",
+      "duration_seconds": 6.56,
+      "sha256": "30a12f449e89f31887b7e2446870f284d756a1a55762c40b656a5d4f9dadc0cc"
+    },
+    {
+      "speaker": "shenyan",
+      "emotion": "curious",
+      "text": "等等，这里有个问题……为什么收入增长了，利润却没有同步跟上？",
+      "file": ".ai/assets/voices/shenyan/emotion/curious.wav",
+      "duration_seconds": 5.12,
+      "sha256": "bd942f7b39a372f0629115bf44225d027ba732e9b322806d7beb062f03ccb060"
+    },
+    {
+      "speaker": "shenyan",
+      "emotion": "firm",
+      "text": "这一点可以明确：增长已经发生，但质量还需要连续数据来验证。",
+      "file": ".ai/assets/voices/shenyan/emotion/firm.wav",
+      "duration_seconds": 5.12,
+      "sha256": "b5de9519c1642447c548a20220d0b6bb5b707212eea1260d6c1677784f5c047d"
+    },
+    {
+      "speaker": "shenyan",
+      "emotion": "skeptical",
+      "text": "先别急着下结论。收入看起来漂亮，但利润和现金流还得继续核对。",
+      "file": ".ai/assets/voices/shenyan/emotion/skeptical.wav",
+      "duration_seconds": 5.92,
+      "sha256": "6651180493dc6f5d1b346a32c06b4d8a641c77c6115059e1656d5f236eea1fc4"
+    },
+    {
+      "speaker": "shenyan",
+      "emotion": "thoughtful",
+      "text": "我更愿意把这件事放回时间里看。下一期数据，可能比今天的结论更重要。",
+      "file": ".ai/assets/voices/shenyan/emotion/thoughtful.wav",
+      "duration_seconds": 5.76,
+      "sha256": "4b8ff06a8bf9ed86f8b68f140d85f97bdf4f660757c6e66daad899c4a26157bc"
+    },
+    {
+      "speaker": "zhiwei",
+      "emotion": "curious",
+      "text": "等等，这里有个问题……为什么收入增长了，利润却没有同步跟上？",
+      "file": ".ai/assets/voices/zhiwei/emotion/curious.wav",
+      "duration_seconds": 5.92,
+      "sha256": "74725f632787c744291d18005bb408016e9dae6e8e07deed601f3ca35140fbc2"
+    },
+    {
+      "speaker": "zhiwei",
+      "emotion": "firm",
+      "text": "这一点可以明确：增长已经发生，但质量还需要连续数据来验证。",
+      "file": ".ai/assets/voices/zhiwei/emotion/firm.wav",
+      "duration_seconds": 5.6,
+      "sha256": "8a3081aa328c074c6869c4a331203741015a9b84898333af244920e330cf0200"
+    },
+    {
+      "speaker": "zhiwei",
+      "emotion": "skeptical",
+      "text": "先别急着下结论。收入看起来漂亮，但利润和现金流还得继续核对。",
+      "file": ".ai/assets/voices/zhiwei/emotion/skeptical.wav",
+      "duration_seconds": 5.76,
+      "sha256": "96892f5084dc88316126826560e269ba6aece83a0e8c36d4312e5163647a2763"
+    },
+    {
+      "speaker": "zhiwei",
+      "emotion": "thoughtful",
+      "text": "我更愿意把这件事放回时间里看。下一期数据，可能比今天的结论更重要。",
+      "file": ".ai/assets/voices/zhiwei/emotion/thoughtful.wav",
+      "duration_seconds": 5.76,
+      "sha256": "905a23b3cae34a52e64c90ecb27383f5ed60fdd44cf8d76b603643467e3170df"
+    }
+  ]
+}

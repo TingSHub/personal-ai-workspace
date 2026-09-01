@@ -1,0 +1,53 @@
+name: content-production
+description: 将冻结的 Research Intelligence Document 转换为受众明确、叙事完整、可追溯的长短视频内容资产
+input:
+  source_document: 已验收并冻结的 Research Intelligence Document
+  audience_and_channel: 目标观众、平台、时长和表达边界
+output:
+  narrative_strategy: 受众、冲突、角度、Hook、结构和标题方向
+  long_script: 可直接口播的长视频脚本
+  short_scripts: 三至五个独立短视频脚本
+  subtitle_draft: 带 estimated 或 aligned 状态的字幕初稿
+  material_plan: 逐段素材叙事与规格规划
+  source_mapping: 内容事实、数字和风险到冻结母稿的映射
+acceptance:
+  - 受众、痛点、核心冲突、内容角度、Hook、故事结构和标题方向明确
+  - 长视频自然可口播，短视频各自只回答一个问题且不削弱风险边界
+  - 所有事实、数字、因果和风险均回指冻结研究底稿，不新增投资建议或收益承诺
+  - 字幕初稿与定稿脚本一致，并明确 estimated 或 aligned 状态
+  - 素材规划逐段说明叙事作用、数据来源、版权、规格、优先级和缺口
+selection:
+  principle: best_available_resource
+  evaluate: [actual_effectiveness, output_quality, stability, dependency_cost, maintenance_cost]
+  discovery_sources: [workspace, external_installed, skill-hub, find-skills, agent-repository]
+resources:
+  - name: codex-video-pipeline
+    kind: skill
+    role: execution
+    source: https://github.com/zoglmk/codex-video-pipeline
+    version: aab79717ad692dd0b4d770778be28a2fa2b09a6e
+    strength: 从证据、Hook、口播、动态叙事到字幕和发布的完整外部生产方法与确定性脚本
+    weakness: 完整链路依赖 HyperFrames、最终旁白、声学字幕和可选素材服务
+    test_result: Python脚本、unittest和doctor已验证；紫光内容案例仅作方法参考，未完成外部链路端到端实跑
+    recommended_usage: 生产环境齐备时作为内容与制作一体化首选；环境不齐时执行可独立交付的策划和脚本阶段
+    dependency_cost: 内容阶段中，完整成片阶段高
+    maintenance_cost: 外部仓库、渲染引擎和提供方兼容维护，中至高
+  - name: research-content-producer
+    kind: agent
+    role: execution
+    source: workspace internal agent profile
+    version: internal
+    strength: 对冻结研究底稿、跨文件数字一致性和非荐股边界控制精确
+    weakness: 生产方法与自动化工具少于完整外部视频流水线
+    test_result: 紫光股份完成策划、长视频、5个短视频、estimated SRT和18项素材规划，质量门0阻断
+    recommended_usage: 从上市公司 Research Intelligence Document 派生内容资产，尤其适合事实边界严格的项目
+    dependency_cost: 只需已验收研究底稿与输出模板，低
+    maintenance_cost: 与项目契约同步，低
+execution_contract:
+  required_resources: []
+  optional_resources: [codex-video-pipeline, research-content-producer]
+  required_outputs: [narrative_strategy, long_script, short_scripts, subtitle_draft, material_plan, source_mapping]
+  validation:
+    - 内容包的每项产物记录实际执行资源与版本，并通过研究底稿事实和数字一致性检查
+    - 使用外部完整流水线时仍须留下独立 Capability Result，不能绕过冻结研究底稿与项目门禁
+experience_refs: [research-master-content-pipeline]

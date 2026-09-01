@@ -1,0 +1,56 @@
+name: listed-company-research-video-production
+goal: 消费已验收的 Research Intelligence Document，生成通过独立质量门的视频内容资产包
+input:
+  upstream_workflow: 固定按名称引用listed-company-research-production
+  research_intelligence_document: 必填，已验收并冻结的唯一事实源
+  company_name: 必填
+  stock_code: 必填
+  company_output_id: 必填，必须与上游Workflow一致
+  delivery_context: 可选，平台、观众、时长和表达风格
+output:
+  content_narrative_plan: content-narrative-plan.md
+  video_script: video-script.md
+  short_video_script: short-video-script.md
+  subtitle: subtitle.srt
+  material_plan: material-plan.md
+  quality_report: quality-report.md
+steps:
+  - id: design-content
+    purpose: 由 Content Production 从冻结研究底稿中筛选内容，形成受众、核心冲突、内容角度、Hook、故事结构和标题方向明确的策略
+    depends_on: []
+    capabilities: [content-production]
+    acceptance:
+      - 受众、痛点、核心冲突、多个内容角度、30秒Hook、结构和标题候选完整
+      - 选择实际效果和当前任务适配性最佳的资源，不因资源位于 workspace 而优先
+      - 每个事实性表达和数字均回指 Research Intelligence Document，不引入底稿外事实或投资建议
+    capability_result:
+      path: outputs/companies/{company_output_id}/content-narrative-plan.md
+      format: markdown
+    resource_override: null
+
+  - id: produce-content-assets
+    purpose: 生成自然口播长视频、三至五个短视频、SRT初稿和逐段素材规划
+    depends_on: [design-content]
+    capabilities: [content-production]
+    acceptance:
+      - 长视频兑现核心冲突并覆盖行业、公司、财务、投资逻辑、风险和跟踪指标
+      - 短视频主题互异且风险语义未削弱；字幕关键数字一致并标记 estimated 或 aligned
+      - 素材规划记录叙事作用、指标、期间、单位、来源、版权、规格和缺口
+    capability_result:
+      path: outputs/companies/{company_output_id}/content-package-manifest.md
+      format: markdown
+    resource_override: null
+
+  - id: validate-content-package
+    purpose: 独立检查策划、长短脚本、字幕、素材与 Research Intelligence Document 的一致性、结构和格式
+    depends_on: [produce-content-assets]
+    capabilities: [quality-assurance]
+    acceptance:
+      - 自动硬检查无阻断项，所有发现均指向上游产物与回退步骤
+      - 语义复核确认无研究底稿外事实、因果强化、风险弱化、收益承诺或直接买卖建议
+      - estimated字幕不被误报为发布就绪
+    capability_result:
+      path: outputs/companies/{company_output_id}/quality-report.md
+      format: markdown
+    resource_override: null
+experience_refs: [research-master-content-pipeline]
