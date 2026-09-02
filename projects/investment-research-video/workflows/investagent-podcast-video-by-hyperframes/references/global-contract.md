@@ -34,6 +34,19 @@
 
 执行细则以 cninfo-connector Skill 为准；这里保留路径和 Workflow 级门禁，避免跨公司运行时误归档。
 
+## 3.1 Free data-source routing and degradation
+
+结构化数据不再绑定单一供应商。按以下顺序路由，并在本次 run 的 `research-materials/data-source-ledger.json` 留下每次调用、字段口径、报告期、返回状态和复核结果：
+
+| 数据用途 | 首选 | 免费回退 | 事实等级 |
+|---|---|---|---|
+| 年报/半年报/公告原文 | cninfo-connector / 交易所 | 公司投资者关系页面 | 事实主源；必须归档 PDF 或原文定位 |
+| 单家公司三表与财务指标 | Tushare（有权限时） | AkShare；再回退 BaoStock | 结构化辅助源；关键数字必须回查官方披露 |
+| A 股历史日线 | Tushare daily（120 分可用） | BaoStock；再回退 AkShare | 行情辅助源；记录复权方式和时间戳 |
+| 同行统一期财务数据 | Tushare（有权限时） | AkShare/BaoStock 分别取数后交叉核对 | 只有报告期、单位、并表范围一致才可比较 |
+
+Tushare 无权限、token 失效或接口超时不是研究失败；必须进入下一层回退并标记 `degraded=true`。AkShare/BaoStock 的数字不得静默升级为官方披露；若字段语义不一致（例如合并净利润与归母净利润），必须在 ledger 和 findings-summary 中写明，禁止直接横向比较。若三层均无法取得，写明确缺口，不用估算填补。
+
 ## 4. Performance contract
 
 - `episode.json` 是事实、对话和角色的锁定输入；`spoken-style-map.json` 保存情绪、delivery、意图和停顿锚点。

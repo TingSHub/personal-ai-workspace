@@ -32,7 +32,7 @@
 - 本 Workflow 只负责账号规格 → 研究 → 编辑 → 对话 → 音频 → Composition → 渲染/QA 的项目顺序、运行参数和交接；资源通用调用规则由对应 Skill/Agent 资产记录负责。
 - Required Resources 仍按 by-name 引用；各 Phase 只消费已验收的上游产物，并在项目执行记录中留下本项目所需的资源和结果证据。
 - 账号资产先于公司内容；公司名、数字、话题、音频路径和图表数据来自 manifest。
-- 研究资料分为四条证据线：官方披露、结构化财务/行情、产业与周期研究、外部深度研究；任何一条线都不能静默替代另一条线。
+- 研究资料分为四条证据线：官方披露、结构化财务/行情、产业与周期研究、外部深度研究；任何一条线都不能静默替代另一条线。结构化数据采用 Tushare → AkShare → BaoStock 的可降级路由，但官方披露始终是关键数字的事实主源。
 - 公司研究额外必须覆盖第五条证据线：公司动态与产品事实，包括近期公告/新闻、获奖、产品发布、具体型号、项目签约/中标/交付、标准制定和技术里程碑；没有命中时也必须留下覆盖报告和缺口状态。
 - 新闻发现优先使用 `multi-search` 的 `prefer_quality=True`（Tavily）；搜索摘要只做候选发现，最终事实必须打开原文并记录来源、事件日期、发布日期和主体核验。`news-search` 只作热点聚合补充。
 - `deep-research` 只作为外部资料补充源；其报告中的数字和判断必须回到原始来源或结构化数据复核后，才能进入 Research Intelligence Document。
@@ -43,8 +43,8 @@
 - `editorial-director-agent` 是全局内容导演：它决定主问题、开场、话题顺序、机制归属、观众收益和视觉意图；`financial-editor-agent` 负责证据/因果裁决，`dialogue-director-agent` 负责逐句互动，三者不得越权。
 - 公司动态和产品事实必须先进入 `company-intelligence` 资产，再由内容导演决定是 opening、main_evidence、supporting_evidence、visual_only、background 还是 omit；研究员或脚本生成器不得直接把搜索结果写进口播。
 - 一个核心机制只能有一个主章节；相邻章节必须有不同主问题、证据集合和观众收益，并在导演方案中留下去重与顺序理由。
-- 开场使用独立顺序 `COLD_OPEN → INTRO → T01`：冷开场负责客观数据钩子，INTRO 负责目录和主持人定位；不得用固定自我介绍替代冷开场。
-- 冷开场口播采用“事实反差 → 开放问题”：先用两个客观事实形成张力，再以“事实果真如此吗？”或同等开放问句收束；不得只罗列数据、先下结论或使用书面化的“利润快涨三倍”。
+- 开场使用独立顺序 `COLD_OPEN → INTRO → T01`：冷开场负责公司专属的客观事实钩子，INTRO 负责目录和主持人定位；不得用固定自我介绍替代冷开场。
+- 冷开场必须是“公司特征事实 → 经营矛盾 → 开放问题”，但不固定使用收入/利润模板。可按公司选择 `operational_paradox`、`business_model_reveal`、`asset_to_revenue` 或 `event_execution` 等模式；开场事实、视觉锚点和问题必须来自本公司的 thesis card 与 evidence ledger。
 - 逐句音频是唯一时间轴来源；不得按性别整段拼接或用字数估时。
 - **Script-first pause**：需要明显句内停顿时，优先在 Phase 2 改写为自然短句、真实追问或独立回应，让 TTS 依据上下文表达；句号只是软性韵律提示，不是确定的静音指令。
 - `target_rate_cps` 只允许作为单个 turn 的明确语速实验字段，不能作为全片或整段停顿的默认实现；局部固定停顿优先使用 `intra_turn_breaks`，且不同时改变该 turn 的自然语速。
@@ -105,7 +105,7 @@
 | `industry-analysis` | skill | yes | 产业链和竞争格局 |
 | `industry-cycle-analysis` | skill | yes | 供需、周期和反证 |
 | `investagent` | skill | yes | 公司研究和数据范围 |
-| `tushare-connector` | skill | yes | 公司与同行的统一财务、三表和行情取数 |
+| `tushare-connector` | skill | conditional | 有权限时获取公司与同行统一财务、三表和行情；无权限按数据源路由降级 |
 | `earnings-reader` | skill | yes | 三表口径、盈利质量、现金流和同行财报阅读 |
 | `multi-search` | skill | yes | `prefer_quality=True` 优先使用 Tavily，发现近期公司新闻、产品发布、型号、奖项、订单和交付线索；搜索摘要不得直接入稿 |
 | `cninfo-connector` | skill | conditional | 年报、公告和法定披露 |
@@ -122,7 +122,7 @@
 
 ### Output
 
-公司级 `outputs/companies/{company}/official-information/` 原件与 manifest、各研究资源的原生产物、`research-materials/peer-comparison/peer-comparison.json`、`research-materials/peer-comparison/peer-comparison.md`、`research-materials/editorial/company-thesis-card.json`、`research-materials/company-intelligence/event-facts.json`、`research-materials/company-intelligence/product-facts.json`、`research-materials/company-intelligence/source-ledger.json`、`research-materials/company-intelligence/coverage-report.md`、可选 `research-materials/deep-research/`、`findings-summary`、`topic-evidence-matrix.md` 和执行记录。
+公司级 `outputs/companies/{company}/official-information/` 原件与 manifest、各研究资源的原生产物、`research-materials/data-source-ledger.json`、`research-materials/peer-comparison/peer-comparison.json`、`research-materials/peer-comparison/peer-comparison.md`、`research-materials/editorial/company-thesis-card.json`、`research-materials/company-intelligence/event-facts.json`、`research-materials/company-intelligence/product-facts.json`、`research-materials/company-intelligence/source-ledger.json`、`research-materials/company-intelligence/coverage-report.md`、可选 `research-materials/deep-research/`、`findings-summary`、`topic-evidence-matrix.md` 和执行记录。
 
 ### Quality Criteria
 
@@ -130,15 +130,17 @@
 - 必须生成 `company-thesis-card.json`，明确公司身份、核心优势、护城河机制、行业位置、增长驱动、风险、未来利润情景和财报在本期的角色。
 - 必须根据最新财报公告日与研究日计算 `days_since_release`，并记录 `freshness`、`materiality`、`content_angle` 和选择理由；不得默认所有公司都使用财报主线。
 - `content_angle` 仅可取 `earnings_led`、`company_led`、`industry_led`、`event_led`；最近 1–2 天发布且 `materiality=high` 时优先 `earnings_led`，其余情况优先从公司优势、行业位置或重大事件中选择。
-- 必须提供至少两个不同的开场角度，其中至少一个围绕公司优势/护城河；选定角度必须能说明财报是主线、验证、反证还是背景。
+- 必须提供至少两个不同的开场角度，其中至少一个围绕公司优势/护城河；至少一个必须体现该公司的独有业务、资产组合或兑现断点，不能只是把另一家公司数字替换进同一模板。选定角度必须能说明财报是主线、验证、反证还是背景。
 - 必须完成公司动态与产品事实扫描，覆盖最近 180 天以及最近 2 年内仍影响当前主线的关键事件；至少查询公告/新闻、产品/型号、奖项/标准、订单/签约/交付四类关键词，并生成 `company-intelligence/coverage-report.md`。
 - 每条入选动态/产品事实必须有 `fact_id`、事件日期、发布日期、事实类型、主体、原文 URL、来源级别、定位信息、与主线相关性和视觉候选；搜索摘要不得作为唯一来源。
 - 产品型号、性能指标、奖项和项目规模必须优先由公司官网、正式公告、政府/行业组织或权威媒体原文支撑；无法核验的线索写入缺口，不进入事实正文。
 - 关键数字有来源、口径、期间和定位；最新报告期与近 12 个月变化单列。
+- 必须生成 `research-materials/data-source-ledger.json`：记录数据源顺序、调用状态、API/函数、报告期、字段映射、单位、复权方式、是否回查官方原文和降级原因；Tushare 无权限时必须留下 AkShare/BaoStock 的真实调用结果或明确缺口。
 - 同行比较至少覆盖两个业务环节；每个环节至少保留 2 家有明确比较角色的上市公司，并注明业务重合度、并表范围和不可比项。
 - `peer-comparison.json` 必须统一记录公司代码、比较角色、报告期、数据类型、单位、收入、归母净利、增速、毛利/净利率、经营现金流、自由现金流、应收、存货、资本开支、债务和估值；取不到的指标写明确缺口，不用空白或估算冒充。
 - 同行表必须按同一报告期分组；Q1、H1、全年不得混成一张排名表。缺少同期数据时，降级为产业坐标并写入缺口清单。
 - 同行关键数字至少有一手披露或结构化数据源；`deep-research` 只提供候选来源、行业背景和外部交叉线索，不能单独支撑公司事实。
+- AkShare/BaoStock 可支撑结构化辅助取数，但不能替代官方 PDF；合并净利润、归母净利润、扣非净利润等字段必须显式映射，口径不一致时不得比较。
 - 同行官方报告必须归档到对应公司级 `outputs/companies/{peer_company}/official-information/`；当前 run 只保存引用路径和证据映射，不复制同行原件。
 - 获取前必须执行本地复用检查；下载记录至少包含 `ts_code`、公司名、报告期、类型、公告日期、公告 ID、来源 URL、本地路径、文件大小和文本校验状态。
 - 文件名必须符合 `{ts_code}_{period}_{document_type}_{announcement_date}.pdf`；不符合的历史文件在进入新 Workflow 前先建立 canonical manifest 映射。
@@ -180,7 +182,7 @@ Phase 1 已验收的 `research-materials/editorial/company-thesis-card.json`、`
 - 每个候选必须包含：主问题、观众为什么关心、开场候选、核心证据、可展开路径、最大风险、content_angle 和 evidence coverage。
 - 每个候选必须明确是否使用公司动态/产品事实，以及每条事实的 `fact_id`、`fact_role`（opening/main_evidence/supporting_evidence/visual_only/background/omit）和采用理由；不能只把新闻标题贴到选题里。
 - 至少一个候选解释公司优势/护城河，至少一个候选解释优势兑现或未来验证；是否采用财报主线由 freshness/materiality 决定。
-- 开场候选必须是事实张力加开放问题；公司简介、合作清单或单个技术事实不能自动成为主钩子。
+- 开场候选必须是公司特征事实、事实张力加开放问题；公司简介、合作清单或单个技术事实不能自动成为主钩子。不同公司允许使用不同的叙事入口，开场模式和选择理由必须写入 `opening-selection.json`。
 - `topic-options.json` 必须记录候选间的 `mutually_exclusive_with` 和机制覆盖，便于后续去重。
 - `topic-approval.md` 在用户确认前必须保持 `status: pending`；pending/rejected 状态不得生成 `director-treatment.md`、`episode-input.json`、`episode.json`、TTS、字幕、视觉或渲染产物。
 - gate 必须能识别缺批准、批准 topic_id 不在候选中、批准时间缺失和候选不完整并给出 FAIL。
@@ -232,7 +234,7 @@ Phase 1 已验收证据、已验收的 `company-intelligence` 事实资产、Pha
 - 必须消费 `editorial-director-agent` 的 treatment：每个话题有 audience payoff、机制归属、前后依赖、visual intent 和验证/证伪条件；缺少任一项不得生成最终 episode。
 - 话题顺序必须有全局去重表：一个核心机制只有一个 `primary_topic_id`；相邻话题不得重复主问题、证据集合和观众收益。
 - 开场 manifest 必须包含 `opening_mode`、`opening_cards` 和 `COLD_OPEN/INTRO` turns；冷开场后才出现主持人自我介绍和目录。
-- `COLD_OPEN-01` 必须包含至少一组事实反差、一个开放问题和 `question_ending=question`；金额/增速采用自然口播，如“涨了快三倍”“反而下降了”。
+- `COLD_OPEN-01` 必须包含至少一组公司特征事实张力、一个开放问题和 `question_ending=question`；金额/增速采用自然口播，如“涨了快三倍”“反而下降了”。不得仅因上一家公司使用过某种钩子，就复制其事实组合、句式或视觉卡布局。
 - 生成 opening canary 时运行项目脚本 `build_podcast_opening_test.py`；脚本必须对 `COLD_OPEN → INTRO` 顺序、事实反差、开放问题和书面化禁用短语给出 PASS/FAIL。
 - 每个话题至少有主理人立题、分析师直接回应、主理人承接/追问、分析师证据、主理人转场。
 - 除话题第一句外，每句有 `reply_to_turn_id` 和 `interaction_type`；不能靠交替 speaker 制造对话。
@@ -403,3 +405,52 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 ### Known Issues
 
 只在单家公司通过不算 Workflow 完成；必须保留第二家公司复用回归证据。
+
+## Phase 6: publish-and-closeout — 多平台发布与结果回写
+
+### Goal
+
+将已通过成片 QA 的视频、封面和平台差异化元数据，提交到已授权的多平台账号；跟踪每个平台的最终状态和作品链接，并把可审计结果回写到发布包与账号记录。
+
+### Required Resources
+
+| Resource | Type | Required | Use |
+|---|---|---|---|
+| `aitoearn` | skill | yes | Open Platform/MCP 多平台素材上传、Flow 创建、状态轮询和作品链接回传 |
+| `social-auto-upload` | skill/tool resource | conditional | AiToEarn 不支持、明确失败或必须使用浏览器自动化时的国内平台回退 |
+| `video-agent-publisher` | skill | yes | 生成平台差异化标题、描述、标签和引用出处 |
+| `douyin-creator` | skill | conditional | 发布后抖音作品列表、数据采集和评论运营，不代替发布接口 |
+
+### Input
+
+最终 `podcast/renders/final.mp4`、`podcast/project/cover.png`、`podcast/project/cover-3x4.png`、已验收 `episode.json`、研究来源清单、账号 profile 和用户明确指定的平台/排期。
+
+### Output
+
+`publish/metadata.json`、`publish/sources.md`、`publish/aitoearn-request.json`（不含 API Key）、`publish/aitoearn-result.json`、`publish/platform-results.json`、`publish/publish-execution.md`，以及确认成功后追加的 `account-profile/published-works.md` 记录。
+
+### Execution contract
+
+1. 先运行 `video-agent-publisher`，为抖音、B站、视频号、小红书、快手、YouTube 等分别生成平台适配文案；原始研究事实和平台字数限制不能被发布工具改写。
+2. 先通过 AiToEarn 获取平台元数据和账号列表，按 `accountId` 建立本次请求映射；不从本地猜账号 ID。
+3. 通过 AiToEarn 签名 URL 上传 MP4 和对应封面，确认资源完成后再创建多平台 Flow；资源 URL 必须属于与 API Key 匹配的中国版或国际版域名。
+4. 一个 Flow 可包含多个平台 item；每个 item 允许独立标题、正文、标签、封面和平台选项。默认创建草稿或排期任务，只有用户明确要求立即发布时才提交即时任务。
+5. 轮询 Flow/record 状态：成功写入作品链接；失败写入平台错误；抖音进入用户操作状态时输出短链/手机确认提醒，收到完成状态后继续轮询。
+6. 只有 AiToEarn 明确返回不支持或明确失败，且不存在“可能已提交”的不确定状态时，才调用 `social-auto-upload` 回退；回退平台必须逐个平台记录，禁止两套工具并发提交同一账号同一内容。
+7. 发布成功后回写 `published-works.md`；没有平台 URL 时留空并标记待确认，禁止编造 URL。发布后的播放/互动数据继续由 `douyin-creator` 或平台后台采集。
+
+### Quality Criteria
+
+- `metadata.json` 为平台差异化版本，不是同一段文案机械复制；每个平台的标题、描述、标签、封面和排期可追溯。
+- `aitoearn-request.json` 只保存账号别名/ID、平台、资源引用、请求时间和 Flow 关联，不保存密钥、Cookie 或短期授权信息。
+- `aitoearn-result.json` 与 `platform-results.json` 必须逐平台记录 `status`、`record_id`、`published_at`、`platform_url`、`error` 和 `needs_user_action`。
+- 轮询失败、超时或状态未知不得直接切换回退工具；必须先查询记录或停在人工恢复状态。
+- 抖音需要手机确认时，必须留下用户操作状态和后续确认结果；未确认不能写 `published`。
+- 账号级发布记录只接受明确成功的真实作品链接；不得把 Flow ID、任务 ID 或 AiToEarn 控制台链接当平台作品 URL。
+- 运行发布前 dry-run/草稿检查；运行发布后结果校验和 `git diff --check`。真实发布属于外部生产动作，必须由用户在调用时明确指定平台、账号和立即/排期模式。
+
+### Known Issues
+
+- 国内平台个人账号上传接口和页面规则可能变化；浏览器回退不是 API 稳定性承诺。
+- AiToEarn 的平台授权、API Key 和资源上传属于第三方服务边界；中国版 Key 必须使用 `aitoearn.cn` 端点，国际版 Key 必须使用 `aitoearn.ai` 端点。
+- “创建 Flow 成功”不等于所有平台发布成功；必须逐平台追踪最终状态。

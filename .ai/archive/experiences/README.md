@@ -36,6 +36,9 @@
 | `podcast-editorial-gate-and-audio-render-regression` | investagent-podcast-video-by-hyperframes Phase 1.5/3/4/5；editorial-director-agent；podcast-audio-compiler；qwen3-forced-aligner | 2026-08-27 |
 | `cosyvoice3-production-backend-selection` | investagent-podcast-video-by-hyperframes Phase 3；podcast-v1-luheng；podcast-audio-compiler | 2026-08-27 |
 | `podcast-script-first-pauses` | investagent-podcast-video-by-hyperframes Phase 2/3/5；projects/investment-research-video/scripts/check_podcast_artifact_consistency.py | 2026-09-01 |
+| `podcast-company-specific-opening-and-voice-role-separation` | investagent-podcast-video-by-hyperframes；editorial-director-agent；ACCOUNT_PROFILE | 2026-09-02 |
+| `podcast-free-financial-data-fallback` | investagent-podcast-video-by-hyperframes/references/global-contract.md；tushare-connector | 2026-09-02 |
+| `aitoearn-publishing-flow-with-safe-fallback` | investagent-podcast-video-by-hyperframes Phase 6；aitoearn；social-auto-upload | 2026-09-02 |
 
 ## 溯源说明
 

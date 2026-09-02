@@ -14,7 +14,7 @@
 | 要求 | Phase 1 已验收研究资产；人工批准前只能输出候选；批准后才能输出导演方案；不得生成 TTS、视频或新增事实 |
 | 更新 | manual · 修改顶层实体定义后同步；验证：用一份研究资产生成 3–5 个互斥选题，再用一份已批准选题生成顺序、开场和 Scene intent |
 | 辅助脚本 | — |
-| 经验引用 | company-intelligence-news-product-facts；podcast-editorial-gate-and-audio-render-regression |
+| 经验引用 | company-intelligence-news-product-facts；podcast-editorial-gate-and-audio-render-regression；podcast-company-specific-opening-and-voice-role-separation |
 
 ## 作用
 

@@ -7,6 +7,8 @@ from pathlib import Path
 
 
 SCRIPT = Path(__file__).parents[1] / "scripts" / "check_editorial_gate.py"
+WORKFLOW = Path(__file__).parents[1] / "workflows" / "investagent-podcast-video-by-hyperframes" / "workflow.md"
+GLOBAL_CONTRACT = WORKFLOW.parent / "references" / "global-contract.md"
 
 
 def write_run(root: Path, approved: bool) -> None:
@@ -42,6 +44,16 @@ def write_run(root: Path, approved: bool) -> None:
 
 
 class EditorialGateTest(unittest.TestCase):
+    def test_data_source_fallback_contract_is_documented(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        contract = GLOBAL_CONTRACT.read_text(encoding="utf-8")
+        for text in (workflow, contract):
+            self.assertIn("AkShare", text)
+            self.assertIn("BaoStock", text)
+            self.assertIn("data-source-ledger.json", text)
+        self.assertIn("tushare-connector` | skill | conditional", workflow)
+        self.assertIn("Tushare → AkShare → BaoStock", workflow)
+
     def run_gate(self, root: Path, require_approved: bool) -> subprocess.CompletedProcess[str]:
         command = [sys.executable, str(SCRIPT), "--run-root", str(root)]
         if require_approved:

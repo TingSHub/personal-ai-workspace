@@ -104,6 +104,17 @@ def chart_markup(specs, style='default'):
     if len(specs)>1:
         return f'<div class="chart-stack">{"".join(chart_markup([spec], style) for spec in specs[:2])}</div>'
     spec=specs[0]; rows=spec.get('data',[]); chart_type=spec.get('type','horizontal-bar')
+    # Keep semantic chart names in manifest while mapping them to the
+    # renderer's proven primitives. This prevents valid company-specific
+    # scene plans from silently producing empty chart zones.
+    chart_type = {
+        'flow': 'flow-map',
+        'network': 'flow-map',
+        'progression': 'validation-dashboard',
+        'funnel': 'validation-dashboard',
+        'milestone': 'validation-dashboard',
+        'checklist': 'validation-dashboard',
+    }.get(chart_type, chart_type)
     claim=html.escape(str(spec.get('claim', '')))
     unit=html.escape(str(spec.get('unit', '')))
     title=f'{claim} <small>（{unit}）</small>' if unit else claim
