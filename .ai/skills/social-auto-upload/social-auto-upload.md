@@ -15,7 +15,7 @@
 | requirements | Python 3.10–3.12、uv、Patchright/Chromium；首次登录和二维码/短信验证可能需要用户在真实终端完成 |
 | update | git · 拉取上游后复查 CLI、平台选择器、依赖和平台规则；verify：运行 `sau --help` 及各平台 `check` |
 | scripts | 无本地辅助脚本；平台执行使用上游 CLI |
-| experience_refs | aitoearn-publishing-flow-with-safe-fallback |
+| experience_refs | aitoearn-publishing-flow-with-safe-fallback,podcast-douyin-handoff-and-investor-cover |
 
 ## 调用说明
 

@@ -39,6 +39,7 @@
 | `podcast-company-specific-opening-and-voice-role-separation` | investagent-podcast-video-by-hyperframes；editorial-director-agent；ACCOUNT_PROFILE | 2026-09-02 |
 | `podcast-free-financial-data-fallback` | investagent-podcast-video-by-hyperframes/references/global-contract.md；tushare-connector | 2026-09-02 |
 | `aitoearn-publishing-flow-with-safe-fallback` | investagent-podcast-video-by-hyperframes Phase 6；aitoearn；social-auto-upload | 2026-09-02 |
+| `podcast-douyin-handoff-and-investor-cover` | investagent-podcast-video-by-hyperframes Phase 6/Quality Criteria；aitoearn；social-auto-upload；account-profile/published-works.md | 2026-09-02 |
 
 ## 溯源说明
 

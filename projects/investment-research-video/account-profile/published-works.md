@@ -38,3 +38,25 @@
 - duration: `384.633s`
 - report: `outputs/companies/星网锐捷/2026-09-01-audio-repair-v3/research-materials/research-intelligence.md`
 - platform_url: `https://www.douyin.com/video/7680355426122075392`（aweme_id 7680355426122075392）
+
+## 2026-09-02｜协鑫能科
+
+- status: `published`
+- title: `协鑫能科：电能真的变成算力了吗？`
+- published_title: `协鑫能科：电能真的变成算力了吗？`
+- platform: `douyin`
+- account: `账本两面`
+- published_at: `2026-09-02 23:32:52`（Asia/Shanghai）
+- topic: `协鑫能科算电协同：能源资产能否兑现为 AIDC 收入`
+- tags: `#协鑫能科 #算电协同 #AIDC #虚拟电厂 #新能源`
+- video: `outputs/companies/协鑫能科/2026-09-01/podcast/renders/final-t02-v2.mp4`
+- cover_4x3: `outputs/companies/协鑫能科/2026-09-01/podcast/project/cover.png`（1440×1080）
+- cover_3x4: `outputs/companies/协鑫能科/2026-09-01/podcast/project/cover-3x4.png`（1080×1440）
+- metadata: `outputs/companies/协鑫能科/2026-09-01/publish/metadata.json`
+- audio_backend: `VoxCPM2 continuation`
+- duration: `374.2s`
+- report: `outputs/companies/协鑫能科/2026-09-01/research-materials/findings-summary.md`
+- aitoearn_flow_id: `d4dbec23-9b1e-4517-b438-487741641e0f`
+- aitoearn_record_id: `6a983e02fe73016b35812130`
+- platform_url: `https://www.douyin.com/video/7680961320070873467`（aweme_id 7680961320070873467）
+- cover_note: `抖音确认页手动选择上传封面；AiToEarn App Scheme 未自动传入独立 cover URL`
