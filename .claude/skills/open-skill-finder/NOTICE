@@ -1,0 +1,17 @@
+Open Skill Finder
+Copyright (c) 2026 30bewater
+
+This is an independent implementation. Its design research considered public
+documentation and ideas from the following projects and communities:
+
+- Agent Skills specification: https://github.com/agentskills/agentskills
+- Vercel Skills: https://github.com/vercel-labs/skills
+- SkillX: https://github.com/nextlevelbuilder/skillx
+- oakoss/agent-skills: https://github.com/oakoss/agent-skills
+- AgentBay Skills: https://github.com/agentbay-ai/agentbay-skills
+- Cisco AI Defense Skill Scanner: https://github.com/cisco-ai-defense/skill-scanner
+- Sentry Skills and Skill Scanner: https://github.com/getsentry/skills
+- VoltAgent Awesome Agent Skills: https://github.com/VoltAgent/awesome-agent-skills
+
+No source code from those projects is included unless separately identified.
+Their names and trademarks remain the property of their respective owners.

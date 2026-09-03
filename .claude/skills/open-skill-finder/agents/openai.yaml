@@ -1,0 +1,4 @@
+interface:
+  display_name: "开放 Skill 查找器"
+  short_description: "多源搜索、审查并推荐可信的通用 Agent Skills"
+  default_prompt: "使用 $open-skill-finder 为我的需求查找、审查并比较合适的 Agent Skills。"

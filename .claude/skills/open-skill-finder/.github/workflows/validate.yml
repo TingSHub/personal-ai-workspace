@@ -1,0 +1,21 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate Skill manifest
+        run: python -c "from pathlib import Path; import sys; sys.path.insert(0, 'scripts'); from common import parse_frontmatter; data=parse_frontmatter(Path('SKILL.md').read_text(encoding='utf-8')); assert data.get('name') == 'open-skill-finder' and data.get('description')"
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
