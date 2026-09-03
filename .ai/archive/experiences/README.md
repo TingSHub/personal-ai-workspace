@@ -40,6 +40,7 @@
 | `podcast-free-financial-data-fallback` | investagent-podcast-video-by-hyperframes/references/global-contract.md；tushare-connector | 2026-09-02 |
 | `aitoearn-publishing-flow-with-safe-fallback` | investagent-podcast-video-by-hyperframes Phase 6；aitoearn；social-auto-upload | 2026-09-02 |
 | `podcast-douyin-handoff-and-investor-cover` | investagent-podcast-video-by-hyperframes Phase 6/Quality Criteria；aitoearn；social-auto-upload；account-profile/published-works.md | 2026-09-02 |
+| `video-publish-review-to-investment-research-video-structure-and-qa` | `topic-forward-lead` Phase 4/5；`investagent-podcast-video-by-hyperframes` Principles/Phase 2/3/4；`video-agent-skills`；`podcast-audio-compiler`；`video-agent-publisher`；新增 `check_dialogue_repetition.py` | 2026-09-03 |
 
 ## 溯源说明
 

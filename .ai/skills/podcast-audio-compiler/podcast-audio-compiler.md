@@ -21,6 +21,7 @@ scripts/compile_index_tts_audio.py    IndexTTS-2.5，显式 A/B
 scripts/compile_cosyvoice_audio.py    CosyVoice3，显式 A/B/instruct
 scripts/generate_emotion_assets.py    Phase 0 一次性情绪资产
 scripts/resolve_pacing_plan.py        emotion/delivery/interaction → 确定性 pacing_plan
+scripts/check_dialogue_repetition.py  episode manifest 的跨段重复句与固定段尾检查
 ```
 
 默认入口：
@@ -48,6 +49,8 @@ scripts/resolve_pacing_plan.py        emotion/delivery/interaction → 确定性
 
 ## Notes
 
+经验引用：`video-publish-review-to-investment-research-video-structure-and-qa`。
+
 情绪参考资产是已登记的兼容资源，不在每个项目重新生成；后续文字 instruct 或 boundary-clean 试验必须使用独立 Workflow profile。音色选择、参考片段规则和历史实验见 `.ai/assets/voices/voices.md` 与 `.ai/assets/voices/voice-notes.md`。
 
 ## 节奏控制现状与复用路径
@@ -57,6 +60,8 @@ scripts/resolve_pacing_plan.py        emotion/delivery/interaction → 确定性
 - 当前 delivery（如 pause_before_number、stress_contrast、short_pause）会写入音频元数据，但不会直接改变 VoxCPM2 的语速或句内停顿；natural-pauses 也只按 interaction_type 生成 turn 间静音。
 - pacing_plan 已由现有逐句编译器执行：speech_rate 使用 FFmpeg atempo 做逐句变速，intra_turn_breaks 按文本标记拆分合成并插入静音，pause_after_ms 覆盖句尾停顿。再用同一批 WAV/SRT/QA 做 A/B，不先换 TTS 后端，也不把 HyperFrames Audio 当作口播语速控制器。
 - 开场应允许比普通 turn 更长的句间停顿，并在“事实反差”和开放问题前声明句内停顿；停顿设计必须进入 segments.json 和 QA，而不是只写在 delivery 标签里。
+- 生产前先对 episode manifest 做跨段重复检查，重点检查每个角色的段首、段尾和总结句；相同句式重复出现时必须改写推进关系，不能用固定口头禅填充每一节。可运行 `scripts/check_dialogue_repetition.py <episode.json>`，发现重复时退出码为 1。
+- 生产后按开场、中段、转场、收束抽查每个角色的真实 WAV；局部音色变化、单字异常停顿、拼接边界或音量突变都应回到配音阶段重生成，并在 audio-qa 中记录时间点。
 
 ### pacing_plan 字段
 

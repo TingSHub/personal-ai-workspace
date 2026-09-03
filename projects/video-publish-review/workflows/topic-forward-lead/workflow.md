@@ -8,14 +8,14 @@
 
 ## Input
 
-- 市场信号：`scripts/fetch_market_signals.py` 产物（`outputs/topic-signals-YYYY-MM-DD.json`：涨停池+涨幅榜）
+- 市场信号：`topic-forward-signal-scanner` 产物（`outputs/topic-forward/YYYY-MM-DD/signals.json`：涨停池+涨幅榜）
 - 财经热点：news-search / multi-search 当日/近 2 日关键词热度；social-trend-monitor 海外风向（可选）
 - 账号规律：`outputs/account-rules.md`（P6 产物，已验证规律权重高于假设中）
 - 去重基线：源项目 `published-works.md` + 全部复盘册（已做过的选题剔除）
 
 ## Output
 
-`outputs/topic-forward-YYYY-MM-DD.md`：
+`outputs/topic-forward/YYYY-MM-DD/topic-forward.md`：
 - 信号摘要节：涨停行业聚集度 Top、涨幅榜异常、热点主题
 - 候选池节：公司/题材候选（每个含信号证据：涨停/涨幅/换手/热点来源）
 - 规律匹配节：候选 × account-rules 打分明细
@@ -30,6 +30,8 @@
 - 信号要可追溯：每个选题卡的证据引用信号 JSON 的具体字段与新闻来源，不引用记忆
 - 合规前置：选题卡表述过 boundary-rewrite 约定边界（不荐股、不预测点位）；选题本身倾向研究视角（财报可验证/证据链可展示）
 - by-name 引用：Workflow / Skill / Agent / Experience 一律用 by-name 标识符
+- 选题先定范围：明确本期讲行业、产业链、单家公司或公司对比，再生成生产提示词；不让行业标题在生产时无理由收缩成单家公司
+- 选题卡是生产主输入；其中的差异化角度、内容范围和生产提示词提供方向，investment-research-video 再结合调研结果决定叙事与视觉实现
 
 ## Phase 1: signal-scan — 市场信号扫描
 
@@ -41,18 +43,18 @@
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| fetch_market_signals.py | 脚本 | 必选 | 本项目 scripts/（akshare 免费接口封装） | 涨停池东财、全量行情新浪；板块资金流接口偶发断连，用涨停行业分布替代 |
+| topic-forward-signal-scanner | skill | 必选 | workspace · `.ai/skills/topic-forward-signal-scanner/` · internal v0.1 | 涨停池东财、全量行情新浪；接口偶发断连，输出 errors 并由本 Workflow 标注降级 |
 | news-search | skill | 必选 | workspace · .ai/skills/news-search | 财经热点关键词热度 |
 | multi-search | skill | 可选 | workspace · .ai/skills/multi-search | 交叉验证 |
 | social-trend-monitor | skill | 可选 | workspace · .ai/skills/social-trend-monitor | 海外 AI/科技风向（映射国产题材） |
 
 ### Input
 
-无（脚本自取当日数据；交易时段后跑，数据最全）。
+无（Skill 自取当日数据；交易时段后跑，数据最全）。
 
 ### Output
 
-`outputs/topic-signals-YYYY-MM-DD.json`（脚本产物）+ 信号摘要（涨停行业聚集度、涨幅榜异常、热点主题列表）。
+`outputs/topic-forward/YYYY-MM-DD/signals.json`（Skill 产物）+ 信号摘要（涨停行业聚集度、涨幅榜异常、热点主题列表）。
 
 ### Quality Criteria
 
@@ -162,6 +164,8 @@ Phase 3 排名候选。
 - 每张卡生产提示词段 ≥80 字、包含研究起点（公司+数据来源提示）与内容方向
 - 表述不涉及买卖建议/目标价/预测点位（boundary-rewrite 边界）
 - 与已做过的视频角度不同（去重已在 P3）
+- 生产提示词必须写明内容范围、公司角色和结论落点；行业/产业链卡优先考虑“行业问题 → 几家公司 → 特殊公司”，但公司数量由证据决定
+- 选题卡必须给出封面主角与大字方向：行业、产业链或公司三者择一，封面只保留手机缩略图可读的大字
 
 ### Known Issues
 
@@ -196,9 +200,3 @@ Phase 4 选题卡 + 用户选择。
 ### Known Issues
 
 - 若用户全否，记录原因回馈 P2（信号映射盲区），下周期调参与
-
-## Evolution Log
-
-| 日期 | 变更 | 依据 |
-|---|---|---|
-| 2026-09-02 | 初版：复盘飞轮的选题前端（免费数据源 akshare 替代 tushare 收费） | 用户需求：复盘后自动寻找下一视频话题；tushare 收费改 akshare（已实测跑通） |

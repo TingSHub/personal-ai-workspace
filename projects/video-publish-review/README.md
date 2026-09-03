@@ -1,6 +1,6 @@
 # video-publish-review
 
-对每支已发布视频做标准化发布复盘的项目：流量数据自动采集 → 漏斗/比率诊断 → 归因 → 改进项 → 回写判定。复盘结果按视频独立成册，跨期可对比，成为账号运营的核心资产。
+对每支已发布视频做标准化发布复盘，并在复盘末端发现下一支视频的选题与叙事方向。发布复盘和选题前瞻分属两条工作流；叙事架构建议由 `topic-forward-lead` 交给 investment-research-video，并根据复盘与新调研结果选择或调整模板。
 
 ## Goal
 
@@ -12,6 +12,7 @@
 - experience-curator（回写判定）
 - boundary-rewrite（改进项中争议性表达的合规改写）
 - video-hook-intro（改进项的钩子设计参考）
+- topic-forward-signal-scanner（选题前瞻的免费市场信号扫描）
 
 ## Workflows
 
@@ -24,6 +25,7 @@
   - `README.md` — 视频身份与复盘状态
   - `metrics-snapshot-YYYY-MM-DD.json` — 每次采集一个快照
   - `attribution-YYYY-MM-DD.md` — 归因报告（T+3 初版，T+7 增量更新终版）
+- 每期选题前瞻一个日期文件夹：`outputs/topic-forward/<YYYY-MM-DD>/`，包含 `topic-forward.md` 与 `signals.json`
 - 已完成复盘：
   - 2026-08-28 中科曙光（迁移自 investment-research-video，见该文件夹内 README）
 - 待复盘队列：

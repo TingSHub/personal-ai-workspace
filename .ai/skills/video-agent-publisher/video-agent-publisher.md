@@ -15,8 +15,10 @@
 | requirements | 已验收 script、研究来源清单和平台字数/封面规则；不执行真实发布 |
 | update | manual · 随外部实体更新本地调用说明；verify：生成 metadata.json 和 sources.md 并检查平台字段 |
 | scripts | 外部实体内置 `generate_metadata.py`、`compile_sources_list.py` |
-| experience_refs | 无 |
+| experience_refs | `video-publish-review-to-investment-research-video-structure-and-qa` |
 
 ## 调用说明
 
 该资源只负责 `publish/metadata.json` 和 `publish/sources.md`，不代替 AiToEarn 或浏览器发布工具。每个平台必须有独立标题、描述、标签、封面和字数校验；研究事实不能因平台改写而改变。生成结果进入 AiToEarn Flow 的 `content` 与每个平台 item 的 `overrides`。
+
+封面方向由上游叙事架构 brief 提供：从行业、产业链或公司中选择一个最能代表本期冲突的主角，封面只保留手机缩略图可读的大字和必要图形；日期、公司全称、研究注释等细节放入发布文案。

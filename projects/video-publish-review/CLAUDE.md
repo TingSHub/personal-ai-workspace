@@ -14,7 +14,8 @@ in_progress
 
 ## Workflow
 
-- publish-review（发布复盘标准流程：登记核对 → 采集 → 诊断 → 归因 → 改进项 → 回写判定）
+- publish-review（发布复盘标准流程：登记核对 → 采集 → 诊断 → 归因 → 改进项 → 回写判定 → 规律沉淀）
+- topic-forward-lead（复盘末端的选题前瞻、叙事架构参考与 investment-research-video 移交）
 
 ## Required Resources
 

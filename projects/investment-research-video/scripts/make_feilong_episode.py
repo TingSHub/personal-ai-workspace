@@ -1,0 +1,41 @@
+import json
+from pathlib import Path
+
+RUN = Path(__file__).resolve().parents[1] / 'outputs/companies/飞龙股份/2026-09-03'
+OUT = RUN / 'editorial/episode-input.json'
+E = 'S-FL-H1'
+
+def t(speaker, text, interaction_type, evidence, emotion='thoughtful', delivery='normal', question_ending='none', visual_intent='none'):
+    return {'speaker': speaker, 'text': text, 'interaction_type': interaction_type, 'emotion': emotion, 'delivery': delivery, 'question_ending': question_ending, 'evidence_ids': evidence, 'source_refs': evidence, 'visual_intent': visual_intent}
+
+def topic(i, short, title, claim, metrics, chart, question, answer, follow, evidence, visual):
+    return {'topic_id': f'T{i:02d}', 'short_label': short, 'title': title, 'claim': claim, 'metrics': metrics, 'chart': dict(chart, evidence_ids=evidence), 'fact_ids': evidence, 'fact_role': 'main_evidence', 'source_refs': evidence, 'visual_intent': visual, 'turns': [
+        t('zhiwei', question, 'challenge', evidence, 'curious', 'stress_contrast', 'question', visual),
+        t('shenyan', answer, 'acknowledge', evidence, 'cautious', 'pause_before_number', visual_intent=visual),
+        t('zhiwei', follow, 'clarify', evidence, 'skeptical', 'normal', 'question', visual),
+        t('shenyan', '所以这里要把已披露事实和仍待验证的部分分开，不能只看一个漂亮的概念标签。', 'counter_evidence', evidence, 'firm', 'normal', visual_intent=visual),
+        t('zhiwei', '明白了，这一段先留下一个可复核的问题，继续往下一层看。', 'summarize', evidence, 'thoughtful', 'normal', visual_intent=visual)
+    ]}
+
+topics = [
+topic(1,'财报反差','收入只增两个点，利润为何降了六成？','飞龙的传统业务利润承压，液冷尚不足以改变合并报表。',[['营业收入','22.06亿元','同比+2.03%','blue'],['归母净利','0.76亿元','同比-64.02%','red'],['经营现金流','1.26亿元','同比-59.50%','orange']],{'type':'diverging-bar','claim':'收入、利润与现金流的方向并不一致','unit':'同比变化','data':[{'label':'收入','value':2.03},{'label':'净利','value':-64.02},{'label':'现金流','value':-59.50}]},'先看半年报，收入还在增长，净利润却跌了六成，这个反差怎么解释？','收入约二十二亿元，只增长两个点；归母净利润约七千六百万元，同比下降六成多，经营现金流也下降接近六成。报告解释包括原材料高位、汽车竞争和汇率损失。','那液冷业务是不是已经足以对冲传统业务的压力？', [E],'financial-contrast'),
+topic(2,'液冷占比','“超过1%”到底代表什么？','飞龙已形成非车领域收入，但液冷在合并收入中的占比仍处于早期。',[['非车收入占比','超过1%','占总体收入','orange'],['全年预测','超过5%','公司预测，不是已实现','red'],['总收入','22.06亿元','2026H1合并口径','blue']],{'type':'horizontal-bar','claim':'业务口径必须分层','unit':'披露口径','data':[{'label':'已实现非车','value':1},{'label':'全年预测','value':5}]},'市场把飞龙说成液冷公司，半年报里最值得盯的数字是什么？','半年报说的是非车领域热管理部件收入占同期总体收入超过百分之一，并没有给出单独的数据中心液冷收入占比。全年超过百分之五是公司预测。','也就是说，把预测值当成已实现收入，会把故事提前了一年？', [E],'revenue-scope'),
+topic(3,'订单验证','六万台订单，距离收入还有多远？','订单台数是需求线索，必须经过认证、交付、验收和回款才能进入经营结果。',[['μ/S/M平台','超5万台','截至披露日订单','green'],['L平台','近万台','截至披露日订单','blue'],['液冷收入','未单独披露','不能由台数倒推','red']],{'type':'progression','claim':'订单兑现有四道门','unit':'执行阶段','data':[{'label':'认证','value':1},{'label':'交付','value':2},{'label':'验收','value':3},{'label':'回款','value':4}]},'飞龙披露的液冷泵订单超过六万台，这个数字能不能直接乘一个单价？','不能。订单统计截至报告披露日，报告只说部分项目小批量落地并形成营业收入，没有披露统一单价、交付批次和取消条款。','真正要等的证据，是后续收入确认和现金回款，而不是把台数直接换算成利润。', [E],'order-to-cash'),
+topic(4,'产品卡位','飞龙卖的是泵，还是一整套液冷？','飞龙当前的切入点是液冷泵和热管理部件，系统级能力与客户认证仍要逐步验证。',[['功率覆盖','6W–80kW','液冷泵平台范围','blue'],['有效专利','650项','截至2026H1','green'],['项目状态','超130个','有序开展','orange']],{'type':'flow','claim':'从部件到系统的卡位路径','unit':'产品链','data':[{'label':'泵','value':1},{'label':'平台','value':1},{'label':'认证','value':1},{'label':'交付','value':1}]},'飞龙的技术卡位在哪里？它已经是液冷系统厂商了吗？','公司披露液冷泵覆盖六瓦到八十千瓦，并有多平台产品和认证流程；这说明部件研发和验证在推进，但不能据此把公司定义成完整系统集成商。','把部件厂和系统厂放在一起比较时，要先看业务环节，而不是只看“液冷”两个字。', [E],'product-position'),
+topic(5,'同行坐标','温控系统厂和液冷设备厂，谁更接近收入兑现？','同行处于不同环节：一家覆盖端到端温控，另一家液冷收入更可拆分，但盈利和现金流压力不同。',[['温控系统收入','30.17亿元','同比+17.24%','blue'],['冷板液冷收入','2.09亿元','2026H1收入','green'],['对应公司归母净利','-0.73亿元','合并口径亏损','red']],{'type':'bar','claim':'不同环节不能用总收入硬排名','unit':'2026H1收入/利润','data':[{'label':'温控系统','value':30.17},{'label':'液冷设备','value':2.46},{'label':'飞龙','value':22.06}]},'把飞龙放进同行里，最容易犯的比较错误是什么？','一家同行的总收入包含机房、机柜和其他温控，另一家可以拆出冷板液冷收入，但公司整体仍亏损；飞龙液冷分部收入没有单列。','所以同行只能用来标定业务环节和兑现难度，不能把三家总收入排成一张“液冷龙头榜”。', [E],'peer-map'),
+topic(6,'现金回收','液冷订单增长，现金流为什么没有同步？','合并现金流受传统汽车业务、营运资金和资本开支共同影响，液冷独立回款无法从公开数据中拆出。',[['经营现金流','1.26亿元','同比-59.50%','red'],['应收账款','11.03亿元','期末余额','orange'],['资本开支现金','2.72亿元','购建长期资产','blue']],{'type':'waterfall','claim':'从订单到现金要经过营运资金','unit':'现金流项目','data':[{'label':'经营现金','value':1.26},{'label':'应收','value':11.03},{'label':'资本开支','value':2.72}]},'如果订单是真的，为什么还要盯现金流？','因为订单不是现金。飞龙半年经营现金流约一亿二千六百万元，同比下降近六成；期末应收账款约十一亿元，购建长期资产支付约二亿七千万元。','这些数字不能证明液冷回款差，但足以说明需要等待分部回款或客户结算证据。', [E],'cash-conversion'),
+topic(7,'产能兑现','扩产和项目多，怎么判断是不是有效产能？','宣布的产能只有在设备、认证、良率、客户排产和现金回报同时出现时，才可视为有效供给。',[['在建/资本开支','2.72亿元','2026H1支付','orange'],['项目','超130个','液冷项目推进','blue'],['客户联系','超80家','主要客户及建立联系','green']],{'type':'checklist','claim':'有效产能需要连续验证','unit':'验证条件','data':[{'label':'设备投产','value':1},{'label':'客户认证','value':1},{'label':'批量交付','value':1},{'label':'现金回收','value':1}]},'公司说项目和客户都在增加，下一步要用什么指标判断扩产没有空转？','至少要看认证完成、批量交付、产能利用率和应收回款；仅有客户联系和项目数量，还不能判断有效供给。','这也是为什么本期把订单、产能和现金流放在同一条证据链上。', [E],'capacity-proof'),
+topic(8,'跟踪清单','未来几个报告期，什么数据能证伪这条主线？','把概念判断改成可跟踪的收入、毛利、订单交付和现金回收指标。',[['液冷收入','单独披露/占比','收入兑现','blue'],['交付质量','批量/验收','订单兑现','orange'],['回款质量','经营现金/应收','现金兑现','green']],{'type':'checklist','claim':'四项指标替代概念叙事','unit':'观察项','data':[{'label':'液冷收入占比','value':1},{'label':'订单交付','value':1},{'label':'毛利率','value':1},{'label':'经营现金','value':1}]},'最后把研究落到跟踪上，飞龙液冷最该看哪几项数据？','第一看液冷或非车收入是否持续提升，第二看订单是否转成批量交付和验收，第三看毛利率，第四看经营现金流和应收账款是否同步改善。','如果收入占比长期不升、订单没有交付或现金持续背离，这条液冷兑现主线就需要重新评估。', [E],'verification-dashboard'),
+]
+
+manifest = {
+ 'episode': {'episode_id':'liquid-cooling-industry-20260903-v1','company_id':'LIQUID-COOLING-INDUSTRY','company_name':'液冷产业链','research_date':'2026-09-03','show_name':'账本两面','format_mode':'host_analyst','role_map':{'host':'zhiwei','analyst':'shenyan'},'speakers':{'zhiwei':{'display_name':'林知微','role':'主理人','resource_key':'voice.zhiwei'},'shenyan':{'display_name':'顾慎言','role':'分析师','resource_key':'voice.shenyan'}}},
+ 'content_angle':'industry_led','report_context':'2026H1三家公司半年报均已发布；本期从9月2日液冷概念涨停信号出发，横向比较飞龙股份、英维克、曙光数创在部件、系统、液冷收入和现金回收上的兑现差异。','editorial_thesis':'液冷需求正在从部件认证走向系统交付，但三家公司处于不同产业环节，订单、收入和现金流口径不能混用；横向比较的价值在于识别谁已经把液冷做成了可确认的生意。','financial_data_role':'validation_and_counterevidence','opening_rationale':'采用industry_contrast模式：飞龙订单台数、英维克端到端方案、曙光数创可拆分液冷收入形成三家公司对照，再追问收入、利润和现金回收。','cover':{'title':'液冷，谁真的赚到钱？','subtitle':'飞龙股份、英维克、曙光数创的兑现差异'},
+ 'opening': {'mode':'industry_contrast','cards':[{'label':'市场信号','display_value':'2.96亿元','display_desc':'飞龙9月2日封单金额','color':'red'},{'label':'订单线索','display_value':'超6万台','display_desc':'飞龙液冷泵订单','color':'green'},{'label':'收入样本','display_value':'2.09亿元','display_desc':'冷板液冷收入样本','color':'orange'}], 'cold_open':[t('zhiwei','9月2日，飞龙股份因为液冷订单涨停，封单接近三个亿；另一边，一家冷板厂商已经把液冷收入单独列出来，另一家系统厂商则在做端到端方案。液冷产业链里，谁真的把需求变成了生意？','hook',['MKT-0902','FL-H1','SG-H1'],'curious','stress_contrast','question','industry-contrast-hook'),t('shenyan','三家公司都叫液冷，但处在不同环节。飞龙的订单台数、系统厂商的方案和冷板厂商的分产品收入，必须放回各自的口径里比较。','answer',['FL-H1','YWK-H1','SG-H1'],'cautious','normal',visual_intent='industry-map')], 'intro':[t('zhiwei','大家好，我是林知微，这里是账本两面。今天我们不只看一家公司的故事，而是把三种液冷生意放在同一张产业链图上。','self_introduction',[],'curious'),t('shenyan','我是顾慎言。我们会把部件、系统、收入和现金流分开，看看行业热度距离经营兑现还有多远。','self_introduction',[],'firm')]},
+ 'topics':topics,
+ 'outro':[t('zhiwei','飞龙的液冷故事已经走过产品和项目验证，但收入占比、利润贡献和现金回收仍需要后续报表接上。','summarize',[E],'thoughtful'),t('shenyan','研究结论停在这里：订单是真实线索，兑现需要交付、验收、收入和现金流共同确认。','counter_evidence',[E],'cautious'),t('zhiwei','你会先看液冷收入占比、订单交付，还是经营现金流？欢迎在评论区留下你的判断。','challenge',[E],'curious','normal','question'),t('shenyan','这里是账本两面，我们下期见。','summarize',[],'firm')],
+ 'valuation_context':{'enabled':False,'allowed_evidence':[],'forbidden':['target_price','rating','buy_sell_hold','position','trading_strategy']},'outro_summary':[{'label':'订单','headline':'超6万台','detail':'仍需经过交付与验收'},{'label':'收入','headline':'>1%','detail':'非车热管理占总收入口径'},{'label':'现金','headline':'待验证','detail':'液冷独立回款未披露'}]
+}
+OUT.parent.mkdir(parents=True, exist_ok=True)
+OUT.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
+print(f'WROTE {OUT} topics={len(topics)}')

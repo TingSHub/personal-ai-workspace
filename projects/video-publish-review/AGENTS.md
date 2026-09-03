@@ -14,7 +14,8 @@ in_progress
 
 ## Workflow
 
-- publish-review (registration check → collection → diagnostics → attribution → improvements → write-back decision)
+- publish-review (registration check → collection → diagnostics → attribution → improvements → write-back decision → rule distillation)
+- topic-forward-lead (topic discovery → architecture reference → approval → handoff to investment-research-video)
 
 ## Required Resources
 

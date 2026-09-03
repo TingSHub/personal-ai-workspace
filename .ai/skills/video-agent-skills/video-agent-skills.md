@@ -14,7 +14,7 @@
 | 要求 | 冻结研究素材（叙事大纲唯一输入）；writer 需外部给定秒级时长分配（资源字数表最小档 5 分钟）；storyboarder/visual 依赖 GEMINI_API_KEY（无离线降级） |
 | 更新 | git · 拉取上游新版本到临时目录审查 SKILL.md 变更后更新 vendor；保留本资源说明；验证：researcher organize 模式对一份中文研究素材产出叙事大纲 + writer 产出一段中文口播稿 |
 | 辅助脚本 | — |
-| 经验引用 | — |
+| 经验引用 | `video-publish-review-to-investment-research-video-structure-and-qa` |
 
 ## 作用
 
@@ -44,3 +44,4 @@
 - researcher organize 是"研报→叙事大纲"的最佳现成骨架：强制叙事目的标注+金句索引，把编剧约束为语言转换
 - writer 的中文口播（280 字/分、第一人称、破立结合）可作为口播规范的基准参考
 - 与其他候选组合：hook 用 claude-youtube 方法论、时长分配用外部 Scene 表
+- 生产前先接收叙事架构 brief：行业主题默认按“行业问题 → 公司角色对比 → 特殊案例”组织，但必须用复盘和研究证据决定是否采用；脚本验收应检查范围兑现、跨段重复和角色段尾模板化。

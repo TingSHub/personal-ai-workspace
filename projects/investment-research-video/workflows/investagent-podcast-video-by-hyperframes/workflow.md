@@ -4,7 +4,7 @@
 
 ## Mission
 
-把上市公司研究转成可复用的长篇双人财经播客视频。账号规格、研究证据、逐句对话、音频时间轴和 HyperFrames 视觉均由 manifest 驱动；公司事实不能写死在模板源码中。
+把经过研究的财经、产业与商业议题转成可复用的双人播客视频。账号规格、研究证据、逐句对话、音频时间轴和 HyperFrames 视觉均由 manifest 驱动；公司事实不能写死在模板源码中。公司财报只是输入类型之一，不能作为默认叙事模板。
 
 默认节目是 `host_analyst`：主理人追问、承接和转场，分析师回答、展开证据和限定结论。`debate` 只有在 episode manifest 中显式指定时启用。
 
@@ -12,20 +12,23 @@
 
 | Field | Required | Contract |
 |---|---|---|
-| `company_id` / `company_name` | yes | 研究对象 |
+| `subject_type` / `subject_id` / `subject_name` | yes | 研究对象类型与标识；`subject_type` 可为 `company`、`industry`、`theme`、`event`、`technology`、`policy`、`macro` 或 `comparison` |
 | `research_date` | yes | 本次运行日期 |
 | `account-profile` | yes | 账号、角色、音色、视觉和表达规则 |
+| `input_mode` | no | `approved_topic`、`topic_discovery`、`research_revision`；默认按上游输入判断 |
+| `source_bundle` | yes | 已验收的研究资料集合；可由财报、公告、产业链资料、新闻事件、政策原文、访谈/案例和结构化数据组成，按 subject_type 选择 |
+| `company_id` / `company_name` | conditional | 只有 subject_type 涉及公司时必填；行业、主题、事件和技术议题不强制绑定单家公司 |
 | `reference_video` | Phase 0 only | 首次建立账号规格时使用；后续公司运行不需要 |
 | `format_mode` | no | 默认继承账号的 `host_analyst`；`debate` 必须显式指定 |
-| `target_duration` | no | 默认 18–25 分钟，不能降级为短视频 |
+| `target_duration` | no | 由选题复杂度、证据量和平台目标决定；不得为了凑固定时长硬加话题 |
 
 ## Output
 
 执行前读取 `references/global-contract.md`。本 Workflow 的账户资产、公司 run 输出、官方资料归档、pacing-plan 和视觉默认契约均在那里集中维护；各 Phase 的独有产物仍在本文件中声明。
 
-### Account and company-run outputs
+### Account and subject-run outputs
 
-账号资产、公司 run 输出、官方资料归档、同行目录、券商材料和媒体产物的完整路径契约见 `references/global-contract.md`；本 Workflow 只在各 Phase 声明本阶段必须新增的产物。
+账号资产、subject run 输出、官方资料归档、比较目录、券商材料和媒体产物的完整路径契约见 `references/global-contract.md`；本 Workflow 只在各 Phase 声明本阶段必须新增的产物。
 
 ## Principles
 
@@ -36,28 +39,31 @@
 - 公司研究额外必须覆盖第五条证据线：公司动态与产品事实，包括近期公告/新闻、获奖、产品发布、具体型号、项目签约/中标/交付、标准制定和技术里程碑；没有命中时也必须留下覆盖报告和缺口状态。
 - 新闻发现优先使用 `multi-search` 的 `prefer_quality=True`（Tavily）；搜索摘要只做候选发现，最终事实必须打开原文并记录来源、事件日期、发布日期和主体核验。`news-search` 只作热点聚合补充。
 - `deep-research` 只作为外部资料补充源；其报告中的数字和判断必须回到原始来源或结构化数据复核后，才能进入 Research Intelligence Document。
-- 内容主线按报告新鲜度和经营重要性动态选择：最近 1–2 天发布且有重大经营变化时，财报可作为主线；否则以公司、业务或行业主线为主，财报作为验证或辅助章节。
+- 内容主线按 subject_type、观众问题、证据新鲜度和产业/经营重要性动态选择：财报、行业机制、公司案例、重大事件、技术路线和政策变化都可以成为主线；财报只在证据和问题确实支持时作为主线。
+- 上游 `topic-forward-lead` 的选题卡是生产主输入；其中的差异化角度、内容范围和生产提示词必须先被导演吸收，再结合本期研究决定叙事、公司数量、模块顺序和视觉形态。任何行业→公司→特殊公司的路径都只是可选参考。
+- 每期先从选题卡提炼一个观众问题和内容承诺，再决定主叙事形态与模块数量；不默认从“若干个话题”开始，也不默认每期都走公司介绍 → 财报 → 风险的顺序。
+- 允许轮换行业拆解、公司案例、公司对比、事件追踪、技术机制、政策影响、神话证伪、产业链地图和问答型节目；轮换必须服从证据和观众问题。
 - 官方资料路径、复用检查、命名和同行归档统一遵循 `references/global-contract.md` 与 cninfo-connector；公司新闻与产品资料统一落到 `research-materials/company-intelligence/`。
-- 公司级 `editorial/episode-input.json` 是 Phase 2 生成器的输入事实与表达契约；生成器不得在代码中写死公司专属开场、自我介绍或估值内容。
-- Phase 1 与 Phase 2 之间存在不可跳过的人工决策门：先生成 3–5 个互斥选题，人工明确批准一个 `topic_id`，再允许内容导演和脚本继续。
+- `editorial/episode-input.json` 是 Phase 2 生成器的输入事实与表达契约；生成器不得在代码中写死公司、行业或事件专属开场、自我介绍、估值内容或固定话题数量。
+- Phase 1 与 Phase 2 之间存在人工决策门：`topic_discovery` 先生成 3–5 个互斥选题并批准一个 `topic_id`；`approved_topic` 与 `research_revision` 验证已有主问题或修订范围后再继续。
 - `editorial-director-agent` 是全局内容导演：它决定主问题、开场、话题顺序、机制归属、观众收益和视觉意图；`financial-editor-agent` 负责证据/因果裁决，`dialogue-director-agent` 负责逐句互动，三者不得越权。
-- 公司动态和产品事实必须先进入 `company-intelligence` 资产，再由内容导演决定是 opening、main_evidence、supporting_evidence、visual_only、background 还是 omit；研究员或脚本生成器不得直接把搜索结果写进口播。
+- 公司动态和产品事实必须先进入结构化事实资产；行业、事件、政策和技术资料也必须先记录来源、日期、主体和证据角色，再由内容导演决定是 opening、main_evidence、supporting_evidence、visual_only、background 还是 omit；研究员或脚本生成器不得直接把搜索结果写进口播。
 - 一个核心机制只能有一个主章节；相邻章节必须有不同主问题、证据集合和观众收益，并在导演方案中留下去重与顺序理由。
-- 开场使用独立顺序 `COLD_OPEN → INTRO → T01`：冷开场负责公司专属的客观事实钩子，INTRO 负责目录和主持人定位；不得用固定自我介绍替代冷开场。
-- 冷开场必须是“公司特征事实 → 经营矛盾 → 开放问题”，但不固定使用收入/利润模板。可按公司选择 `operational_paradox`、`business_model_reveal`、`asset_to_revenue` 或 `event_execution` 等模式；开场事实、视觉锚点和问题必须来自本公司的 thesis card 与 evidence ledger。
+- 开场使用 `COLD_OPEN → INTRO` 或直接问题式开场；顺序由 narrative_mode 和平台目标决定，不能用固定自我介绍替代主问题。
+- 开场必须在前 10 秒让观众知道本期要回答什么，可采用事实反差、现场问题、争议说法、事件节点、技术演示或产业链冲突；事实、视觉锚点和问题必须来自对应 subject 的证据 brief。
 - 逐句音频是唯一时间轴来源；不得按性别整段拼接或用字数估时。
 - **Script-first pause**：需要明显句内停顿时，优先在 Phase 2 改写为自然短句、真实追问或独立回应，让 TTS 依据上下文表达；句号只是软性韵律提示，不是确定的静音指令。
 - `target_rate_cps` 只允许作为单个 turn 的明确语速实验字段，不能作为全片或整段停顿的默认实现；局部固定停顿优先使用 `intra_turn_breaks`，且不同时改变该 turn 的自然语速。
 - `speaker alternation` 只是顺序门禁；对话关系必须由 `reply_to_turn_id`、`interaction_type`、`emotion` 和 `delivery` 表达。
 - 图表优先于表格，表格优先于大段文字；观众不可见内部字段不得进入 HTML。
-- Composition 默认使用 editorial-paper 视觉变体：暖纸面、衬线标题、深墨正文、红涨绿跌、细线结构和低圆角；只有 A/B 视觉实验才显式传入其他 --style。
+- Composition 使用 account-profile 允许的视觉变体；editorial-paper 是稳定基线，不是每期强制样式。`visual_mode` 可按内容选择 editorial-paper、data-newsroom、dark-terminal、field-notes、timeline-board 或其他已验证变体，并记录选择理由。
 - 音色缺失、身份不匹配或静默 fallback 时，停在音频门禁。
 - `references/podcast-v1-luheng.md` 是当前稳定音频版本，使用 VoxCPM2 continuation；CosyVoice3、IndexTTS 和其他 clone mode 只作为独立 A/B。
 - **数字口播简化**：亿级金额只说整数（"五十八亿"而非"五十八亿五"），千万级四舍五入到亿（"七个亿"而非"七亿三"），百分比用"X个点"（"十二个点"而非"十二点零零"）。详见 `account-profile/dialogue-policy.md`。
 - **英文读法**：CPU 保持英文，GPU 可说"显卡"，ARM 整体发音（不逐字母拼读），NVIDIA 用"英伟达"。
 - **字幕基线**：默认一条口播回合对应一条字幕，时间沿用该回合真实音频区间；允许自然换行，不按固定字数机械切碎。只有一个回合确实包含多个独立句群且画面需要分别强调时，才在 manifest 中显式拆 cue。
 - **平台封面**：封面是独立 HTML 资产，不属于正片 Composition 时间轴；沿用同一 editorial-paper 背景和字体，显示公司名/栏目 logo、主标题和副标题，封面字号大于正片标题。封面数据来自 `episode-input.json` 的 `cover.title` 与 `cover.subtitle`。
-- **官方报告归档**：Phase 1 前必须将公司半年报/年报 PDF 下载到 `outputs/companies/{company}/official-information/`，使用 cninfo-connector 标准文件名。下载前先查本地缓存。
+- **官方资料归档**：公司 subject 在 Phase 1 前归档适用的半年报/年报与公告；其他 subject 按来源类型归档政策、事件、技术或产业原文。下载前先查本地缓存。
 
 ## Phase 0: reference-replication — 建立账号规格
 
@@ -92,11 +98,11 @@
 
 参考视频的原文、原声和品牌资产不进入生产；只能复用结构和视觉语法。音色资产必须使用已授权或自建资产。
 
-## Phase 1: research — 公司与行业研究
+## Phase 1: research — 研究对象与证据建模
 
 ### Goal
 
-建立足以支撑 8–9 个话题的事实、正反证据、产业背景、核心优势、护城河、风险和可验证变量，并决定本期最值得讲的公司主线。
+围绕 subject_type 建立足以回答观众问题的事实、正反证据、背景、机制、风险和可验证变量，并决定本期最值得讲的主线。模块数量由问题和证据决定，不以固定话题数为验收目标。
 
 ### Required Resources
 
@@ -104,9 +110,9 @@
 |---|---|---|---|
 | `industry-analysis` | skill | yes | 产业链和竞争格局 |
 | `industry-cycle-analysis` | skill | yes | 供需、周期和反证 |
-| `investagent` | skill | yes | 公司研究和数据范围 |
+| `investagent` | skill | conditional | subject_type 涉及公司时启用公司研究；行业/主题/事件类输入按研究对象选择对应资源 |
 | `tushare-connector` | skill | conditional | 有权限时获取公司与同行统一财务、三表和行情；无权限按数据源路由降级 |
-| `earnings-reader` | skill | yes | 三表口径、盈利质量、现金流和同行财报阅读 |
+| `earnings-reader` | skill | conditional | 有财报或财务问题时启用；无财报主线时不强制 |
 | `multi-search` | skill | yes | `prefer_quality=True` 优先使用 Tavily，发现近期公司新闻、产品发布、型号、奖项、订单和交付线索；搜索摘要不得直接入稿 |
 | `cninfo-connector` | skill | conditional | 年报、公告和法定披露 |
 | `news-search` | skill | conditional | 多平台新闻聚合补充；只用于发现线索，必须回到原文核验 |
@@ -116,27 +122,27 @@
 
 ### Input
 
-公司标识、研究日期、账号 profile、研究边界和初始同行宇宙（证券代码、比较角色、业务环节）。
+subject_type、subject_id/subject_name、研究日期、账号 profile、研究边界和可用 source_bundle；涉及公司时再提供证券代码、比较角色和业务环节。
 
-执行前读取 `references/global-contract.md` 的 Company-run outputs 和 Official-source archive。
+执行前读取 `references/global-contract.md` 的适用输出契约；公司 subject 使用 Company-run outputs，行业/主题/事件 subject 使用对应的 topic run 目录和来源归档。
 
 ### Output
 
-公司级 `outputs/companies/{company}/official-information/` 原件与 manifest、各研究资源的原生产物、`research-materials/data-source-ledger.json`、`research-materials/peer-comparison/peer-comparison.json`、`research-materials/peer-comparison/peer-comparison.md`、`research-materials/editorial/company-thesis-card.json`、`research-materials/company-intelligence/event-facts.json`、`research-materials/company-intelligence/product-facts.json`、`research-materials/company-intelligence/source-ledger.json`、`research-materials/company-intelligence/coverage-report.md`、可选 `research-materials/deep-research/`、`findings-summary`、`topic-evidence-matrix.md` 和执行记录。
+按 subject_type 落盘相应的研究原件、来源 ledger、事实卡、比较材料、findings-summary、topic-evidence-matrix 和执行记录；公司 subject 额外生成 company-thesis-card、company-intelligence 与同行财报归档，行业/主题/事件 subject 生成对应的 industry/theme/event evidence brief，不强制生成公司专属文件。
 
 ### Quality Criteria
 
-- 至少 8 个候选话题，每个话题有矛盾、正反证据、来源、期间和视觉锚点。
-- 必须生成 `company-thesis-card.json`，明确公司身份、核心优势、护城河机制、行业位置、增长驱动、风险、未来利润情景和财报在本期的角色。
-- 必须根据最新财报公告日与研究日计算 `days_since_release`，并记录 `freshness`、`materiality`、`content_angle` 和选择理由；不得默认所有公司都使用财报主线。
-- `content_angle` 仅可取 `earnings_led`、`company_led`、`industry_led`、`event_led`；最近 1–2 天发布且 `materiality=high` 时优先 `earnings_led`，其余情况优先从公司优势、行业位置或重大事件中选择。
-- 必须提供至少两个不同的开场角度，其中至少一个围绕公司优势/护城河；至少一个必须体现该公司的独有业务、资产组合或兑现断点，不能只是把另一家公司数字替换进同一模板。选定角度必须能说明财报是主线、验证、反证还是背景。
-- 必须完成公司动态与产品事实扫描，覆盖最近 180 天以及最近 2 年内仍影响当前主线的关键事件；至少查询公告/新闻、产品/型号、奖项/标准、订单/签约/交付四类关键词，并生成 `company-intelligence/coverage-report.md`。
+- 至少形成一个清晰主问题和一组可回答它的内容模块；模块数量按选题复杂度和证据量决定，不要求每期固定 8–9 个话题。
+- subject_type 涉及公司时必须生成 `company-thesis-card.json`；其他 subject_type 生成等价的 subject-thesis brief，明确主问题、机制、证据边界、风险和可验证变量。
+- 只有有财报输入时才计算 `days_since_release`；所有 subject_type 都必须记录 `freshness`、`materiality`、`content_angle` 和选择理由。
+- `content_angle` 可按 subject_type 取 `earnings_led`、`company_led`、`industry_led`、`event_led`、`technology_led`、`policy_led`、`comparison_led` 或 `myth_busting`；不得默认财报主线。
+- 至少提供两个不同的开场角度（若选题天然只有一个入口，记录原因）；角度必须体现本 subject 的独特冲突或机制，不能只是套用上一期句式。
+- 公司 subject 必须完成公司动态与产品事实扫描；其他 subject_type 按主题性质完成政策、事件、技术、供需或案例覆盖报告，不强制查询公司产品四类关键词。
 - 每条入选动态/产品事实必须有 `fact_id`、事件日期、发布日期、事实类型、主体、原文 URL、来源级别、定位信息、与主线相关性和视觉候选；搜索摘要不得作为唯一来源。
 - 产品型号、性能指标、奖项和项目规模必须优先由公司官网、正式公告、政府/行业组织或权威媒体原文支撑；无法核验的线索写入缺口，不进入事实正文。
 - 关键数字有来源、口径、期间和定位；最新报告期与近 12 个月变化单列。
 - 必须生成 `research-materials/data-source-ledger.json`：记录数据源顺序、调用状态、API/函数、报告期、字段映射、单位、复权方式、是否回查官方原文和降级原因；Tushare 无权限时必须留下 AkShare/BaoStock 的真实调用结果或明确缺口。
-- 同行比较至少覆盖两个业务环节；每个环节至少保留 2 家有明确比较角色的上市公司，并注明业务重合度、并表范围和不可比项。
+- 只有选择 comparison 或行业产业链叙事时才要求同行/角色比较；比较对象数量由问题和证据决定，并注明角色、可比边界和不可比项。
 - `peer-comparison.json` 必须统一记录公司代码、比较角色、报告期、数据类型、单位、收入、归母净利、增速、毛利/净利率、经营现金流、自由现金流、应收、存货、资本开支、债务和估值；取不到的指标写明确缺口，不用空白或估算冒充。
 - 同行表必须按同一报告期分组；Q1、H1、全年不得混成一张排名表。缺少同期数据时，降级为产业坐标并写入缺口清单。
 - 同行关键数字至少有一手披露或结构化数据源；`deep-research` 只提供候选来源、行业背景和外部交叉线索，不能单独支撑公司事实。
@@ -156,7 +162,7 @@
 
 ### Goal
 
-将 Phase 1 的研究资产转成 3–5 个角度互斥的选题候选，明确主问题、观众收益、开场、证据和风险，并在人工批准前停止下游生产。
+根据 `input_mode` 处理选题：`topic_discovery` 才生成 3–5 个互斥候选；`approved_topic` 直接验证用户已给出的主问题；`research_revision` 针对既有视频或脚本提出结构修订。所有模式都明确主问题、观众收益、证据和风险，并在人工批准前停止下游生产。
 
 ### Required Resources
 
@@ -167,21 +173,20 @@
 
 ### Input
 
-Phase 1 已验收的 `research-materials/editorial/company-thesis-card.json`、`topic-evidence-matrix.md`、`research-materials/company-intelligence/event-facts.json`、`product-facts.json`、`source-ledger.json`、`coverage-report.md`、findings-summary、研究 freshness/materiality、账号 audience/content policy 和可用视觉锚点。
+Phase 1 已验收的 subject-thesis brief、topic-evidence-matrix、适用的事实卡/来源 ledger/coverage report、findings-summary、研究 freshness/materiality、账号 audience/content policy 和可用视觉锚点。
 
 ### Output
 
-- `editorial/topic-options.md`：供人工阅读的 3–5 个候选。
-- `editorial/topic-options.json`：机器可消费的候选、证据 IDs、风险和互斥关系。
+- `editorial/topic-options.md` / `.json`：`topic_discovery` 模式的 3–5 个候选；其他模式记录已批准主问题或修订范围。
 - `editorial/topic-approval.md`：人工审批表，必须明确 `status: pending|approved|rejected`、批准的 `topic_id`、`approved_at` 和备注。
 - `editorial/phase1.5-execution.md`：资源 by-name、installed_ref、输入、候选覆盖、停止状态和 gate 结果。
 
 ### Quality Criteria
 
-- 候选数量为 3–5 个，角度互斥；不能只是同一个事实换写标题。
+- `topic_discovery` 候选数量为 3–5 个且角度互斥；其他模式不强制生成候选池，不能为了满足数量制造无效角度。
 - 每个候选必须包含：主问题、观众为什么关心、开场候选、核心证据、可展开路径、最大风险、content_angle 和 evidence coverage。
 - 每个候选必须明确是否使用公司动态/产品事实，以及每条事实的 `fact_id`、`fact_role`（opening/main_evidence/supporting_evidence/visual_only/background/omit）和采用理由；不能只把新闻标题贴到选题里。
-- 至少一个候选解释公司优势/护城河，至少一个候选解释优势兑现或未来验证；是否采用财报主线由 freshness/materiality 决定。
+- 候选或已批准主问题必须覆盖本 subject 最关键的机制、证据冲突或验证路径；是否采用财报主线由 subject_type、freshness 和 materiality 决定。
 - 开场候选必须是公司特征事实、事实张力加开放问题；公司简介、合作清单或单个技术事实不能自动成为主钩子。不同公司允许使用不同的叙事入口，开场模式和选择理由必须写入 `opening-selection.json`。
 - `topic-options.json` 必须记录候选间的 `mutually_exclusive_with` 和机制覆盖，便于后续去重。
 - `topic-approval.md` 在用户确认前必须保持 `status: pending`；pending/rejected 状态不得生成 `director-treatment.md`、`episode-input.json`、`episode.json`、TTS、字幕、视觉或渲染产物。
@@ -195,13 +200,26 @@ Phase 1 已验收的 `research-materials/editorial/company-thesis-card.json`、`
 
 ### Goal
 
-把已验收证据编排成自然的主理人播客逐句稿，并锁定口播、回应关系、情绪、delivery 和画面表达。
+把已验收证据编排成自然的主理人播客逐句稿，并锁定口播、回应关系、情绪、delivery 和画面表达。先选定 `narrative_mode`，再按该模式组织内容模块，不默认每期使用同一套话题顺序。
+
+### Narrative modes
+
+- `industry_map`：行业问题 → 产业链/机制 → 公司或案例角色 → 兑现与风险
+- `company_case`：一个公司问题 → 业务机制 → 证据冲突 → 验证条件
+- `comparison`：统一比较问题 → 多对象逐项对照 → 差异来源 → 边界
+- `event_tracker`：事件发生了什么 → 谁受影响 → 机制与证据 → 后续观察点
+- `technology_explainer`：技术到底解决什么 → 链条和约束 → 商业化案例 → 未解问题
+- `policy_impact`：政策目标 → 传导链条 → 受影响主体 → 可能的副作用与观察指标
+- `myth_busting`：流行说法 → 事实核验 → 为什么会误判 → 更准确的判断框架
+- `qa_roundtable`：观众问题 → 快速回答 → 证据展开 → 追问与结论
+
+可扩展新模式，但必须在 manifest 中声明模式、适用理由和模块顺序；模式只是编排工具，不替代研究判断。
 
 ### Required Resources
 
 | Resource | Type | Required | Use |
 |---|---|---|---|
-| `editorial-director-agent` | agent | yes | treatment 模式；读取已批准候选，锁定 editorial thesis、opening、topic order、机制去重和 scene intent |
+| `editorial-director-agent` | agent | yes | treatment 模式；读取已批准选题卡，锁定 editorial thesis、opening、narrative mode、模块顺序、机制去重和 scene intent |
 | `financial-editor-agent` | agent | yes | 主命题、事实核验和冲突裁决 |
 | `dialogue-director-agent` | agent | yes | host/analyst 回合、回应关系和表演字段 |
 | `information-visualization-architect` | agent | yes | chart-spec，不补数据 |
@@ -213,7 +231,7 @@ Phase 1 已验收的 `research-materials/editorial/company-thesis-card.json`、`
 
 ### Input
 
-Phase 1 已验收证据、已验收的 `company-intelligence` 事实资产、Phase 1.5 已批准的 `topic-approval.md` 与 `topic-options.json`、`research-materials/editorial/company-thesis-card.json`、账号 profile 和导演 treatment。
+Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修订范围、subject-thesis brief、账号 profile 和导演 treatment。
 
 执行前读取 `references/global-contract.md` 的 Performance contract。
 
@@ -221,24 +239,28 @@ Phase 1 已验收证据、已验收的 `company-intelligence` 事实资产、Pha
 
 `editorial/episode-input.json`、`editorial/feedback-constraints.md`、`editorial/phase2-execution.md`、`podcast/script/episode-draft.json`、`podcast/script/episode-polished.json`、`podcast/script/episode.json`、`podcast/script/spoken-polish-diff.json`、`debate-script.md`、`dialogue-map.json`、`spoken-style-map.json` 和 `visual-plan/chart-spec.json`。
 
-同时保留 `editorial/director-treatment.md`、`editorial/topic-order.json`、`editorial/opening-selection.json`、`editorial/scene-intent.json` 和 `editorial/director-execution.md`。
+同时保留 `editorial/director-treatment.md`、可选 `editorial/narrative-options.json`、`editorial/topic-order.json`、`editorial/opening-selection.json`、`editorial/scene-intent.json` 和 `editorial/director-execution.md`。
 
 ### Quality Criteria
 
 - manifest 写入 `format_mode`、`role_map`、`turn_id`、`topic_id`、`speaker`、`text` 和 `evidence_ids`。
 - manifest 的 topic/turn 必须能够回指 `fact_ids`、`fact_role`、`source_refs` 和 `visual_intent`；产品型号、奖项、签约、交付等事实不得只存在于导演私有笔记。
 - `episode-input.json` 必须声明 `cover.title`、`cover.subtitle` 和 `outro`；`topics[]` 必须提供 `short_label`，供目录和持久导航使用。
+- `cover.title` 必须突出本期最引人注目的行业、产业链或公司主角；封面只保留手机缩略图可读的大字和必要图形，日期、全称和研究注释不进入封面主视觉。
 - `episode-input.json` 必须声明 `opening.mode`、`opening.cards`、`opening.cold_open`、`opening.intro`；开场和自我介绍只能从该 manifest 读取。
-- `episode-input.json` 必须携带 `content_angle`、`report_context`、`editorial_thesis`、`financial_data_role` 和 `opening_rationale`；Phase 2 不得绕过 Phase 1 的主线决策。
-- Phase 2 开始前必须通过 topic approval gate；`topic_id`、opening 和 topic order 必须与批准记录一致。
-- 必须消费 `editorial-director-agent` 的 treatment：每个话题有 audience payoff、机制归属、前后依赖、visual intent 和验证/证伪条件；缺少任一项不得生成最终 episode。
+- `episode-input.json` 必须携带 `content_angle`、`report_context`、`editorial_thesis`、`opening_rationale` 和 `narrative_mode`；`financial_data_role` 仅在存在财报/财务证据时填写，Phase 2 不得绕过 Phase 1 的主线决策。
+- Phase 2 开始前必须通过适用的 topic approval gate；`topic_id`、opening 和模块顺序必须与批准记录或用户已批准主问题一致。
+- 必须消费 `editorial-director-agent` 的 treatment：每个内容模块有 audience payoff、机制归属、前后依赖、visual intent 和验证/证伪条件；缺少任一项不得生成最终 episode。
+- 若选题卡允许多种讲法，导演必须先提交 2–3 个轻量叙事草案并记录选择理由；若证据或平台目标只支持一种，记录不做多方案的原因即可。草案不要求新增模板，写入 treatment 或可选 `narrative-options.json`。
 - 话题顺序必须有全局去重表：一个核心机制只有一个 `primary_topic_id`；相邻话题不得重复主问题、证据集合和观众收益。
 - 开场 manifest 必须包含 `opening_mode`、`opening_cards` 和 `COLD_OPEN/INTRO` turns；冷开场后才出现主持人自我介绍和目录。
-- `COLD_OPEN-01` 必须包含至少一组公司特征事实张力、一个开放问题和 `question_ending=question`；金额/增速采用自然口播，如“涨了快三倍”“反而下降了”。不得仅因上一家公司使用过某种钩子，就复制其事实组合、句式或视觉卡布局。
+- `COLD_OPEN-01` 或等价的首个主问题回合必须包含 subject 特征事实/争议、一个开放问题和 `question_ending=question`；金额/增速采用自然口播。不得仅因上一期使用过某种钩子，就复制其事实组合、句式或视觉卡布局。
 - 生成 opening canary 时运行项目脚本 `build_podcast_opening_test.py`；脚本必须对 `COLD_OPEN → INTRO` 顺序、事实反差、开放问题和书面化禁用短语给出 PASS/FAIL。
-- 每个话题至少有主理人立题、分析师直接回应、主理人承接/追问、分析师证据、主理人转场。
+- 每个内容模块至少有立题、直接回应、证据展开和推进/收束；是否由分析师承担证据，要按 narrative_mode 和角色设定决定。
+- 每个内容模块至少指定一个 shot proposition，并说明口播、出镜、B-roll、图表和字幕各自承担什么信息；无功能的装饰性画面不得进入 Composition。
 - 除话题第一句外，每句有 `reply_to_turn_id` 和 `interaction_type`；不能靠交替 speaker 制造对话。
 - 情绪和 delivery 与回应关系共同生成；语气词服务于关系，不能机械重复。
+- 每个角色的段首、段尾和总结句必须跨话题去重；禁止用固定结论句或口头禅填充每一节。生产前运行 `podcast-audio-compiler` 的 `check_dialogue_repetition.py`，发现重复先回到 Phase 2 改稿。
 - Phase 2 输出 emotion、delivery 和 pause anchors；Phase 3 先运行 resolve_pacing_plan.py，再消费稳定基线的 turn 级 speech_rate、target_rate_cps 和 pause_after_ms，并在 segments.json/audio-qa.json 留痕。
 - Phase 2 对明显停顿必须先完成脚本表达设计：长句拆分、问答回合或自然承接优先；不得把“画面里、口播、字幕”等制作元话语写入 spoken text。若确需固定静音，才在受影响 turn 上声明 `intra_turn_breaks`。
 - 句首出现“对/嗯/没错/好”等短回应时，必须同时写入 `response_action=backchannel`、`backchannel`、`backchannel_target`、`filler_position=start`、`delivery=short_pause` 和正值 `pause_after_ms`；不能只把短词拼进普通长句。
@@ -247,8 +269,8 @@ Phase 1 已验收证据、已验收的 `company-intelligence` 事实资产、Pha
 - `spoken-polish-diff.json` 必须记录每个 changed turn 的 before/after；draft/final 的 speaker、topic_id、evidence_ids 不得变化。存在用户口语化反馈时，运行 `scripts/check_spoken_polish.py --require-change`，无实际文本变化不得写 PASS。
 - 明显停顿的脚本改写必须落在 `episode-draft`/`episode-polished`/最终 `episode.json` 的文本中；只修改 `spoken-style-map`、delivery 或口头说明而未改变实际 spoken text，不得写 PASS。
 - `check_podcast_dialogue.py` 必须阻断制作元话语（视频里、画面里、字幕里、必须说等）和其他公司名进入 spoken text；`check_spoken_polish.py` 对长篇稿件至少要求 10% turn 有实际 before/after 改写，不能用一两个虚词变化冒充全稿口语化。
-- 每个话题有 chart-spec 或明确 no-chart 理由；可选 `valuation_context` 话题只消费官方或券商材料，不出现买卖建议、仓位或目标价。
-- 话题排序必须服务于 `editorial_thesis`：至少一个话题解释公司优势/护城河，至少一个话题验证其兑现情况，至少一个话题讨论未来驱动和证伪条件；财报主线也不能把整期变成数字罗列。
+- 每个内容模块有 chart-spec 或明确 no-chart 理由；可选 `valuation_context` 模块只消费官方或券商材料，不出现买卖建议、仓位或目标价。
+- 内容模块排序必须服务于 `editorial_thesis`：至少一个模块解释核心机制，至少一个模块呈现证据或反证，至少一个模块讨论验证条件、风险或下一步观察；财报主线也不能把整期变成数字罗列。
 - `valuation_context` 必须显式声明 `enabled`；启用时必须有 `topic_id`、`source_class=brokerage`、`source_dir=research-materials/brokerage/`、允许证据类型和禁用表达清单。未启用不阻断整期节目。
 - Phase 2 必须留下三个独立执行证据：`feedback-constraints.md`（human-understanding）、`spoken-polish-diff.json`（finance-content-engineering + humanizer-zh 实际改写）和 `phase2-execution.md` 中的资源 installed_ref；缺少任一证据不得写 PASS。
 - 运行项目脚本 `scripts/check_podcast_dialogue.py`，对开场、短回应、估值资料边界和两个口语化资源执行证据给出 PASS/FAIL。
@@ -343,13 +365,16 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 - 同一 Composition 只消费 manifest/variables，不能写死公司事实。
 - 每个核心话题必须有公司无关的 Scene archetype 和至少 3 个 visual beats：立题/数据变化/机制或限制/验证收束；不能把一个话题压缩成单一静态页。
 - 默认视觉 Token 从 account-profile/design.md 读取；不得在生成器中为单家公司写死品牌色，editorial-paper 只提供公司无关的财经编辑语法。
+- `visual_mode` 必须与 narrative_mode 和观众问题匹配；连续节目不得无理由复用同一开场卡、目录布局和章节模板。
+- 关键转折处应有可感知的视觉或对话变化（图表状态、证据类型、镜头尺度、主持人职责或 B-roll 角色至少变化一项）；变化服务于认知推进，不为制造噪声而切换。
+- `scene-intent` 中的每个 scene 都要能回答“展示什么、为什么现在展示、展示后观众多知道什么”；无法回答时降级为背景或删除。
 - 每个核心数据图至少使用一种可感知的 seek-safe 动画：数字滚动、柱体生长、曲线绘制、瀑布展开、路径/节点出现或重点标注；动画必须由 `hyperframes-animation` 规则和 `scene-manifest.json` 指定。
 - 目录使用紧凑的章节网格或分组导航，不把完整长问题堆成同尺寸胶囊；目录文字必须来自 manifest 的短标签。
 - OUTRO/SUMMARY 必须有总结性视觉资产（验证看板、三道门、结论矩阵或指标卡）和一句来自 manifest 的收束文字；不得以空白画面作为结尾状态。
 - 字幕、说话人高亮、图表、音频和导航使用同一真实时间轴。
 - `COLD_OPEN`、音频和第一条 caption 均从 0 秒开始；`cover.html` 是独立平台封面，不得出现在正片 timeline。
 - **字幕密度**：默认一回合一条字幕，贴合沪电股份基线；字幕时间覆盖该回合真实语音区间，长句自然换行，不按固定字数机械截断。字幕数字使用阿拉伯数字（如"58亿""7个亿""12%"），不用中文数字。
-- **平台封面**：Phase 4 必须生成独立的 `podcast/project/cover.html`，沿用 Composition 的同一背景、字体和视觉 Token，只展示公司名/栏目标识、引人注目的主标题和副标题，标题字号大于正片标题。封面必须包含账号 logo，并分别使用 `scripts/render_cover_4x3.js` 导出 4:3 的 `cover.png`（推荐 1440×1080）、使用 `scripts/render_cover_3x4.js` 导出 3:4 的 `cover-3x4.png`（推荐 1080×1440）；封面独立于正片时间轴。
+- **平台封面**：Phase 4 必须生成独立的 `podcast/project/cover.html`，沿用 Composition 的同一背景、字体和视觉 Token，只展示栏目标识、subject 主角和一组手机端可读的大字；标题字号大于正片标题，副标题可省略。封面主角从行业、产业链、公司、事件或技术中择一，由 evidence brief 说明选择理由。封面必须包含账号 logo，并分别使用 `scripts/render_cover_4x3.js` 导出 4:3 的 `cover.png`（推荐 1440×1080）、使用 `scripts/render_cover_3x4.js` 导出 3:4 的 `cover-3x4.png`（推荐 1080×1440）；封面独立于正片时间轴。
 - 平台封面默认不进入正片时间轴，不产生音频、字幕或 `segments.json` 时长；正片 `COLD_OPEN` 必须从 0 秒开始。若明确需要片头封面动画，必须将同等时长同步加入音频、字幕和所有 Scene 时间轴，并单独标记为 in-video cover。
 - 底部章节导航和进度条是 root-level persistent layer，章节宽度按真实音频时长比例计算。
 - 进度条、章节边界和 Scene 区间必须共用同一套全局累计时间线：每个区间记录 `start_ms`、`end_ms`、`duration_ms`，首段从 0 开始，后段 `start_ms` 必须等于前段 `end_ms`；不得为章节重新从 0 计时或用局部比例重算。
@@ -359,7 +384,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 - 运行 `check_public_copy.py` 和 `caption_gate.py verify`。
 - 运行全局时间线检查，验证 progress、chapter ranges、Scene、caption 和 audio segments 使用同一累计区间；发现区间断裂、重叠或进度语义不一致时 FAIL。
 - 运行字幕密度检查，确认 `podcast/qa/captions.json` 默认每个 turn 只有一条 cue、起止时间覆盖真实语音，且平台封面单独截图、不参与正片时长。
-- 运行 `hyperframes-animation/scripts/animation-map.mjs` 并在开场、目录、至少两个核心话题和结尾抓取 snapshots；视觉审阅必须记录结论，不只检查 DOM/媒体流。
+- 运行 `hyperframes-animation/scripts/animation-map.mjs` 并在开场、主要导航/转场、代表性核心模块和结尾抓取 snapshots；代表性模块数量按 manifest 声明，不强制每期固定两段。
 
 ### Known Issues
 
@@ -369,7 +394,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 
 ### Goal
 
-验证成片可播、研究一致、音频同步、视觉达标，并证明第二家公司只替换 manifest 即可复用。
+验证成片可播、研究一致、音频同步、视觉达标，并证明同一模板可在适用的第二个 subject 或视觉/叙事变体上复用。
 
 ### Required Resources
 
@@ -382,7 +407,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 
 ### Input
 
-完整 Composition、最终音频、字幕、episode manifest、账号 profile 和第二家公司最小测试输入。
+完整 Composition、最终音频、字幕、episode manifest、账号 profile 和第二个 subject 或变体的最小测试输入。
 
 ### Output
 
@@ -392,19 +417,19 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 
 - 音频逐句交替、音色正确、字幕同步、导航连续、图表状态完整。
 - 公共文案、数字一致性、字体、溢出、时长和渲染性能通过门禁。
-- 检查 `content_angle` 与 `report_context` 的一致性；非新鲜财报不得无理由使用固定的财务反差开场，跨公司重复开场需回到公司主线卡复核。
+- 检查 `subject_type`、`content_angle` 与 `report_context` 的一致性；无财报主线时不得硬套财务反差开场，跨期重复开场需回到 subject brief 复核。
 - 检查 Phase 1.5 的批准记录与导演 treatment 一致；没有人工批准的 run 不得进入渲染。
 - 检查话题全局顺序、机制主章节和相邻话题去重；发现多个章节重复同一机制时，必须退回 Phase 2 重新编排。
 - 检查反向转写 QA 已对所有重生成句完成闭环，异常句不能只通过字幕替换掩盖。
 - 检查 progress/chapter/scene/audio/caption 的全局累计区间一致。
 - 检查所有可见新闻、奖项、产品型号、性能和项目事实均能回指 `fact-card-manifest.json` 与已打开原文；缺来源或只来自搜索摘要时 FAIL。
 - 开场回归优先运行 `scripts/build_opening_canary.py`，只截取 `COLD_OPEN + INTRO` 生成短视频，先完成视觉审阅再进入长片渲染。
-- 第二家公司只替换 manifest 即可完成 draft render，不改模板源码。
+- 第二个 subject 或变体只替换 manifest/variables 即可完成 draft render，不改模板源码；若模板不适用，记录原因并新增适配模式。
 - 所有事实可回溯，财经边界检查通过。
 
 ### Known Issues
 
-只在单家公司通过不算 Workflow 完成；必须保留第二家公司复用回归证据。
+只在单一 subject 通过不算 Workflow 完成；必须保留第二个 subject 或变体的复用回归证据。
 
 ## Phase 6: publish-and-closeout — 多平台发布与结果回写
 
