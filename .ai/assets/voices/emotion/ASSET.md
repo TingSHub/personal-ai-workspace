@@ -1,6 +1,6 @@
 # Asset: voice-emotion.phase0-v1
 
-> 位置: `.ai/assets/voices/{zhiwei,shenyan,luheng}/emotion/`
+> 位置: `.ai/assets/voices/{zhiwei,shenyan,shenyan}/emotion/`
 
 ## 元数据
 

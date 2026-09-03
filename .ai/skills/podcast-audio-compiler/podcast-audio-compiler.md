@@ -10,7 +10,7 @@
 ## Workflow profiles
 
 具体版本参数由调用它的 Workflow 管理，例如
-`investagent-podcast-video-by-hyperframes/references/podcast-v1-luheng.md`。
+`investagent-podcast-video-by-hyperframes/references/podcast-v1-shenyan.md`。
 本 Skill 只定义通用编译契约，不拥有账号资产或播客版本。
 
 ## Entrypoints
@@ -30,7 +30,7 @@ scripts/check_dialogue_repetition.py  episode manifest 的跨段重复句与固�
 .venv-voxcpm/bin/python .ai/skills/podcast-audio-compiler/scripts/compile_podcast_audio.py \
   --episode <episode.json> --outdir <output> \
   --natural-pauses --post-process natural \
-  --voice-override shenyan=<workspace>/.ai/assets/voices/luheng/reference.wav
+  --voice-override shenyan=<workspace>/.ai/assets/voices/shenyan/reference.wav
 ```
 
 ## Hard gates

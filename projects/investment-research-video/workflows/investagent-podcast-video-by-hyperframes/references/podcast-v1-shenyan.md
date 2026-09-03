@@ -1,4 +1,4 @@
-# Podcast Workflow Profile: podcast-v1-luheng
+# Podcast Workflow Profile: podcast-v1-shenyan
 
 这是 `investagent-podcast-video-by-hyperframes` 的一个可复用运行版本，不是账号资产。
 
@@ -9,7 +9,7 @@
 | format | `host_analyst` |
 | role map | `host=zhiwei`, `analyst=shenyan` |
 | host asset | `voice.zhiwei` |
-| analyst asset | `voice.luheng`，通过运行时 override 选择 |
+| analyst asset | `voice.shenyan`，通过运行时 override 选择 |
 | backend | VoxCPM2 continuation |
 | inference timesteps | 10 |
 | pauses | `--natural-pauses` |
@@ -27,8 +27,8 @@
   --natural-pauses \
   --post-process natural \
   --inference-timesteps 10 \
-  --voice-override shenyan=<workspace>/.ai/assets/voices/luheng/reference.wav \
-  --emotion-override shenyan=<workspace>/.ai/assets/voices/luheng/emotion \
+  --voice-override shenyan=<workspace>/.ai/assets/voices/shenyan/reference.wav \
+  --emotion-override shenyan=<workspace>/.ai/assets/voices/shenyan/emotion \
   --voice-prompt shenyan="大家好，我是陆衡。这里是账本两面。今天我们先把收入、利润和现金流放在一起看。增长是真的，但利润能不能留下，还要继续核对。有人更看重规模，也有人更在意回款，这个问题可能没有一句话答案。"
 ```
 
@@ -39,7 +39,7 @@
 - 同一 `episode.json`、speaker/role 契约和顶层资源 key 可用于不同公司。
 - 每个 turn 独立生成；顺序、停顿和字幕来自实测 `segments.json`。
 - `audio-qa.json` 记录 backend、override、停顿、后处理和复用片段数。
-- 使用 voice.luheng 作为 shenyan 时，必须同时提供 voice.luheng/reference.wav、voice.luheng/emotion 和登记的 prompt_text。
+- 使用 voice.shenyan 作为 shenyan 时，必须同时提供 voice.shenyan/reference.wav、voice.shenyan/emotion 和登记的 prompt_text。
 - 任何 voice override 必须同时提供该资源 `ASSET.md` 中的 `prompt_text`；参考音频与 prompt 不匹配时不得进入生产。
 - VoxCPM2 continuation 是本版本的生产后端；CosyVoice3、IndexTTS 和其他 clone mode 属于独立 A/B，不得静默混入本版本。
 

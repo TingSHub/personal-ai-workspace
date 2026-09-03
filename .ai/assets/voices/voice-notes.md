@@ -11,7 +11,7 @@
 
 ## Cross-project lessons
 
-- `luheng` 已通过播客 canary 试听，作为独立的备用分析音色资源；具体 Workflow 是否选用它由 Workflow profile 决定。
+- `shenyan` 已通过播客 canary 试听，作为稳定分析音色资源；由 Workflow 的 `analyst=shenyan` 固定选择。
 - 音色资源验证只说明音色可用，不等于某个播客 Workflow 版本被锁定，也不承诺最终噪声底。
 - `inference_timesteps=20` 只改善部分高频平滑度，不能单独解决气声或持续性噪声。
 - 自然压缩和增益会放大呼吸声；具体 Workflow 是否启用 natural 后处理由 Workflow profile 决定。
@@ -26,6 +26,5 @@
 
 ## Historical experiments
 
-- `zhouyan`：已注册备用音色，未进入稳定 profile。
 - `voice.shenyan`：已验证基础男声资源，可被不同项目 profile 选择。
 - CosyVoice3、IndexTTS 和 boundary-clean 均属于 Workflow 实验分支，不改变已登记音色资源。

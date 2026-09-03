@@ -58,7 +58,7 @@
 - 图表优先于表格，表格优先于大段文字；观众不可见内部字段不得进入 HTML。
 - Composition 使用 account-profile 允许的视觉变体；editorial-paper 是稳定基线，不是每期强制样式。`visual_mode` 可按内容选择 editorial-paper、data-newsroom、dark-terminal、field-notes、timeline-board 或其他已验证变体，并记录选择理由。
 - 音色缺失、身份不匹配或静默 fallback 时，停在音频门禁。
-- `references/podcast-v1-luheng.md` 是当前稳定音频版本，使用 VoxCPM2 continuation；CosyVoice3、IndexTTS 和其他 clone mode 只作为独立 A/B。
+- `references/podcast-v1-shenyan.md` 是当前稳定音频版本，使用 VoxCPM2 continuation；CosyVoice3、IndexTTS 和其他 clone mode 只作为独立 A/B。
 - **数字口播简化**：亿级金额只说整数（"五十八亿"而非"五十八亿五"），千万级四舍五入到亿（"七个亿"而非"七亿三"），百分比用"X个点"（"十二个点"而非"十二点零零"）。详见 `account-profile/dialogue-policy.md`。
 - **英文读法**：CPU 保持英文，GPU 可说"显卡"，ARM 整体发音（不逐字母拼读），NVIDIA 用"英伟达"。
 - **字幕基线**：默认一条口播回合对应一条字幕，时间沿用该回合真实音频区间；允许自然换行，不按固定字数机械切碎。只有一个回合确实包含多个独立句群且画面需要分别强调时，才在 manifest 中显式拆 cue。
@@ -296,7 +296,7 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 
 ### Input
 
-`episode.json`、项目 `account-profile` 的资源选择和显式 Workflow profile。默认稳定版本见 `references/podcast-v1-luheng.md`。
+`episode.json`、项目 `account-profile` 的资源选择和显式 Workflow profile。默认稳定版本见 `references/podcast-v1-shenyan.md`。
 
 Phase 2 必须使用项目通用脚本 `scripts/build_podcast_episode.py` 从 `episode-input.json` 生成 episode、dialogue-map、spoken-style-map 和 chart-spec；该脚本不提供公司、话题或 OUTRO fallback，禁止调用带公司专属内容的历史 run 脚本作为新公司生成器。
 
@@ -312,7 +312,7 @@ Phase 2 必须使用项目通用脚本 `scripts/build_podcast_episode.py` 从 `e
 - 字幕时间来自真实 WAV；音频和 manifest 的文本、角色、后端、profile 可追溯。
 - 编译完成后必须运行 `scripts/build_caption_manifest.py`，从真实 `segments.json` 生成 `podcast/qa/captions.json` 和最终 `subtitles.srt`；Composition 只消费该 caption manifest，不直接把整段 turn 文本当作一条字幕。
 - 默认每个 turn 生成一条字幕 cue，起止时间来自该 turn 的真实音频；长文本由字幕容器自然换行，不用固定 20 字/40 字规则强制拆分。
-- `references/podcast-v1-luheng.md` 使用 VoxCPM2 continuation、`voice.zhiwei + voice.luheng`、自然停顿和 natural 后处理；不启用 CosyVoice3、IndexTTS 或其他 clone mode。
+- `references/podcast-v1-shenyan.md` 使用 VoxCPM2 continuation、`voice.zhiwei + voice.shenyan`、自然停顿和 natural 后处理；不启用 CosyVoice3、IndexTTS 或其他 clone mode。
 - **缓存失效门禁**：音频缓存不得只按 `turn_id` 和 WAV 文件存在性复用。文本、speaker、voice/reference、emotion、prompt、TTS 参数或 pacing 变化时，必须使用内容寻址缓存或全新音频目录；`reused_segments` 必须能解释为同一 manifest 的安全复用。
 - 通过音色、发音、尾词残留、杂音、响度、断句和文件可解码检查。
 - TTS 完成后必须对最终 narration 或逐句 WAV 执行反向转写/已知文本对齐检查；`audio-qa.json` 必须记录转写文本、异常句、重生成次数和最终 PASS。发现乱码、漏词、重复词或句尾残留时，必须回到 Phase 3 重生成该 turn，不能只改字幕。
@@ -328,8 +328,8 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 
 ### Phase 3 profile constraints
 
-- 当前 `podcast-v1-luheng` 的生产后端为 VoxCPM2 continuation；后端切换前必须先通过同一 `COLD_OPEN + INTRO` canary 和人工试听。
-- 当前 profile 固定使用自然停顿、natural 后处理和 luheng 情绪参考资产；其他后端和 clone mode 属于独立实验分支。
+- 当前 `podcast-v1-shenyan` 的生产后端为 VoxCPM2 continuation；后端切换前必须先通过同一 `COLD_OPEN + INTRO` canary 和人工试听。
+- 当前 profile 固定使用自然停顿、natural 后处理和 shenyan 情绪参考资产；其他后端和 clone mode 属于独立实验分支。
 
 ## Phase 4: podcast-composition — 参数化视觉
 

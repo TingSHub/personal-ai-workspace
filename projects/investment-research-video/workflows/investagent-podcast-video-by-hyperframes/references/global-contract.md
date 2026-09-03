@@ -9,7 +9,7 @@
 - `account-profile/content-policy.md`
 - `account-profile/dialogue-policy.md`
 - 顶层 `.ai/assets/` 中由 `resource_key` 选择的通用资源
-- 当前 Workflow profile，例如 `references/podcast-v1-luheng.md`
+- 当前 Workflow profile，例如 `references/podcast-v1-shenyan.md`
 - 账号图形：`account-profile/account/` 下的横版 logo、mark 和 avatar
 
 账号资产先于公司内容；项目只通过 `resource_key` 和 profile 选择资源，不复制资源本体。

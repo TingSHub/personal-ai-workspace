@@ -20,8 +20,8 @@ VOICE_CONFIG = {
         "clip": ASSET_ROOT / "voices" / "shenyan" / "reference.wav",
         "prompt": "欢迎来到账本两面，我是顾慎言。20多年投资经验，经历过2007年牛市，2015年股灾，见过太多看着贵其实不贵，和看着便宜其实是坑的故事。",
     },
-    "luheng": {
-        "clip": ASSET_ROOT / "voices" / "luheng" / "reference.wav",
+    "shenyan": {
+        "clip": ASSET_ROOT / "voices" / "shenyan" / "reference.wav",
         "prompt": "大家好，我是陆衡。这里是账本两面。今天我们先把收入、利润和现金流放在一起看。增长是真的，但利润能不能留下，还要继续核对。有人更看重规模，也有人更在意回款，这个问题可能没有一句话答案。",
     },
 }

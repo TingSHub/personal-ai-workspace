@@ -13,7 +13,7 @@ tags: [podcast, audio, pacing, prosody, tts, quality-gate]
 ## 来源证据
 
 - 项目：investment-research-video，东山精密 run 2026-08-23。
-- 证据：podcast/audio/podcast-v1-luheng-corrected/segments.json 与 audio-qa.json。
+- 证据：podcast/audio/podcast-v1-shenyan-corrected/segments.json 与 audio-qa.json。
 - 统计：107 段音频；林知微约 4.79 字/秒，顾慎言约 4.50 字/秒；冷开场林知微约 4.39 字/秒，顾慎言约 4.00 字/秒。
 - 开场四个 turn 的 turn 间停顿全部为 140ms；episode manifest 的 pause_after_ms 为 0，由 natural-pauses 回填。
 - 编译器现状：delivery 写入 segments 元数据；natural-pauses 按 interaction_type 生成 turn 间静音；没有 speech rate 或句内 break 的执行参数。
