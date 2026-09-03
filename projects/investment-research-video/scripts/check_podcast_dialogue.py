@@ -50,11 +50,6 @@ def main() -> int:
 
     findings: list[str] = []
     turns = episode.get("turns") or []
-    current_company = args.episode.parents[3].name if len(args.episode.parents) > 3 else episode.get("company_name", "")
-    companies_root = args.episode.parents[4] / "" if len(args.episode.parents) > 4 else None
-    known_other_companies = []
-    if companies_root and companies_root.is_dir():
-        known_other_companies = [p.name for p in companies_root.iterdir() if p.is_dir() and p.name != current_company]
     topic_order = []
     for turn in turns:
         if turn.get("topic_id") not in topic_order:
@@ -82,9 +77,6 @@ def main() -> int:
         for phrase in FORBIDDEN_PRODUCTION_META:
             if phrase in text:
                 findings.append(f"{turn.get('turn_id')} contains production metadata in spoken text: {phrase}")
-        for company in known_other_companies:
-            if company and company in text:
-                findings.append(f"{turn.get('turn_id')} contains another company name: {company}")
         prefix = next((item for item in SHORT_PREFIXES if any(text.startswith(item + marker) for marker in ("，", "。"))), None)
         if prefix:
             if turn.get("backchannel") != prefix:
@@ -111,6 +103,17 @@ def main() -> int:
     for resource in ("human-understanding", "humanizer-zh"):
         if resource not in phase2:
             findings.append(f"phase2 execution receipt missing {resource}")
+
+    # Comparison episodes must name the objects being compared.  Do not infer
+    # or ban names from sibling project directories: industry and comparison
+    # subjects are explicitly allowed to mention multiple entities.
+    comparison_entities = episode.get("comparison_entities") or []
+    if len(comparison_entities) > 1:
+        spoken = "\n".join(turn.get("text", "") for turn in turns)
+        for entity in comparison_entities:
+            name = entity.get("name", "") if isinstance(entity, dict) else str(entity)
+            if name and name not in spoken:
+                findings.append(f"comparison entity missing from spoken text: {name}")
 
     report = {
         "status": "PASS" if not findings else "FAIL",

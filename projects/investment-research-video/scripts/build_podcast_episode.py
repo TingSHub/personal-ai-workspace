@@ -131,9 +131,10 @@ def main() -> int:
         "opening_visual": opening.get("opening_visual") or manifest.get("opening_visual"),
         "opening_mode": opening.get("mode", "cold_data_hook"),
         "opening_cards": opening["cards"],
+        "comparison_entities": manifest.get("comparison_entities", []),
         "agenda": [topic["title"] for topic in topics],
         "valuation_context": manifest.get("valuation_context"),
-        "topics": [{**{k: topic[k] for k in ("topic_id", "title", "claim", "metrics", "chart")}, "short_label": topic.get("short_label", topic["title"].split("，")[0]), "fact_ids": topic.get("fact_ids", []), "fact_role": topic.get("fact_role", "none"), "source_refs": topic.get("source_refs", []), "visual_intent": topic.get("visual_intent", "none")} for topic in topics],
+        "topics": [{**{k: topic[k] for k in ("topic_id", "title", "claim", "metrics", "chart")}, "short_label": topic.get("short_label", topic["title"].split("，")[0]), "entity_legend": topic.get("entity_legend", []), "fact_ids": topic.get("fact_ids", []), "fact_role": topic.get("fact_role", "none"), "source_refs": topic.get("source_refs", []), "visual_intent": topic.get("visual_intent", "none")} for topic in topics],
         "outro_summary": manifest.get("outro_summary", [{"label": "增长", "value": "已发生", "desc": "收入与利润高增长"}, {"label": "现金", "value": "待验证", "desc": "经营现金流与回款"}, {"label": "产能", "value": "待兑现", "desc": "扩产后的有效回报"}]),
         "turns": turns,
     }

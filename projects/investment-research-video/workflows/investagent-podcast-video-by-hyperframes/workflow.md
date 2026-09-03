@@ -42,6 +42,7 @@
 - 内容主线按 subject_type、观众问题、证据新鲜度和产业/经营重要性动态选择：财报、行业机制、公司案例、重大事件、技术路线和政策变化都可以成为主线；财报只在证据和问题确实支持时作为主线。
 - 上游 `topic-forward-lead` 的选题卡是生产主输入；其中的差异化角度、内容范围和生产提示词必须先被导演吸收，再结合本期研究决定叙事、公司数量、模块顺序和视觉形态。任何行业→公司→特殊公司的路径都只是可选参考。
 - 每期先从选题卡提炼一个观众问题和内容承诺，再决定主叙事形态与模块数量；不默认从“若干个话题”开始，也不默认每期都走公司介绍 → 财报 → 风险的顺序。
+- 比较或行业→公司叙事必须在 manifest 声明 `comparison_entities[]`（每项含 `name`、`role`、`source_refs`）以及相关 topic 的 `entity_legend`；口播首次提到“几家公司/几类主体”时，必须在同一回合或前一回合说出具体名称。质量检查不得通过扫描项目目录来禁止其他公司名，跨主体比较是受支持的输入形态。
 - 允许轮换行业拆解、公司案例、公司对比、事件追踪、技术机制、政策影响、神话证伪、产业链地图和问答型节目；轮换必须服从证据和观众问题。
 - 官方资料路径、复用检查、命名和同行归档统一遵循 `references/global-contract.md` 与 cninfo-connector；公司新闻与产品资料统一落到 `research-materials/company-intelligence/`。
 - `editorial/episode-input.json` 是 Phase 2 生成器的输入事实与表达契约；生成器不得在代码中写死公司、行业或事件专属开场、自我介绍、估值内容或固定话题数量。
@@ -249,6 +250,7 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 - `cover.title` 必须突出本期最引人注目的行业、产业链或公司主角；封面只保留手机缩略图可读的大字和必要图形，日期、全称和研究注释不进入封面主视觉。
 - `episode-input.json` 必须声明 `opening.mode`、`opening.cards`、`opening.cold_open`、`opening.intro`；开场和自我介绍只能从该 manifest 读取。
 - `episode-input.json` 必须携带 `content_angle`、`report_context`、`editorial_thesis`、`opening_rationale` 和 `narrative_mode`；`financial_data_role` 仅在存在财报/财务证据时填写，Phase 2 不得绕过 Phase 1 的主线决策。
+- `comparison_entities[]` 是可选但有条件必填的字段：当标题、口播或选题卡涉及多家公司/多类主体时必须填写；`entity_legend` 用于页面明确显示名称和环节，不能用“公司A/B”或“观察”占位。
 - Phase 2 开始前必须通过适用的 topic approval gate；`topic_id`、opening 和模块顺序必须与批准记录或用户已批准主问题一致。
 - 必须消费 `editorial-director-agent` 的 treatment：每个内容模块有 audience payoff、机制归属、前后依赖、visual intent 和验证/证伪条件；缺少任一项不得生成最终 episode。
 - 若选题卡允许多种讲法，导演必须先提交 2–3 个轻量叙事草案并记录选择理由；若证据或平台目标只支持一种，记录不做多方案的原因即可。草案不要求新增模板，写入 treatment 或可选 `narrative-options.json`。
@@ -265,6 +267,7 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 - Phase 2 对明显停顿必须先完成脚本表达设计：长句拆分、问答回合或自然承接优先；不得把“画面里、口播、字幕”等制作元话语写入 spoken text。若确需固定静音，才在受影响 turn 上声明 `intra_turn_breaks`。
 - 句首出现“对/嗯/没错/好”等短回应时，必须同时写入 `response_action=backchannel`、`backchannel`、`backchannel_target`、`filler_position=start`、`delivery=short_pause` 和正值 `pause_after_ms`；不能只把短词拼进普通长句。
 - 数字分别锁定事实、自然口播和紧凑画面表达；不改变口径和事实方向。
+- 每个视觉指标卡必须有语义完整的 `label`、`value`、`desc`；同一 topic 的三张卡不得全部使用“观察/指标/数据/待填写”等占位值。页面标签应回答“谁/什么指标/处于什么阶段”，不能只重复状态词。
 - `human-understanding` 先把反馈转成约束；`finance-content-engineering` 直接改写 episode-draft；`humanizer-zh` 审校 episode-polished 并写回最终 episode.json。两者不能只更新 spoken-style-map，也不能在 Phase 3 随意改稿。
 - `spoken-polish-diff.json` 必须记录每个 changed turn 的 before/after；draft/final 的 speaker、topic_id、evidence_ids 不得变化。存在用户口语化反馈时，运行 `scripts/check_spoken_polish.py --require-change`，无实际文本变化不得写 PASS。
 - 明显停顿的脚本改写必须落在 `episode-draft`/`episode-polished`/最终 `episode.json` 的文本中；只修改 `spoken-style-map`、delivery 或口头说明而未改变实际 spoken text，不得写 PASS。

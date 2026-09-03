@@ -90,6 +90,26 @@ def metric_cards(metrics):
         cards.append(f'<div class="metric {html.escape(str(color))}"><div class="label">{html.escape(str(label))}</div><div class="value"{count_attrs}>{html.escape(value_text)}</div><div class="desc">{html.escape(str(desc))}</div></div>')
     return ''.join(cards)
 
+def validate_metric_semantics(topic_id, metrics):
+    """Stop generic placeholder cards from reaching a rendered episode.
+
+    A metric card may be qualitative, but three cards with the same filler
+    value (for example, ``观察``) carry no topic information and usually mean
+    the manifest generator substituted a default.  Repeated values remain
+    available when the manifest explicitly marks ``allow_repeated_value``.
+    """
+    if not isinstance(metrics, list) or len(metrics) < 3:
+        return
+    values = []
+    for metric in metrics[:3]:
+        if isinstance(metric, dict):
+            values.append(str(metric.get('display_value', metric.get('value', ''))).strip())
+        elif isinstance(metric, (list, tuple)) and len(metric) >= 2:
+            values.append(str(metric[1]).strip())
+    placeholders = {'观察', '指标', '数据', '待填写', '暂无'}
+    if len(values) == 3 and len(set(values)) == 1 and values[0] in placeholders:
+        raise SystemExit(f"{topic_id} has three placeholder metric values ({values[0]}); provide topic-specific values")
+
 def number(value):
     try:
         return float(value)
@@ -323,7 +343,12 @@ def main():
                 metrics.append((meta.get('display_name','主持人'),meta.get('role','研究视角'),'关注结构、趋势与验证','pink' if speaker_id=='zhiwei' else 'orange'))
             metrics.append(('本期目录',f'{len(agenda_items)} 个话题','从现象走到验证','blue'))
         elif topic_id in {'SUMMARY','OUTRO'}: title='双人总结'; subtitle='把判断交给下一期数据验证'; metrics=[]
-        else: title=t.get('title',topic_id); subtitle=''; metrics=t.get('metrics',[])
+        else:
+            title=t.get('title',topic_id)
+            legend=t.get('entity_legend') or []
+            subtitle='｜'.join(str(x.get('name', x) if isinstance(x, dict) else x) for x in legend)
+            metrics=t.get('metrics',[])
+            validate_metric_semantics(topic_id, metrics)
         labels=[]
         for nav_index, nav_id in enumerate(topic_order):
             nav_topic=topics.get(nav_id,{})
