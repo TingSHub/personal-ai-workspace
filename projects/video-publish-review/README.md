@@ -16,6 +16,7 @@
 ## Workflows
 
 - publish-review（本项目核心 SOP，位于 `workflows/publish-review/workflow.md`）
+- topic-forward-lead（选题前瞻：复盘后自动发现下一个视频话题，位于 `workflows/topic-forward-lead/workflow.md`）
 
 ## 复盘成果组织
 
