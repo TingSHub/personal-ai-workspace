@@ -73,3 +73,6 @@ external/
 .claude/skills/investagent/skills/uzi-skill/docs/screenshots/
 .claude/skills/investagent/skills/TradingAgents/tests/
 experiments/video-resource-benchmark/vendors/
+
+# OMC/tooling runtime mirror of .claude/skills.
+.agents/skills/
