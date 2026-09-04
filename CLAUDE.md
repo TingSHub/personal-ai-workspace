@@ -14,7 +14,7 @@
 - 字段清单一律从 `.ai/templates/` 模板读取填充，禁止内联字段定义
 - 工作区统一使用一个 Git 仓库，`projects/*` 下的项目源码由本仓库统一管理
 - 引用 Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径
-- 运行时状态（`.omc/`）永不提交；`.codex/skills` 是唯一目录级软链接，固定指向 `../.claude/skills`，禁止创建逐 Skill 二级链接
+- 运行时状态（`.omc/`）永不提交；`.claude/skills` 是工作区唯一 Skill 安装根，`.codex/skills` 是唯一兼容软链接并固定指向 `../.claude/skills`，禁止存在 `.agents/skills` 或逐 Skill 二级链接
 - **默认调用路径**：Project → Workflow → Skill/Agent。Workflow 是 Markdown SOP 唯一事实源；阶段 Required Resources 必须真实执行并留下独立产物；下游只消费已验收产物。
 - **最佳可用资源选择**：禁止 local first。按实际效果、输出质量、稳定性、依赖成本、维护成本和当前项目适配性选择；从 workspace、已安装外部 Skill、skill-hub、find-skills 和 agent repository 发现候选，来源不构成优先级。依赖可安全补齐时先补齐，确实无法使用或验收失败才回退；不维护综合评分、可用状态或配置成本模型。
 - **资源边界**：Skill/Agent 只记录来源、已安装版本、调用、要求、更新方式、注意事项、踩坑和可选辅助脚本。本地增强放在资源资产内，不修改外部安装实体。
@@ -29,5 +29,6 @@
 - `.ai/workflows` — 流程库（development / task / automation）
 - `.ai/templates` — 生成模板（唯一事实源）
 - `.ai/rules` — 规则索引
-- `.claude/skills` — Registry Skills
+- `.claude/skills` — Manager 与可执行 Skill 的唯一安装根
+- `.agents` — 只保存 Agent 定义，禁止安装或镜像 Skill
 - `projects` — 实际项目（纳入本仓库统一管理）

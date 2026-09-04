@@ -9,8 +9,8 @@
 3. 创建新项目使用 Project Registry。
 4. 字段清单一律从 `.ai/templates/` 读取，禁止在 Manager 中复制字段定义。
 5. Workflow / Skill / Agent / Experience 一律使用 by-name 引用，不用相对路径。
-6. 顶层仓库与 `projects/*` 物理隔离；项目代码永不提交到本仓库。
-7. 运行时状态不提交；`.codex/skills` 是指向 `../.claude/skills` 的单一目录软链接，禁止逐 Skill 建链或复制。
+6. workspace 使用一个顶层 Git 仓库统一管理 `projects/*` 项目源码。
+7. 运行时状态不提交；`.claude/skills` 是唯一 Skill 安装根，`.codex/skills` 是指向它的单一目录软链接，禁止 `.agents/skills`、逐 Skill 建链或复制。
 
 ## 默认调用路径
 
@@ -24,9 +24,9 @@
 
 ## 收尾与提交触发
 
-- 用户说“收尾”“提交”“结束”“交付”“wrap up”或等价表达时，优先调用 Global Workflow `closeout-and-commit`。
-- 收尾第一轮只生成 staging bundle、对话蒸馏和 Experience/文档/提交候选，不直接改正式资产或提交。
-- 只有用户明确确认候选和文件范围后，才允许回写文档、运行最终交付质量门和创建本地 Git commit。
+- 只有用户显式调用 `$closeout` 时才启动 Global Workflow `closeout-and-commit`；普通“提交”“结束”等措辞不替代显式入口。
+- `review` 只生成完成度、目录和知识候选，不直接改正式资产或提交。
+- 只有用户按稳定提案 ID 明确批准后，才允许执行目录动作、回写文档或创建本地 Git commit；commit 需要独立授权。
 - 收尾默认不 push、不发 PR、不发布外部内容；实际外部事件和失败必须在 handoff 中保留。
 
 ## 质量优先选择

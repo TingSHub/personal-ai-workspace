@@ -14,7 +14,7 @@ A personal AI asset management and orchestration system. It manages reusable Wor
 - Field lists always come from `.ai/templates/` templates; never inline field definitions
 - The workspace uses one Git repository: project source under `projects/*` is managed by this repository
 - Reference Workflows / Skills / Agents / Experiences by name, never by relative path
-- Runtime state (`.omc/`) is never committed; `.codex/skills` is one directory symlink to `../.claude/skills`
+- Runtime state (`.omc/`) is never committed; `.claude/skills` is the only workspace Skill installation root, `.codex/skills` is the single compatibility symlink to `../.claude/skills`, and `.agents/skills` must not exist
 - **Default call path**: Project → Workflow → Skill/Agent. The Workflow is the single source of truth as a Markdown SOP; each phase's Required Resources must actually run and leave an independent artifact; downstream steps consume only accepted artifacts.
 - **Best-available selection**: never use local-first routing. Choose by actual effectiveness, output quality, stability, dependency cost, maintenance cost, and current-project fit. Discover across workspace, installed external skills, skill-hub, find-skills, and agent repositories; source is not a priority. Fall back only when the preferred resource cannot be made usable or fails acceptance. Do not add aggregate scores, availability states, or setup-cost models.
 - **Resource boundary**: Skill/Agent records are technical calling guides. They contain source, installed revision, invocation, requirements, update method, known issues, and optional local scripts. Never modify vendored external resources to add local behavior; keep local notes/scripts in the resource asset.
@@ -29,10 +29,11 @@ A personal AI asset management and orchestration system. It manages reusable Wor
 - `.ai/workflows` — workflow library (development / task / automation)
 - `.ai/templates` — templates (single source of truth)
 - `.ai/rules` — rules index
-- `.claude/skills` — manager and executable skills
+- `.claude/skills` — the only installation root for manager and executable skills
+- `.agents` — Agent definitions only; never a Skill installation or mirror root
 - `projects` — actual projects managed inside this repository
 
 ## Known Limitations
 
 - Installed third-party resources may ship their own code/scripts. Local calling helpers belong under the matching `.ai/skills/<name>/scripts/` or `.ai/agents/<name>/scripts/` directory and must not modify the external installation.
-- Do not create per-Skill links or copies under `.codex/skills`; maintain the single directory symlink so Claude and Codex always see the same installation tree.
+- Do not create Skill links, copies, or mirrors under `.agents/skills` or per-Skill entries under `.codex/skills`; maintain only the single `.codex/skills -> ../.claude/skills` directory symlink.

@@ -75,5 +75,5 @@ external/
 .claude/skills/investagent/skills/TradingAgents/tests/
 experiments/video-resource-benchmark/vendors/
 
-# OMC/tooling runtime mirror of .claude/skills.
+# Block legacy tooling mirrors; .claude/skills is the only installation root.
 .agents/skills/

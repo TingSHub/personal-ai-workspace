@@ -31,12 +31,12 @@ personal-ai-workspace/
 │   ├── archive/         # 归档区（capabilities/experiences/workflows/templates/docs，仅溯源不执行）
 │   ├── experiences/     # 在途经验（反馈闭环：回写完成后归档）
 │   ├── workflows/       # 流程库（development/task/automation）
-│   ├── projects/        # 项目登记索引
 │   ├── rules/           # 规则索引
 │   └── templates/       # 生成模板（唯一事实源）
 ├── projects/            # 实际项目（与 workspace 共用一个 Git 仓库）
-├── .claude/skills/      # Manager Skills 与实际执行 Skills
-└── .codex/skills        # Codex 兼容入口（目录软链接 → ../.claude/skills）
+├── .agents/             # Agent 实体定义（不安装 Skill）
+├── .claude/skills/      # Manager 与执行 Skill 的唯一安装根
+└── .codex/skills        # 唯一兼容入口（目录软链接 → ../.claude/skills）
 ```
 
 ## Agent 执行规则
@@ -69,4 +69,4 @@ personal-ai-workspace/
 
 Markdown + YAML + Git。无数据库、无 Web UI、无评分/状态系统、无 Framework、无 Runtime。
 
-仓库卫生：运行时状态（`.omc/`）永不提交；`.codex/skills` 必须保持为指向 `../.claude/skills` 的单一目录软链接，不创建逐 Skill 链接或副本。
+仓库卫生：运行时状态（`.omc/`）永不提交；`.claude/skills` 是唯一 Skill 安装根，`.agents/skills` 禁止存在，`.codex/skills` 必须保持为指向 `../.claude/skills` 的单一目录软链接。

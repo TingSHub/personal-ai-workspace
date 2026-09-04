@@ -43,6 +43,10 @@ def scan(root: Path) -> list[dict[str, str]]:
     if not (root / "AGENTS.md").is_file() or not (root / ".ai").is_dir():
         raise ValueError("root is not a personal-ai-workspace checkout")
 
+    duplicate_skill_root = root / ".agents" / "skills"
+    if duplicate_skill_root.exists() or duplicate_skill_root.is_symlink():
+        results.append(finding("BLOCKER", "duplicate-skill-root", duplicate_skill_root.relative_to(root), "Skills must be installed only in .claude/skills; remove this mirror or compatibility link."))
+
     legacy_projects = root / ".ai" / "projects"
     if legacy_projects.exists():
         results.append(finding("RECOMMENDED", "legacy-project-registry", legacy_projects.relative_to(root), "Legacy registry duplicates the canonical projects/ tree."))
