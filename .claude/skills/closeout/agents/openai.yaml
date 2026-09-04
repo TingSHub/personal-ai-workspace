@@ -1,0 +1,6 @@
+interface:
+  display_name: "Closeout"
+  short_description: "Review structure, distill knowledge, and commit approved changes"
+  default_prompt: "Use $closeout to review this task, propose directory and knowledge changes, and wait for approval before applying or committing."
+policy:
+  allow_implicit_invocation: false

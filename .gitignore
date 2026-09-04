@@ -36,6 +36,7 @@ projects/investment-research-video/account-profile/evidence/voices/
 # Local/generated material outside the source tree.
 external/
 .ai/closeouts/
+.ai/archive/closeouts/
 .ai/archive/projects/
 
 # Large binary media and generated assets are kept outside Git.

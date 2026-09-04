@@ -4,248 +4,189 @@
 
 ## Mission
 
-把“收尾 / 提交 / 结束 / wrap up”从一句口头指令变成可复用的交付流程：先从本轮对话、日志和产物中提炼可改变未来行动的经验，再由用户确认，随后回写正式文档、清理交付表面、验证任务边界，最后按模板为每个受影响仓库创建本地 Git 提交。流程服务所有项目，不绑定公司、视频或单一 Workflow。
+通过显式 `$closeout` 把已完成任务转化为结构清晰、经验可复用、范围可审计的本地 Git 提交。先验收任务与目录结构，再生成逐项审批提案；只有用户批准后才整理目录、回写正式资产或提交。流程服务整个单仓库 workspace，不负责 push、PR、发布或外部消息。
 
 ## Input
 
-- 触发意图：用户表达收尾、提交、结束、交付或等价意图；若只是询问状态，不启动提交分支。
-- 当前工作范围：项目或顶层仓库、任务目标、正式产物、验收证据、使用过的 Workflow/Skill/Agent、当前 Git 仓库边界。
-- 可追溯材料：本轮对话文本或转写稿、项目日志、已验收产物、用户已明确接受的决定。
-- 用户选择：Phase 1 生成候选后，必须明确确认要回写的经验、文档变更和提交范围；未确认时只保留 closeout staging bundle，不改正式资产、不提交。
-- 可选：本轮排除项或必须保留的审计事实。没有提供时由资源规则从最终状态判定，不凭空补写。
+- 必填：显式 `$closeout` 调用、当前任务目标、正式产物、验收证据和当前工作目录。
+- 必填：运行模式；未指定时为 `review`。`apply` 必须带有可映射到稳定提案 ID 的用户批准。
+- 可选：任务拥有的文件、排除项、允许保留的结构例外和需要蒸馏的对话或日志。
+- `commit-only` 可跳过经验蒸馏；`distill-only` 不执行目录 mutation 或 Git commit。
 
 ## Output
 
-每次运行先在当前仓库产生一个可审计的 staging bundle：
-
-- 项目仓库：`projects/<project>/logs/closeout/<run-id>/`
-- 顶层仓库：`.ai/closeouts/<run-id>/`
-
-Bundle 至少包含：`baseline.md`、`conversation-distill.md`、`experience-candidates/`、`doc-change-proposals.md`、`commit-plan.md`、`validation-receipt.md`、`final-delivery.md`。原始对话只可留在 staging/evidence，不得直接进入资产库。
-
-用户确认后，正式输出为：已回写并归档的 Experience、更新后的 Workflow/Skill/Agent 文档、验证收据、每个仓库一个符合模板的本地 commit，以及最终交付说明。默认不 push、不发 PR、不发送外部消息。
+- review：`baseline.md`、`directory-review.md`、`approval-proposal.md`。
+- apply：仅为实际执行的动作增加 `apply-receipt.md`、`validation-receipt.md`、`commit-receipt.md` 和最终 handoff。
+- 项目级证据：`projects/<name>/logs/closeout/<run-id>/`。
+- workspace 级证据：运行中使用 `.ai/closeouts/<run-id>/`；完成后只归档必要收据到 `.ai/archive/closeouts/`，不长期保留未使用的阶段占位文件。
 
 ## Principles
 
-- best_available_resource：按实际效果、输出质量、稳定性、依赖成本、维护成本和当前项目适配性选择资源，禁止 local first。
-- 先候选、后确认：蒸馏结论和文档计划可以自动生成，正式资产回写和提交必须经过用户确认。
-- 只沉淀可改变未来行动的经验：项目专属事实、普通命令输出、对话全文和无证据建议留在日志或 staging。
-- 正式文档是最终状态叙述：只保留读者理解结果所需的事实，不把被否决方案、纠正过程或内部约束当成标题和交付内容。
-- 保护边界：先记录 pre-existing 修改，按文件清单提交；多个仓库分别验证、分别提交。
-- 不把验证替代事实：质量门只能检查已定义的要求，不能把一次通过当成通用能力证明。
-- 不自动扩张外部动作：本 Workflow 只提交本地 Git；push、PR、发布和删除属于另一个明确授权。
-- by-name 引用：Workflow/Skill/Agent/Experience 使用稳定名称，不使用相对路径作为资源身份。
+- 显式入口：只有 `$closeout` 启动本 Workflow；普通“提交/结束”措辞不能替代显式调用或 mutation 批准。
+- 先建议、后批准：review 不移动、删除、归档、写 canonical asset、stage 或 commit。
+- 分项授权：提交范围、目录动作、Experience、文档回写和 commit 使用稳定 ID 分别批准；模糊同意不扩大范围。
+- 单仓库边界：workspace 顶层 Git 是唯一仓库；`projects/*` 是同一仓库内的子项目，不分别 commit。
+- 目录质量是提交门：同时检查归属、生命周期、命名、重复、可发现性和扩展结构；vendor/runtime 体积本身不是重组理由。
+- 真实执行留痕：Required Resources 必须真实执行并留下独立结果；下游只消费已验收产物。
+- 经验只沉淀未来会改变行动的结论；项目事实和普通日志留在项目执行记录。
+- by-name 引用：Workflow、Skill、Agent 和 Experience 使用稳定名称。
 
-## Phase 0: inventory — 固定范围与权威基线
+## Phase 0: baseline-and-completion — 冻结范围并确认任务完成
 
 ### Goal
 
-确定本轮哪些内容属于任务、哪些是 pre-existing 修改，冻结各仓库基线，避免收尾时把无关变更带入文档或提交。
+冻结 HEAD、工作树和 task-owned 范围，并在治理与提交前确认请求的工作已经完成。
 
 ### Required Resources
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| resource-manager | skill | 必选 | internal | 解析当前资源说明、确认资源身份和 installed_ref；不负责经验回写 |
+| closeout | skill | 必选 | internal | 显式路由、模式与审批边界；不替代任务自己的质量门 |
 
 ### Input
 
-触发意图、当前工作目录、任务目标、Git 仓库列表、正式产物和已有验证记录。
+任务目标、最终产物、验证证据、Git 状态、用户提供的范围与排除项。
 
 ### Output
 
-`baseline.md`：仓库绝对路径、HEAD、工作树状态、任务拥有的文件范围、pre-existing 修改、待验证产物、是否存在未完成 closeout。
+`baseline.md`：HEAD、工作树快照、task-owned 候选、pre-existing 修改、排除项、完成度与阻断项。
 
 ### Quality Criteria
 
-- 每个受影响仓库都记录 HEAD 与 `git status --short` 快照。
-- 明确 task-owned 文件候选和保护清单；未知归属不得默认纳入提交。
-- 找到并读取当前任务使用的 Workflow SOP；没有 Workflow 时记录为流程缺口，不在本阶段临时创造隐含规则。
-- 不修改正式资产、不 stage、不 commit。
+- 任务必需产物存在且相应验证已执行；失败或缺失记为 BLOCKER。
+- pre-existing 修改与本次任务修改分开记录；未知归属不进入批准清单。
+- 本阶段不修改文件、不 stage、不 commit。
 
 ### Known Issues
 
-Git 工作树可能包含其他任务的修改；以 baseline 快照和用户确认范围为准。无法区分归属时只提出候选，不执行提交。
+对话上下文不足以判定文件归属时，只生成待确认项；不能以“当前工作树里存在”为依据认领文件。
 
-## Phase 1: distill — 对话蒸馏与经验候选
+## Phase 1: structure-and-knowledge-review — 目录审查与按需蒸馏
 
 ### Goal
 
-把本轮反馈压缩为可复用的正向结论、质量规则、资源调用教训和脚本化机会，形成候选而不是直接写入正式文档。
+扫描机械结构问题并进行语义目录审查；仅在存在真实可复用反馈时生成 Experience 和文档候选。
 
 ### Required Resources
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| cangjie-skill | skill | 必选 | internal | 用 RIA-TV++ 的结构/原则/反例/应用视角蒸馏长对话或转写；需要可追溯文本源，不凭记忆补写 |
-| experience-curator | skill | 必选 | internal | 筛选会改变未来 Workflow、资源调用、质量检查或脚本的结论；负责归属，不越权回写 |
+| closeout | skill | 必选 | internal | 执行只读扫描与语义结构审查；扫描器不判断业务归属 |
+| experience-curator | skill | 按模式 | internal | review/distill 且有真实证据时生成候选；无复用结论时应明确跳过 |
+| cangjie-skill | skill | 可选 | internal | 仅用于长对话或长日志蒸馏，不再作为每次提交的固定成本 |
 
 ### Input
 
-`baseline.md`、对话/日志文本、已验收交付物、当前 Workflow/Skill/Agent 说明和验证证据。
+已验收的 `baseline.md`、任务产物、相关父目录、控制目录、引用和可追溯反馈。
 
 ### Output
 
-- `conversation-distill.md`：主题骨架、已接受结论、证据、适用边界、未决项。
-- `experience-candidates/*.md`：按 Experience 模板生成的候选，明确 owner、asset、证据和未来行动。
-- `doc-change-proposals.md`：每项候选建议回写到哪个 Workflow/Skill/Agent，以及理由。
-- `commit-plan.md`：按仓库拆分的拟提交文件、提交类型和最终状态摘要。
+- `directory-review.md`：扫描结果和语义审查，分为 BLOCKER、RECOMMENDED、OPTIONAL、ACCEPTED_EXCEPTION。
+- 可选 Experience candidates 和文档回写候选，各自包含证据、owner、目标资产与未来行动。
 
 ### Quality Criteria
 
-- 对话蒸馏有实际文本来源和元信息，不把私有推理当证据。
-- 每个候选都能回答“下次具体改变什么行动”；否则留在 `conversation-distill.md`，不创建 Experience。
-- 同主题候选先搜索已有 Experience，重复结论合并而不是新增。
-- 项目专属事实、未验证建议、被否决方案和原始对话不进入候选正文。
-- 可机械化的人工检查被标记为脚本候选，并写明目标资源。
-- 本阶段不改 canonical docs、不移动 Experience、不提交 Git。
+- 每个目录建议包含当前位置、建议位置、理由、受影响引用、风险和是否阻断提交。
+- 检查归属、source/generated/runtime/archive 生命周期、命名、重复、发现入口和后续同类扩展方式。
+- 外部安装实体、虚拟环境、缓存和大型依赖不因体积或深度被误判为应移动。
+- 没有会改变未来行动的结论时，不创建 Experience 占位文件。
 
 ### Known Issues
 
-cangjie-skill 原生定位是长内容→skills；本 Workflow 只使用其蒸馏方法生成候选，不在没有用户确认时自动创建或安装新 Skill。Experience Curator 的正式 promote 必须延后到 Phase 2。
+确定性扫描只能发现高置信度事实；扩展性和归类准确性必须结合任务语义审阅。
 
-## Phase 2: approval-and-apply — 用户确认后回写正式文档
+## Phase 2: approval — 生成统一逐项审批提案
 
 ### Goal
 
-让用户对“哪些经验成立、回写哪里、哪些文件提交”作出明确确认，然后只应用被确认的变更。
+把任务文件、目录动作、经验、文档回写、延期事项和 commit 授权汇总为可精确批准的清单。
 
 ### Required Resources
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| experience-curator | skill | 必选 | internal | 按确认结果 promote，回写带来源标记的条目并归档；必须保留 by-name 追溯 |
-| workflow-registry | skill | 必选 | internal | 维护 Workflow 索引；SOP 内容仍由作者按模板直接修改 |
-| resource-manager | skill | 必选 | internal | 修改 Skill/Agent 资源说明或注册新资源；不直接承担 Workflow 知识回写 |
+| closeout | skill | 必选 | internal | 生成稳定提案 ID 并阻止模糊授权扩张 |
 
 ### Input
 
-Phase 1 的候选、文档计划、提交计划和用户明确确认。
+通过验收的 baseline、directory review 和可选知识候选。
 
 ### Output
 
-已确认的 Experience 被 promote、回写并归档；批准的 Workflow/Skill/Agent 文档变更已落盘；`apply-receipt.md` 记录每项候选的 accepted/rejected/deferred 及目标文件。
+`approval-proposal.md`：至少分为文件范围、目录动作、Experience、文档写入、延期与本地 commit 六类；无内容类别标记为不适用。
 
 ### Quality Criteria
 
-- 用户确认前不写正式资产；确认后只应用明确批准的条目。
-- Experience frontmatter 和索引符合模板，回写目标存在，`experience_refs[]` 使用 by-name。
-- Workflow 至少保持 Mission/Input/Output/Principles/Phase 运行结构；Required Resources 均可解析。
-- 不把通用规则写进某家公司或某个项目的专属 profile；项目事实留在项目记录。
-- 变更后立即记录受影响文件和原因，便于 Phase 3 读回。
+- 每个 mutation 都有独立稳定 ID；move、merge、archive、delete 不合并为一个泛化动作。
+- 提案明确哪些是阻断项以及不批准的后果。
+- review 和 distill-only 到此停止并把选择交给用户。
 
 ### Known Issues
 
-“同意”必须能映射到候选或文件范围；模糊同意只能继续生成更小的确认清单，不能扩大写入范围。归档是可追溯变更，删除资产仍需单独确认。
+“同意”“继续”等无法映射到具体 ID 时，必须请求更精确选择，不能默认全选。
 
-## Phase 3: sanitize-and-verify — 最终表面清理与验证
+## Phase 3: apply-and-postflight — 应用批准项并重新验证
 
 ### Goal
 
-从最终状态重新生成文档、提交说明和交付文案，清除会暴露工作过程的残留，并验证任务事实、路径、资源和测试均未被破坏。
+仅执行明确批准的动作，然后从最终状态重新检查目录、引用、测试、secret 和 Git 范围。
 
 ### Required Resources
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| no-negative-echo | skill | 必选 | github · 2dfbefdc41f9f728984096850d90a61e20054923 | 后置清理和表面质量门；不能保证宿主自动激活，必须显式调用并读回 |
-| research-quality-gate | skill | 按任务类型 | internal | 只在研究/视频/脚本等有对应冻结研究底稿时调用；不补研究 |
+| closeout | skill | 必选 | internal | 执行范围保护、结构复扫和 staged diff 门禁 |
+| experience-curator | skill | 按批准项 | internal | promote、回写并归档已批准 Experience |
+| resource-manager | skill | 按批准项 | internal | Skill/Agent 资源登记、修改、脚本和引用验证 |
+| workflow-registry | skill | 按批准项 | internal | Workflow SOP/索引与 Required Resources 解析验证 |
+| no-negative-echo | skill | 可选 | github · 2dfbefdc41f9f728984096850d90a61e20054923 | 对长迭代后的正式表面做清理；普通小提交无需固定调用 |
 
 ### Input
 
-已应用的文档变更、`apply-receipt.md`、baseline、提交计划、验证命令、用户确认的必要事实。
+明确批准的提案 ID、上游验收产物和任务质量门。
 
 ### Output
 
-- `validation-receipt.md`：结构、引用、测试、质量门、scanner、Git diff 的结果。
-- `final-delivery.md`：从读回最终状态生成的交付说明。
-- 冻结的 `commit-message.txt`，仅描述 task-owned 最终状态。
+`apply-receipt.md` 与 `validation-receipt.md`：逐项结果、最终路径、引用更新、测试、结构复扫、secret 检查和 diff 范围。
 
 ### Quality Criteria
 
-- 先 preflight、冻结表面，再进行 mutation；mutation 后读回并 postflight。
-- 使用 no-negative-echo scanner 扫描文档、commit message、handoff 和相关路径；scanner 通过后仍做语义审阅。
-- 保留安全、准确、兼容、迁移、审计和实际外部事件等必要事实。
-- 研究/视频产物如有对应质量门，必须读取其独立验收结果；不能只写“已检查”。
-- 测试失败、未读回或无法扫描的表面必须阻断提交或明确进入 deferred。
+- 只执行批准 ID；目录移动使用可恢复方式并同步已识别引用。
+- mutation 后重新运行结构扫描、引用检查、任务测试和 `git diff --check`。
+- unresolved BLOCKER、secret、测试失败、陈旧引用或范围歧义阻断 commit。
+- staged 文件集合必须严格等于批准集合；未批准和 pre-existing 修改保持不动。
 
 ### Known Issues
 
-scanner 是精确项扫描，不识别所有语义改写；commit 和 handoff 必须由最终读回状态生成。无法观察宿主是否激活 Skill 时，只能声明“文件安装与脚本验证通过”，不能声称本轮自动激活。
+归档和删除不是同一动作；删除仍需独立批准。无法验证的外部状态必须报告为 deferred 或 blocked。
 
-## Phase 4: commit — 按范围创建本地提交
+## Phase 4: commit-and-handoff — 本地提交与最终交付
 
 ### Goal
 
-只提交用户确认且验证通过的 task-owned 文件，为每个 Git 仓库生成可读、可复现、无会话残留的本地提交。
+仅在明确批准 commit 且 postflight 通过时创建一个本地提交，并交付可读回的最终状态。
 
 ### Required Resources
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| no-negative-echo | skill | 必选 | github · 2dfbefdc41f9f728984096850d90a61e20054923 | 冻结并检查 commit message 与提交交付文案；不替代 Git diff 审查 |
+| closeout | skill | 必选 | internal | staged 范围、提交授权和最终读回门禁 |
 
 ### Input
 
-用户确认的文件清单、通过验证的 `validation-receipt.md`、冻结的 `commit-message.txt`、baseline 和各仓库 Git 状态。
+通过验证的 receipts、批准的 commit ID、冻结的最终提交说明和 staged diff。
 
 ### Output
 
-每个受影响仓库一个本地 commit；`commit-receipt.md` 记录仓库、commit SHA、提交文件、验证命令、保留的 pre-existing 修改和未执行的外部动作。
+`commit-receipt.md` 与最终 handoff：commit SHA、文件清单、验证证据、延期项、保留的 pre-existing 修改和未执行的外部动作。
 
 ### Quality Criteria
 
-- 只按批准文件清单 stage；提交前检查 staged diff 和 staged 文件名。
-- commit subject 使用 Conventional Commits：`type(scope): imperative summary`。
-- commit body 使用以下固定结构，内容来自最终状态：
-
-  ```text
-  Summary:
-  - <accepted result>
-
-  Validation:
-  - <command or independent receipt>
-
-  Scope:
-  - <task-owned boundary>
-  ```
-
-- 不写“经过几轮修改”“没有采用某方案”等会话过程；只有真实 baseline 行为变化、迁移或审计需要时才说明变化。
-- 不提交 `.omc/`、临时 staging、密钥、未确认文件或其他仓库文件。
-- 本 Phase 只执行本地 Git commit，不 push、不建 PR。
+- commit subject 使用 `type(scope): imperative summary`，正文只描述最终结果、验证和 task-owned 范围。
+- `git diff --cached --check` 通过，staged 文件与批准清单一致。
+- commit SHA 可读回；只创建本地 commit，不 push、不建 PR。
+- 完成后 workspace 级 closeout 只归档必要收据，不保留空阶段和重复对话副本。
 
 ### Known Issues
 
-一个任务可能跨顶层仓库和项目仓库；必须分别 commit，不能在顶层仓库越界 stage `projects/*` 项目代码。提交失败时保留已生成的 receipt，报告准确状态，不重写用户已有修改。
-
-## Phase 5: handoff — 交付与经验闭环
-
-### Goal
-
-把实际读回的最终状态交付给用户，并明确哪些经验已经沉淀、哪些候选延期、哪些仓库修改仍属于用户原有工作。
-
-### Required Resources
-
-| Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
-|---|---|---|---|---|
-| no-negative-echo | skill | 必选 | github · 2dfbefdc41f9f728984096850d90a61e20054923 | 对最终 handoff 再做一次正向状态检查；不得隐藏实际外部事件或失败 |
-| experience-curator | skill | 必选 | internal | 确认已归档 Experience 的回写目标和适用范围 |
-
-### Input
-
-`commit-receipt.md`、`final-delivery.md`、验证收据、归档 Experience 索引和各仓库最终状态。
-
-### Output
-
-用户可读的最终 handoff：结果、关键文件、commit SHA、验证证据、延期候选、仍保留的用户修改、未执行的外部动作。`final-delivery.md` 必须与实际读回一致。
-
-### Quality Criteria
-
-- 只报告最终状态和必要事实，不把内部草稿当成果。
-- 每个 commit SHA 都能由对应仓库读回；文件链接/路径可解析。
-- 明确 PASS、WARNING、DEFERRED 和 BLOCKED，不能用模糊的“基本完成”。
-- Experience 只有在完成回写并登记归档后才报告为已沉淀；否则报告为候选。
-
-### Known Issues
-
-宿主可能需要新会话才能发现刚安装的外部 Skill；这不阻止使用已验证的本地 scanner，但必须如实说明“激活未观测”。
+用户批准目录或知识变更不等于批准 commit；缺少独立 commit 授权时停在已应用、未提交状态。
