@@ -1,6 +1,0 @@
-name: video-publish-review
-description: 对每支已发布视频执行标准化复盘（采集→诊断→归因→改进项→回写判定），复盘结果按视频独立成册
-workflows:
-  - publish-review
-  - topic-forward-lead
-registered: 2026-09-01

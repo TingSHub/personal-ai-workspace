@@ -15,10 +15,10 @@
 
 ## Output
 
-- review：`baseline.md`、`directory-review.md`、`approval-proposal.md`。
-- apply：仅为实际执行的动作增加 `apply-receipt.md`、`validation-receipt.md`、`commit-receipt.md` 和最终 handoff。
-- 项目级证据：`projects/<name>/logs/closeout/<run-id>/`。
-- workspace 级证据：运行中使用 `.ai/closeouts/<run-id>/`；完成后只归档必要收据到 `.ai/archive/closeouts/`，不长期保留未使用的阶段占位文件。
+- 默认：review、审批提案、验证结果和最终 handoff 直接返回当前对话，不创建 staging 或 receipt 文件。
+- 可选：只有用户明确要求审计留痕时，才写入 `baseline.md`、`directory-review.md`、`approval-proposal.md` 或 action receipts。
+- apply：只为实际执行且用户要求留痕的动作增加 receipt；canonical asset 和 Git commit 仍按批准写入。
+- 不创建未使用阶段的占位文件，不把普通对话输出复制进资产库。
 
 ## Principles
 
@@ -27,7 +27,7 @@
 - 分项授权：提交范围、目录动作、Experience、文档回写和 commit 使用稳定 ID 分别批准；模糊同意不扩大范围。
 - 单仓库边界：workspace 顶层 Git 是唯一仓库；`projects/*` 是同一仓库内的子项目，不分别 commit。
 - 目录质量是提交门：同时检查归属、生命周期、命名、重复、可发现性和扩展结构；vendor/runtime 体积本身不是重组理由。
-- 真实执行留痕：Required Resources 必须真实执行并留下独立结果；下游只消费已验收产物。
+- 真实执行留痕：Required Resources 必须真实执行并在对话中给出可核验结果；只有用户要求审计记录时才落盘独立产物。
 - 经验只沉淀未来会改变行动的结论；项目事实和普通日志留在项目执行记录。
 - by-name 引用：Workflow、Skill、Agent 和 Experience 使用稳定名称。
 
@@ -49,7 +49,7 @@
 
 ### Output
 
-`baseline.md`：HEAD、工作树快照、task-owned 候选、pre-existing 修改、排除项、完成度与阻断项。
+对话中的 baseline 摘要：HEAD、工作树快照、task-owned 候选、pre-existing 修改、排除项、完成度与阻断项；用户要求留痕时才写 `baseline.md`。
 
 ### Quality Criteria
 
@@ -81,7 +81,7 @@
 
 ### Output
 
-- `directory-review.md`：扫描结果和语义审查，分为 BLOCKER、RECOMMENDED、OPTIONAL、ACCEPTED_EXCEPTION。
+- 对话中的 directory review：扫描结果和语义审查，分为 BLOCKER、RECOMMENDED、OPTIONAL、ACCEPTED_EXCEPTION；用户要求留痕时才写 `directory-review.md`。
 - 可选 Experience candidates 和文档回写候选，各自包含证据、owner、目标资产与未来行动。
 
 ### Quality Criteria
@@ -113,7 +113,7 @@
 
 ### Output
 
-`approval-proposal.md`：至少分为文件范围、目录动作、Experience、文档写入、延期与本地 commit 六类；无内容类别标记为不适用。
+对话中的 approval proposal：至少分为文件范围、目录动作、Experience、文档写入、延期与本地 commit 六类；用户要求留痕时才写 `approval-proposal.md`。
 
 ### Quality Criteria
 

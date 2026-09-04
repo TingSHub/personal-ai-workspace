@@ -108,12 +108,24 @@ def main() -> int:
     # or ban names from sibling project directories: industry and comparison
     # subjects are explicitly allowed to mention multiple entities.
     comparison_entities = episode.get("comparison_entities") or []
+    comparison_signal = any(
+        marker in (turn.get("text", "") or "")
+        for turn in turns
+        for marker in ("三家公司", "几家公司", "多家公司", "三类公司", "三类主体", "多个项目")
+    )
+    if comparison_signal and len(comparison_entities) < 2:
+        findings.append("comparison wording requires comparison_entities[] with at least two named entities")
     if len(comparison_entities) > 1:
         spoken = "\n".join(turn.get("text", "") for turn in turns)
         for entity in comparison_entities:
             name = entity.get("name", "") if isinstance(entity, dict) else str(entity)
             if name and name not in spoken:
                 findings.append(f"comparison entity missing from spoken text: {name}")
+        for entity in comparison_entities:
+            if isinstance(entity, dict):
+                for field in ("role", "comparison_axis"):
+                    if not entity.get(field):
+                        findings.append(f"comparison entity {entity.get('name', '?')} missing {field}")
 
     report = {
         "status": "PASS" if not findings else "FAIL",

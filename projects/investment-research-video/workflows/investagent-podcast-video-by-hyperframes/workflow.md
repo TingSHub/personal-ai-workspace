@@ -240,7 +240,7 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 
 `editorial/episode-input.json`、`editorial/feedback-constraints.md`、`editorial/phase2-execution.md`、`podcast/script/episode-draft.json`、`podcast/script/episode-polished.json`、`podcast/script/episode.json`、`podcast/script/spoken-polish-diff.json`、`debate-script.md`、`dialogue-map.json`、`spoken-style-map.json` 和 `visual-plan/chart-spec.json`。
 
-同时保留 `editorial/director-treatment.md`、可选 `editorial/narrative-options.json`、`editorial/topic-order.json`、`editorial/opening-selection.json`、`editorial/scene-intent.json` 和 `editorial/director-execution.md`。
+同时必须保留 `editorial/director-treatment.md`、`editorial/topic-order.json`、`editorial/opening-selection.json`、`editorial/scene-intent.json` 和 `editorial/director-execution.md`；当选题存在两种以上可行讲法时，另保留 `editorial/narrative-options.json`。这些是 Phase 2 的硬交接产物。
 
 ### Quality Criteria
 
@@ -250,9 +250,10 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 - `cover.title` 必须突出本期最引人注目的行业、产业链或公司主角；封面只保留手机缩略图可读的大字和必要图形，日期、全称和研究注释不进入封面主视觉。
 - `episode-input.json` 必须声明 `opening.mode`、`opening.cards`、`opening.cold_open`、`opening.intro`；开场和自我介绍只能从该 manifest 读取。
 - `episode-input.json` 必须携带 `content_angle`、`report_context`、`editorial_thesis`、`opening_rationale` 和 `narrative_mode`；`financial_data_role` 仅在存在财报/财务证据时填写，Phase 2 不得绕过 Phase 1 的主线决策。
-- `comparison_entities[]` 是可选但有条件必填的字段：当标题、口播或选题卡涉及多家公司/多类主体时必须填写；`entity_legend` 用于页面明确显示名称和环节，不能用“公司A/B”或“观察”占位。
+- `comparison_entities[]` 在标题、口播或选题卡涉及多家公司/多类主体时为强制字段；每个对象必须有 `name`、`role`、`comparison_axis` 和 `evidence_ids`，且所有主体必须在 spoken text 或字幕中首次点名。任何“几家公司/三类主体”而不点名的稿件必须 FAIL。
 - Phase 2 开始前必须通过适用的 topic approval gate；`topic_id`、opening 和模块顺序必须与批准记录或用户已批准主问题一致。
 - 必须消费 `editorial-director-agent` 的 treatment：每个内容模块有 audience payoff、机制归属、前后依赖、visual intent 和验证/证伪条件；缺少任一项不得生成最终 episode。
+- 每个内容模块还必须写入 `entry_belief`、`open_question`、`evidence_progression`、`turn`、`exit_belief` 和 `next_question`；缺少认知弧、无法说明章节前后判断变化的模块不得生成最终 episode。
 - 若选题卡允许多种讲法，导演必须先提交 2–3 个轻量叙事草案并记录选择理由；若证据或平台目标只支持一种，记录不做多方案的原因即可。草案不要求新增模板，写入 treatment 或可选 `narrative-options.json`。
 - 话题顺序必须有全局去重表：一个核心机制只有一个 `primary_topic_id`；相邻话题不得重复主问题、证据集合和观众收益。
 - 开场 manifest 必须包含 `opening_mode`、`opening_cards` 和 `COLD_OPEN/INTRO` turns；冷开场后才出现主持人自我介绍和目录。

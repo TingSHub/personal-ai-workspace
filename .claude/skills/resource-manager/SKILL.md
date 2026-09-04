@@ -14,7 +14,7 @@ description: 管理 Skill/Agent 执行资源与可跨项目复用的媒体/设�
 - 外部 Skill 安装：`.claude/skills/<name>/`；这是 workspace 唯一 Skill 安装根
 - Codex 安装树：`.codex/skills` 必须是指向 `../.claude/skills` 的单一目录软链接；`.codex/skills/<name>` 通过该目录映射自动可见
 - `.agents/` 只保存 Agent 实体定义，禁止创建 `.agents/skills` 目录、镜像或软链接
-- 本地说明和辅助脚本保存在资源资产目录，不直接修改外部安装实体
+- 外部 Skill 的本地说明和辅助脚本保存在资源资产目录，不直接修改外部安装实体；workspace 一方 Skill 可将其执行所需脚本放在 `.claude/skills/<name>/scripts/`，并在对应 `.ai/skills/<name>/<name>.md` 登记
 - 字段清单只能从模板读取，本文不复制字段定义
 - 不维护状态、配置成本、使用次数或更新历史数组等记录
 - 归档是显式操作，必须先取得用户确认
@@ -87,7 +87,7 @@ description: 管理 Skill/Agent 执行资源与可跨项目复用的媒体/设�
 - 对应资源元数据和说明文件存在并符合模板
 - 外部资源包含可复现的 `installed_ref`、更新方法和更新后验证方式
 - requirements 中只记录配置名称，不包含 secret 值
-- 声明的本地脚本均存在并能通过最小验证
+- 声明的本地脚本均存在并能通过最小验证；一方 Skill 的实体脚本位于其 `.claude/skills/<name>/scripts/`
 - `.codex/skills` 是指向 `../.claude/skills` 的有效目录软链接，且安装实体能从两条路径解析到同一目录
 - `.agents/skills` 不存在，Skill 没有第二份 workspace 安装实体
 - 资源变更后 Required Resources 解析检查通过（workflow.md 的引用均可解析到 `.ai/skills/` 或 `.ai/agents/`）

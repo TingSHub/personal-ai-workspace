@@ -9,7 +9,7 @@ Execute `closeout-and-commit` as the manual entry point for task completion. The
 
 ## Modes
 
-- `review` (default): inspect and write a proposal; do not move files, update canonical assets, stage, or commit.
+- `review` (default): inspect and return the baseline, directory findings, and approval proposal directly in the conversation; do not create evidence files, move files, update canonical assets, stage, or commit.
 - `apply`: apply only proposal items the user explicitly approved, revalidate, then commit only if commit approval is included.
 - `commit-only`: omit knowledge distillation, but still run completion, structure, secret, scope, and staged-diff checks.
 - `distill-only`: propose reusable Experience and documentation changes without directory mutations or Git commit.
@@ -21,9 +21,9 @@ If the invocation does not state a mode, run `review`. A general request to “f
 1. Read `closeout-and-commit` and the current task's accepted artifacts and validation evidence.
 2. Freeze the repository HEAD, worktree status, task-owned files, pre-existing changes, and exclusions.
 3. Check completion before governance. Unfinished required work or failed validation is a blocker.
-4. Run `python3 .ai/skills/closeout/scripts/scan_workspace_structure.py --root .` when this workspace contains it.
+4. Run `python3 .claude/skills/closeout/scripts/scan_workspace_structure.py --root .` when this workspace contains it.
 5. Semantically review touched files, their parent directories, repository control directories, and relevant references. Judge ownership, lifecycle, naming consistency, duplication, discoverability, and extension shape. Do not reorganize vendored or runtime trees merely because they are large.
-6. Present one approval matrix with stable item IDs covering file scope, directory moves, Experience candidates, documentation writes, deferred items, and local commit authorization.
+6. Present one approval matrix with stable item IDs covering file scope, directory moves, Experience candidates, documentation writes, deferred items, and local commit authorization. Return it in chat; only write a review bundle when the user explicitly requests an audit record.
 
 Every directory proposal must state current path, proposed path, rationale, affected references, migration risk, and whether it blocks commit. Classify findings as `BLOCKER`, `RECOMMENDED`, `OPTIONAL`, or `ACCEPTED_EXCEPTION`.
 
@@ -41,4 +41,4 @@ Stop before commit on failed required tests, unresolved blockers, secrets, stale
 
 ## Outputs
 
-Keep closeout evidence compact. A review needs `baseline.md`, `directory-review.md`, and `approval-proposal.md`; add receipts only for actions actually performed. Store project execution evidence under `projects/<name>/logs/closeout/<run-id>/`. For workspace-level work, use `.ai/closeouts/<run-id>/` during the run and archive the compact receipt after completion. Do not create placeholder files for unused phases.
+Keep closeout output conversational by default. Review, approval proposals, validation results, and handoff are returned in chat and do not create `baseline.md`, `directory-review.md`, `approval-proposal.md`, or staging bundles unless the user explicitly asks to save an audit record. Canonical asset changes and Git commits remain real file mutations when separately approved. Do not create placeholder files for unused phases.
