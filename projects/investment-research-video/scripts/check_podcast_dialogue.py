@@ -25,6 +25,11 @@ CONTRAST_MARKERS = ("反而", "但", "却", "不过", "只是", "同时")
 SHORT_PREFIXES = ("没错", "对", "嗯", "好")
 BOOKISH_HOOK = re.compile(r"(?:利润|净利|净利润)快涨(?:了)?三倍")
 FORBIDDEN_VALUATION = ("目标价", "评级", "买入", "卖出", "持有", "仓位", "交易策略")
+FORBIDDEN_DIRECT_ADVICE = re.compile(
+    r"(?:建议|可以|应该|适合|值得|不妨|赶紧|立即|马上)\s*(?:买入|卖出|持有)"
+    r"|(?:买入|卖出)\s*(?:这只|该股|这家公司|甲公司|乙公司)?"
+    r"|(?:逢低|逢高)\s*(?:买入|卖出)"
+)
 FORBIDDEN_PRODUCTION_META = ("视频里", "画面里", "字幕里", "镜头里", "观众", "必须把", "必须说", "口播稿")
 
 
@@ -33,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--episode", type=Path, required=True)
     parser.add_argument("--phase2-execution", type=Path, required=True)
     parser.add_argument("--feedback-constraints", type=Path, required=True)
-    parser.add_argument("--brokerage-dir", type=Path, required=True)
+    parser.add_argument("--brokerage-dir", type=Path)
     parser.add_argument("--out", type=Path)
     return parser.parse_args()
 
@@ -65,10 +70,10 @@ def main() -> int:
         text = first.get("text", "")
         if first.get("turn_id") != "COLD_OPEN-01":
             findings.append("first cold-open turn must be COLD_OPEN-01")
-        if first.get("question_ending") != "question" or "？" not in text:
-            findings.append("COLD_OPEN-01 must contain an open question")
-        if not any(marker in text for marker in CONTRAST_MARKERS):
-            findings.append("COLD_OPEN-01 must contain a fact contrast")
+        if not text.strip():
+            findings.append("COLD_OPEN-01 must contain spoken text")
+        # A thesis-led opening need not contain a question or contrast word.
+        # Evidence strength and audience payoff are reviewed by the editor.
         if BOOKISH_HOOK.search(text):
             findings.append("COLD_OPEN-01 contains bookish profit-growth wording")
 
@@ -77,6 +82,8 @@ def main() -> int:
         for phrase in FORBIDDEN_PRODUCTION_META:
             if phrase in text:
                 findings.append(f"{turn.get('turn_id')} contains production metadata in spoken text: {phrase}")
+        if FORBIDDEN_DIRECT_ADVICE.search(text):
+            findings.append(f"{turn.get('turn_id')} contains direct investment advice")
         prefix = next((item for item in SHORT_PREFIXES if any(text.startswith(item + marker) for marker in ("，", "。"))), None)
         if prefix:
             if turn.get("backchannel") != prefix:
@@ -92,10 +99,14 @@ def main() -> int:
 
     valuation = episode.get("valuation_context") or {}
     if valuation.get("enabled"):
-        if valuation.get("source_class") != "brokerage":
-            findings.append("enabled valuation_context must use source_class=brokerage")
-        if not args.brokerage_dir.is_dir():
+        if not valuation.get("source_class"):
+            findings.append("enabled valuation_context requires source_class")
+        if valuation.get("source_class") == "brokerage" and (
+            args.brokerage_dir is None or not args.brokerage_dir.is_dir()
+        ):
             findings.append("enabled valuation_context requires research-materials/brokerage/")
+        if valuation.get("source_class") != "brokerage" and not valuation.get("source_refs"):
+            findings.append("non-brokerage valuation_context requires source_refs")
         for turn in turns:
             if any(word in turn.get("text", "") for word in FORBIDDEN_VALUATION):
                 findings.append(f"valuation context contains forbidden advice wording: {turn.get('turn_id')}")

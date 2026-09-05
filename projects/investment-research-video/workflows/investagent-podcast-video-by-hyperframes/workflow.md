@@ -33,6 +33,8 @@
 
 ## Principles
 
+- 本账号面向中小投资者，在法律及适用平台规则边界内，以流量、粉丝积累和长期收益转化为首要产品目标；按 content-policy 执行。每期有一个明确、有依据、可争辩的主张；多空研究供导演取舍，不要求将全部正反观点搬进节目，不直接荐股或给交易指令。
+
 - 本 Workflow 只负责账号规格 → 研究 → 编辑 → 对话 → 音频 → Composition → 渲染/QA 的项目顺序、运行参数和交接；资源通用调用规则由对应 Skill/Agent 资产记录负责。
 - Required Resources 仍按 by-name 引用；各 Phase 只消费已验收的上游产物，并在项目执行记录中留下本项目所需的资源和结果证据。
 - 账号资产先于公司内容；公司名、数字、话题、音频路径和图表数据来自 manifest。
@@ -145,7 +147,7 @@ subject_type、subject_id/subject_name、研究日期、账号 profile、研究�
 - 关键数字有来源、口径、期间和定位；最新报告期与近 12 个月变化单列。
 - 必须生成 `research-materials/data-source-ledger.json`：记录数据源顺序、调用状态、API/函数、报告期、字段映射、单位、复权方式、是否回查官方原文和降级原因；Tushare 无权限时必须留下 AkShare/BaoStock 的真实调用结果或明确缺口。
 - 只有选择 comparison 或行业产业链叙事时才要求同行/角色比较；比较对象数量由问题和证据决定，并注明角色、可比边界和不可比项。
-- `peer-comparison.json` 必须统一记录公司代码、比较角色、报告期、数据类型、单位、收入、归母净利、增速、毛利/净利率、经营现金流、自由现金流、应收、存货、资本开支、债务和估值；取不到的指标写明确缺口，不用空白或估算冒充。
+- 公司对照可介绍产业位置、技术、产品、客户、渠道、认证、交付和细分优势，须有来源与比较边界；不因缺财务表阻断有证据的定性介绍。只有实际进行财务比较时才生成相应 `peer-comparison.json`，记录使用的指标、报告期、口径与单位；所需指标缺失则标明缺口，不强制收集无关三表字段。
 - 同行表必须按同一报告期分组；Q1、H1、全年不得混成一张排名表。缺少同期数据时，降级为产业坐标并写入缺口清单。
 - 同行关键数字至少有一手披露或结构化数据源；`deep-research` 只提供候选来源、行业背景和外部交叉线索，不能单独支撑公司事实。
 - AkShare/BaoStock 可支撑结构化辅助取数，但不能替代官方 PDF；合并净利润、归母净利润、扣非净利润等字段必须显式映射，口径不一致时不得比较。
@@ -153,6 +155,7 @@ subject_type、subject_id/subject_name、研究日期、账号 profile、研究�
 - 获取前必须执行本地复用检查；下载记录至少包含 `ts_code`、公司名、报告期、类型、公告日期、公告 ID、来源 URL、本地路径、文件大小和文本校验状态。
 - 文件名必须符合 `{ts_code}_{period}_{document_type}_{announcement_date}.pdf`；不符合的历史文件在进入新 Workflow 前先建立 canonical manifest 映射。
 - 没有足够证据、追问缺口或视觉锚点的话题不得进入 Phase 2。
+- findings-summary 与 topic-evidence-matrix 保留 investagent、industry-analysis 等已验收研究中的关键多空解释、细分公司优势及可改变判断的证据，供导演选择；不得把研究模型意见伪称为真实机构共识。
 - 没有完成公司动态与产品事实覆盖报告的话题不得进入 Phase 1.5；覆盖不足时必须标记 `coverage_status=degraded` 和具体缺口。
 - 所有关键数字都能回溯到 `official-information/` 中的原始披露或明确标记的结构化行情源；不能只引用 `research-materials/` 二次摘要。
 
@@ -186,10 +189,10 @@ Phase 1 已验收的 subject-thesis brief、topic-evidence-matrix、适用的事
 ### Quality Criteria
 
 - `topic_discovery` 候选数量为 3–5 个且角度互斥；其他模式不强制生成候选池，不能为了满足数量制造无效角度。
-- 每个候选必须包含：主问题、观众为什么关心、开场候选、核心证据、可展开路径、最大风险、content_angle 和 evidence coverage。
+- 每个候选必须包含：主问题、观众为什么关心、开场候选、核心证据、可展开路径、最大风险、content_angle 和 evidence coverage；用自然语言明确拟主张什么、与何种看法存在分歧、为何值得中小投资者关注。
 - 每个候选必须明确是否使用公司动态/产品事实，以及每条事实的 `fact_id`、`fact_role`（opening/main_evidence/supporting_evidence/visual_only/background/omit）和采用理由；不能只把新闻标题贴到选题里。
 - 候选或已批准主问题必须覆盖本 subject 最关键的机制、证据冲突或验证路径；是否采用财报主线由 subject_type、freshness 和 materiality 决定。
-- 开场候选必须是公司特征事实、事实张力加开放问题；公司简介、合作清单或单个技术事实不能自动成为主钩子。不同公司允许使用不同的叙事入口，开场模式和选择理由必须写入 `opening-selection.json`。
+- 开场候选可直接提出有证据的主张，也可用公司特征事实、案例或问题切入；前 10 秒明确本期要回答什么及观看价值。不同公司允许不同入口，选择理由写入 `opening-selection.json`，标题与开场承诺须由正文兑现。
 - `topic-options.json` 必须记录候选间的 `mutually_exclusive_with` 和机制覆盖，便于后续去重。
 - `topic-approval.md` 在用户确认前必须保持 `status: pending`；pending/rejected 状态不得生成 `director-treatment.md`、`episode-input.json`、`episode.json`、TTS、字幕、视觉或渲染产物。
 - gate 必须能识别缺批准、批准 topic_id 不在候选中、批准时间缺失和候选不完整并给出 FAIL。
@@ -273,10 +276,11 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 - `human-understanding` 先把反馈转成约束；`finance-content-engineering` 直接改写 episode-draft；`humanizer-zh` 审校 episode-polished 并写回最终 episode.json。两者不能只更新 spoken-style-map，也不能在 Phase 3 随意改稿。
 - `spoken-polish-diff.json` 必须记录每个 changed turn 的 before/after；draft/final 的 speaker、topic_id、evidence_ids 不得变化。存在用户口语化反馈时，运行 `scripts/check_spoken_polish.py --require-change`，无实际文本变化不得写 PASS。
 - 明显停顿的脚本改写必须落在 `episode-draft`/`episode-polished`/最终 `episode.json` 的文本中；只修改 `spoken-style-map`、delivery 或口头说明而未改变实际 spoken text，不得写 PASS。
-- `check_podcast_dialogue.py` 必须阻断制作元话语（视频里、画面里、字幕里、必须说等）和其他公司名进入 spoken text；`check_spoken_polish.py` 对长篇稿件至少要求 10% turn 有实际 before/after 改写，不能用一两个虚词变化冒充全稿口语化。
-- 每个内容模块有 chart-spec 或明确 no-chart 理由；可选 `valuation_context` 模块只消费官方或券商材料，不出现买卖建议、仓位或目标价。
+- `check_podcast_dialogue.py` 必须阻断制作元话语（视频里、画面里、字幕里、必须说等）进入 spoken text；允许已声明并有证据的同行介绍与比较。`check_spoken_polish.py` 对长篇稿件至少要求 10% turn 有实际 before/after 改写，不能用一两个虚词变化冒充全稿口语化。
+- 每个内容模块有 chart-spec 或明确 no-chart 理由；定性同行介绍可采用产业地图、产品或公司身份卡。估值可消费官方披露、可靠行情、券商材料及可复核条件计算，允许明确多空观点，不出现直接荐股、交易指令或收益保证。
 - 内容模块排序必须服务于 `editorial_thesis`：至少一个模块解释核心机制，至少一个模块呈现证据或反证，至少一个模块讨论验证条件、风险或下一步观察；财报主线也不能把整期变成数字罗列。
-- `valuation_context` 必须显式声明 `enabled`；启用时必须有 `topic_id`、`source_class=brokerage`、`source_dir=research-materials/brokerage/`、允许证据类型和禁用表达清单。未启用不阻断整期节目。
+- `valuation_context` 必须显式声明 `enabled`；启用时使用现有 source_refs 指向已验收研究来源，声明 topic_id、source_class 及适用 source_dir。券商来源继续使用 research-materials/brokerage/；其他来源不强制券商目录。日期、口径、假设和敏感性在研究材料中说明，由 financial-editor-agent 实际复核；未启用不阻断节目。
+- director-treatment.md 按 editorial-director-agent 输出主张、标题/开场选择、问题承接、公司定位及术语铺垫；director-execution.md 留下具体段落的只听稿审阅证据。检验明确立场、最强挑战、及时的信息回报和结尾兑现，不按多空条数或财务表数量验收。
 - Phase 2 必须留下三个独立执行证据：`feedback-constraints.md`（human-understanding）、`spoken-polish-diff.json`（finance-content-engineering + humanizer-zh 实际改写）和 `phase2-execution.md` 中的资源 installed_ref；缺少任一证据不得写 PASS。
 - 运行项目脚本 `scripts/check_podcast_dialogue.py`，对开场、短回应、估值资料边界和两个口语化资源执行证据给出 PASS/FAIL。
 - 运行项目脚本 `scripts/check_editorial_gate.py --run-root <company-run> --require-approved`，对批准状态、候选一致性和导演交接产物给出 PASS/FAIL。
@@ -449,7 +453,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 | `aitoearn` | skill | yes | Open Platform/MCP 多平台素材上传、Flow 创建、状态轮询和作品链接回传 |
 | `social-auto-upload` | skill/tool resource | conditional | AiToEarn 不支持、明确失败或必须使用浏览器自动化时的国内平台回退 |
 | `video-agent-publisher` | skill | yes | 生成平台差异化标题、描述、标签和引用出处 |
-| `douyin-creator` | skill | conditional | 发布后抖音作品列表、数据采集和评论运营，不代替发布接口 |
+| `douyin-creator-tools` | skill | conditional | 发布后抖音作品列表、数据采集和评论运营，不代替发布接口 |
 
 ### Input
 
@@ -467,7 +471,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 4. 一个 Flow 可包含多个平台 item；每个 item 允许独立标题、正文、标签、封面和平台选项。默认创建草稿或排期任务，只有用户明确要求立即发布时才提交即时任务。
 5. 轮询 Flow/record 状态：成功写入作品链接；失败写入平台错误；抖音进入用户操作状态时输出短链/手机确认提醒。抖音确认页必须人工复核封面：AiToEarn 当前 App Scheme 可能只带视频路径，不保证独立 cover URL 已传入；收到完成状态后继续轮询。
 6. 只有 AiToEarn 明确返回不支持或明确失败，且不存在“可能已提交”的不确定状态时，才调用 `social-auto-upload` 回退；回退平台必须逐个平台记录，禁止两套工具并发提交同一账号同一内容。
-7. 发布成功后回写 `published-works.md`；没有平台 URL 时留空并标记待确认，禁止编造 URL。发布后的播放/互动数据继续由 `douyin-creator` 或平台后台采集。
+7. 发布成功后回写 `published-works.md`；没有平台 URL 时留空并标记待确认，禁止编造 URL。发布后的播放/互动数据继续由 `douyin-creator-tools` 或平台后台采集。
 
 ### Quality Criteria
 
