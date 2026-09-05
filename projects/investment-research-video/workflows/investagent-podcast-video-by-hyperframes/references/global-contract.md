@@ -61,7 +61,7 @@ Tushare 无权限、token 失效或接口超时不是研究失败；必须进入
 - 第二家公司只替换 manifest 和研究资产，不改 Composition 模板源码。
 - 生成视频、音频、截图、PDF 和 HTML 是 run 产物，不进入通用资源层。
 - 平台封面是独立 `cover.html` + 4:3 `cover.png` + 3:4 `cover-3x4.png` 产物：复用正片背景和视觉 Token，展示主标题、副标题、公司名/栏目 logo；推荐 PNG 尺寸分别为 1440×1080 和 1080×1440。除非 manifest 显式声明 in-video cover，否则不得挂入正片 timeline，也不得改变音频、字幕或 Composition 的起始时间。
-- `episode-input.json` 的 `cover.title`、`cover.subtitle`、`outro` 和每个 topic 的 `short_label` 是唯一内容来源；不存在这些字段时，Phase 2 直接失败，不从历史公司或模板补值。
+- `episode-input.json` 的 `cover.title`、`cover.subtitle`、`cover.subject_label`、`cover.large_text`、`outro` 和每个 topic 的 `short_label` 是唯一内容来源；不存在这些字段时，Phase 2 直接失败，不从历史公司或模板补值。封面必须按“账本两面”横幅品牌规范生成 HTML，并截图输出横版与竖版 PNG；旧版亮红/黄色投流海报、无语义几何装饰和反色 Logo 不得复用。
 - 字幕以 `podcast/qa/captions.json` 为唯一显示来源；它由真实 `segments.json` 生成，默认一回合一条 cue、起止时间覆盖该回合真实语音，平台封面不复用字幕时间轴。
 - 内容主线由 Phase 1 的 `research-materials/editorial/company-thesis-card.json` 决定：`earnings_led` 仅适用于研究日前 1–2 天发布且经营变化重大的财报；其他情况使用 `company_led`、`industry_led` 或 `event_led`，财报作为验证或辅助章节。
 - `company-thesis-card.json` 至少记录 `content_angle`、`report_context`、`company_identity`、`core_advantages`、`moat_mechanisms`、`growth_drivers`、`profit_scenarios`、`financial_data_role`、`opening_candidates` 和 `selection_reason`。Phase 2 必须原样交接主线决策，不得用模板默认值覆盖。

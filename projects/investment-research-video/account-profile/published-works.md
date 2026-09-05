@@ -60,3 +60,24 @@
 - aitoearn_record_id: `6a983e02fe73016b35812130`
 - platform_url: `https://www.douyin.com/video/7680961320070873467`（aweme_id 7680961320070873467）
 - cover_note: `抖音确认页手动选择上传封面；AiToEarn App Scheme 未自动传入独立 cover URL`
+
+## 2026-09-05｜数据基础设施
+
+- status: `published`
+- title: `数据基础设施：谁有真订单？`
+- published_title: `数据基础设施：谁有真订单？`
+- platform: `douyin`
+- account: `账本两面`
+- published_at: `2026-09-05 22:51:12`（Asia/Shanghai）
+- topic: `数据基础设施：英方软件、海量数据、科蓝软件谁更接近真实订单？`
+- tags: `#数据基础设施 #英方软件 #海量数据 #科蓝软件 #财报解读`
+- video: `outputs/companies/数据基础设施/2026-09-05/podcast/renders/final.mp4`
+- cover_4x3: `outputs/companies/数据基础设施/2026-09-05/podcast/project/cover.png`（1440×1080）
+- cover_3x4: `outputs/companies/数据基础设施/2026-09-05/podcast/project/cover-3x4.png`（1080×1440）
+- metadata: `outputs/companies/数据基础设施/2026-09-05/publish/metadata.json`
+- duration: `336.2s`
+- report: `outputs/companies/数据基础设施/2026-09-05/research-materials/findings-summary.md`
+- aitoearn_flow_id: `05a18ac3-a3d0-4eed-8739-705fbf15e5fe`
+- aitoearn_record_id: `6a9c2a47ec55e4d875a6726a`
+- platform_url: `https://www.douyin.com/video/7682063842764307630`（aweme_id 7682063842764307630）
+- cover_note: `抖音确认页已由用户确认并完成发布；实际封面状态以用户确认页为准`

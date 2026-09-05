@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- 账本两面 账户封面模板（by-name: account-cover-reference）。演示文字可点击编辑；「替换当前背景」可换图；字体 assets/fonts/ 来自 font.noto-serif-sc 资源。用法与规则见同目录 README.md 与 account-profile/design.md 平台封面规范。 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>账本两面 · 封面预览</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#282725;color:#20201e;font-family:system-ui,sans-serif}.toolbar{padding:16px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;color:#eee;font-size:14px}button,.upload{background:#f6f0e6;color:#272522;border:0;border-radius:6px;padding:9px 16px;cursor:pointer;font:inherit}.hint{text-align:center;color:#c5c0b8;font-size:13px;margin:0 12px 16px}.stage{width:min(90vw,630px);margin:0 auto 32px}.cover{width:1080px;height:1440px;position:relative;overflow:hidden;background:#f4eee3;transform-origin:top left}.background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.content{position:absolute;inset:0;text-align:center;font-family:"Noto Serif CJK SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif}.brand{position:absolute;top:48px;left:100px;right:100px;display:flex;align-items:center;justify-content:center;gap:25px}.mark{width:68px;height:92px;flex:none}.brand-name{font-size:57px;font-weight:900;letter-spacing:9px}.tagline{position:absolute;top:151px;left:0;right:0;font-size:20px;letter-spacing:8px}.rule{position:absolute;top:208px;left:220px;right:220px;height:1px;background:#827b70}.rule:after{content:"";position:absolute;right:0;top:7px;width:92px;height:3px;background:#811d28}.companies{position:absolute;top:250px;left:55px;right:55px;font-size:37px;font-weight:700;letter-spacing:1px}.headline{position:absolute;top:327px;left:65px;right:65px;margin:0;font-weight:900;line-height:1.09;letter-spacing:3px}.headline span{display:block;font-size:172px}.headline .accent{color:#781923;font-size:182px}.category{position:absolute;top:748px;left:170px;right:170px;display:flex;align-items:center;gap:23px;justify-content:center;font-size:23px;letter-spacing:6px}.category:before,.category:after{content:"";height:1px;background:#a39a8e;flex:1}.footer{position:absolute;bottom:52px;left:125px;right:125px;padding:14px 12px;background:rgba(249,244,235,.86);display:flex;gap:20px;align-items:center;justify-content:center;font-size:25px;letter-spacing:4px}.footer:before,.footer:after{content:"";width:60px;height:2px;background:#811d28}[contenteditable=true]:focus{outline:2px dashed #a85760;outline-offset:5px}input[type=file]{display:none}.landscape{width:1440px;height:1080px}.landscape .brand{top:28px}.landscape .mark{width:48px;height:66px}.landscape .brand-name{font-size:43px}.landscape .tagline{top:103px;font-size:16px}.landscape .rule{top:141px;left:420px;right:420px}.landscape .companies{top:181px;font-size:32px}.landscape .headline{top:247px}.landscape .headline span{display:inline;font-size:163px}.landscape .headline .accent{font-size:163px}.landscape .category{top:442px;left:380px;right:380px;font-size:21px}.landscape .footer{bottom:33px;left:350px;right:350px;font-size:22px}
+@media print{body{background:white}.toolbar,.hint{display:none}.stage{margin:0!important;width:auto!important;height:auto!important}.cover{transform:none!important}@page{size:1080px 1440px;margin:0}}
+/* ===== 参考图细节与可调整参数 =====
+   尺寸与坐标均基于1080×1440画布。修改变量即可调整主要排版。
+   背景上的标识为独立SVG叠层，可替换成你的正式Logo。
+*/
+:root{--ink:#201f1d;--wine:#781923;--title-top:327px;--title-size:172px;--accent-size:182px;--company-size:37px;--paper-logo-x:255px;--paper-logo-y:1018px;--paper-logo-angle:26deg}
+.headline{top:var(--title-top);color:var(--ink)}.headline span{font-size:var(--title-size)}.headline .accent{font-size:var(--accent-size);color:var(--wine)}.companies{font-size:var(--company-size)}
+.footer{background:none;padding:0;text-shadow:0 1px 2px rgba(255,255,255,.35)}
+.margin-grid{position:absolute;top:0;bottom:0;width:154px;opacity:.44;pointer-events:none;background-image:linear-gradient(to right,rgba(127,107,78,.15) 1px,transparent 1px),linear-gradient(to bottom,rgba(127,107,78,.15) 1px,transparent 1px);background-size:52px 40px;mask-image:linear-gradient(to bottom,#000 0%,#000 36%,transparent 76%)}
+.margin-grid.left{left:0;border-right:1px solid #b9af9e}.margin-grid.right{right:0;border-left:1px solid #b9af9e}
+.margin-notes{position:absolute;top:91px;width:100px;display:flex;flex-direction:column;align-items:center;gap:21px;color:#827d72;font-size:16px;letter-spacing:5px;line-height:1.3}.margin-notes.left{left:28px}.margin-notes.right{right:22px}.margin-notes:after{content:"";display:block;width:24px;height:1px;background:#999082;margin-top:5px}
+.paper-imprint{position:absolute;left:var(--paper-logo-x);top:var(--paper-logo-y);width:160px;text-align:center;transform:rotate(var(--paper-logo-angle)) skewX(-13deg) scaleY(.72);transform-origin:center;mix-blend-mode:multiply;opacity:.91}.paper-imprint svg{width:89px;height:113px}.paper-imprint .imprint-text{font-family:Georgia,"Times New Roman",serif;font-size:13px;line-height:1.75;letter-spacing:5px;margin-top:10px;color:#615147}
+.landscape .paper-imprint{left:225px;top:787px;transform:rotate(20deg) skewX(-14deg) scaleY(.72)}.landscape .margin-notes{top:70px;font-size:14px;gap:17px}.landscape .margin-grid{width:154px}
+@media print{.margin-grid{print-color-adjust:exact}.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* final polish: ink-forward Chinese type and a stamped-on-paper imprint */
+@font-face{font-family:"Noto Serif SC Local";src:url("assets/fonts/NotoSerifSC-Regular.otf") format("opentype");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"Noto Serif SC Local";src:url("assets/fonts/NotoSerifSC-Bold.otf") format("opentype");font-style:normal;font-weight:700 900;font-display:swap}
+.content{font-family:"Noto Serif SC Local","Noto Serif CJK SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-weight:600}
+.brand-name,.companies,.headline,.headline span,.headline .accent,.footer,.category{font-weight:700}
+.brand-name{letter-spacing:8px}.tagline{font-weight:600}.headline{letter-spacing:4px}.headline .accent{font-weight:900}
+.headline{top:410px;left:0;right:0;width:880px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:0}
+.headline span,.headline .accent{display:block;width:100%;font-size:212px;line-height:1;text-align:center;text-align-last:center;white-space:nowrap;-webkit-text-stroke:1.5px currentColor}
+.headline span:first-child{transform:none}
+.headline .accent{margin-top:-2px;-webkit-text-stroke:3px currentColor}
+/* 行尾全角标点「？」：Noto Serif SC Bold 中「？」字身宽为全角(≈1em)，但墨迹只画在左半(≈0.49em)，
+   右半是空字身；text-align:center 按完整字身居中时，整行墨迹会视觉左偏 40-50px（两行大字左右错位）。
+   把行尾标点包进 .qm 并用负外边距抵消空字身（-0.521em 为实测校准值：墨迹中心=画布中心），
+   仅对行尾「？！」生效；字体被替换后需重新校准。 */
+.headline span.qm{display:inline-block;width:auto;margin-right:-0.521em}
+.category{top:875px}
+.paper-imprint{display:none}
+.landscape .headline{top:315px;width:1200px;display:block}
+.landscape .headline span{display:inline;width:auto;text-align:center;text-align-last:center}
+.landscape .headline span:first-child{transform:none}
+.landscape .category{top:535px}
+</style></head>
+<body>
+<div class="toolbar"><button id="portrait">竖版 3:4</button><button id="landscape">横版 4:3</button><label class="upload">替换当前背景<input id="upload" type="file" accept="image/*"></label><button id="save">保存当前HTML</button></div>
+<p class="hint">文字可点击编辑 · 背景已内嵌，断网也可打开 · 自动化截图目标：#cover</p>
+<main class="stage" id="stage"><article class="cover" id="cover">
+<img class="background" id="background" alt="米白账本摄影背景">
+<div class="content">
+<!-- 两侧栏目小字与淡账本细线；可改字、删项或整组隐藏。 -->
+<div class="margin-grid left"></div><div class="margin-grid right"></div>
+<div class="margin-notes left"><span contenteditable="true">财报</span><span contenteditable="true">订单</span><span contenteditable="true">现金流</span><span contenteditable="true">产业</span></div>
+<div class="margin-notes right"><span contenteditable="true">数据</span><span contenteditable="true">市场</span><span contenteditable="true">公司</span><span contenteditable="true">价值</span></div>
+<div class="brand"><svg class="mark" viewBox="0 0 70 96" aria-label="黑红折页示意标识"><path fill="#1c1c1b" d="M33 2 4 20 4 73 33 91Z"/><path fill="#8b1d2a" d="M37 8 65 24 65 78 37 95Z"/></svg><div class="brand-name" contenteditable="true">账本两面</div></div>
+<div class="tagline" contenteditable="true">看懂数字背后的公司</div><div class="rule"></div>
+<div class="companies" contenteditable="true">英方软件 · 海量数据 · 科蓝软件</div>
+<h1 class="headline"><span contenteditable="true">谁有</span><span class="accent" contenteditable="true">真订单<span class="qm">？</span></span></h1>
+<div class="category"><span contenteditable="true">数据基础设施观察</span></div>
+<div class="footer"><span contenteditable="true">从订单到现金，逐层验证</span></div>
+</div></article></main>
+<script>
+// 自动化接入：替换下方背景值为本地路径，或保留内嵌图片。
+// 长标题需调小 .headline 字号；当前版式针对两行短标题。
+const backgrounds={portrait:'assets/background-portrait.png',landscape:'assets/background-landscape.png'};
+const cover=document.getElementById('cover'),stage=document.getElementById('stage'),bg=document.getElementById('background');let mode='portrait';
+function fit(){const w=mode==='portrait'?1080:1440,h=mode==='portrait'?1440:1080;const scale=stage.clientWidth/w;cover.style.transform=`scale(${scale})`;stage.style.height=`${h*scale}px`;}
+function setMode(next){mode=next;cover.classList.toggle('landscape',mode==='landscape');bg.src=backgrounds[mode];fit();}
+document.getElementById('portrait').onclick=()=>setMode('portrait');document.getElementById('landscape').onclick=()=>setMode('landscape');
+document.getElementById('upload').onchange=e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{backgrounds[mode]=reader.result;bg.src=reader.result};reader.readAsDataURL(file)};
+window.addEventListener('resize',fit);setMode(new URLSearchParams(location.search).get('format')==='landscape'?'landscape':'portrait');
+document.getElementById('save').onclick=()=>{
+  const clone=document.documentElement.cloneNode(true);
+  // 将上传后的背景也保存进新文件，编辑的文字已包含在DOM中。
+  for(const script of clone.querySelectorAll('script')){
+    script.textContent=script.textContent.replace(/const backgrounds=\{portrait:'[^']*',landscape:'[^']*'\};/,()=>`const backgrounds={portrait:'assets/background-portrait.png',landscape:'assets/background-landscape.png'};`);
+  }
+  const url=URL.createObjectURL(new Blob(['<!doctype html>\n'+clone.outerHTML],{type:'text/html;charset=utf-8'}));
+  const link=document.createElement('a');link.href=url;link.download='cover-edited.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1500);
+};
+// 截图前 await document.fonts.ready，并等待背景图片加载。
+</script></body></html>

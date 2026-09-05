@@ -66,7 +66,7 @@
 - **数字口播简化**：亿级金额只说整数（"五十八亿"而非"五十八亿五"），千万级四舍五入到亿（"七个亿"而非"七亿三"），百分比用"X个点"（"十二个点"而非"十二点零零"）。详见 `account-profile/dialogue-policy.md`。
 - **英文读法**：CPU 保持英文，GPU 可说"显卡"，ARM 整体发音（不逐字母拼读），NVIDIA 用"英伟达"。
 - **字幕基线**：默认一条口播回合对应一条字幕，时间沿用该回合真实音频区间；允许自然换行，不按固定字数机械切碎。只有一个回合确实包含多个独立句群且画面需要分别强调时，才在 manifest 中显式拆 cue。
-- **平台封面**：封面是独立 HTML 资产，不属于正片 Composition 时间轴；沿用同一 editorial-paper 背景和字体，显示公司名/栏目 logo、主标题和副标题，封面字号大于正片标题。封面数据来自 `episode-input.json` 的 `cover.title` 与 `cover.subtitle`。
+- **平台封面**：封面是独立 HTML 资产，不属于正片 Composition 时间轴；必须先生成 HTML，再按实际平台尺寸截图为横版与竖版 PNG。封面继承“账本两面”横幅的克制、沉稳、财经出版物气质：深黑蓝—暖棕—灰黑柔和渐变，低透明度纸张噪点、暗角和账本方格纹理；禁止纯色铺底、亮红顶部横条、鲜红标签、黄色强调字、无语义圆环和斜切色块。品牌强调色统一使用 Logo 的暗酒红，右侧主视觉使用 Logo 的黑红折页图形并保持低透明度。标题使用财经出版物/研究机构气质的衬线显示字体，避免普通 PPT 粗黑体；公司名置于标题上方，主标题和底部细线表达由 `episode-input.json` 的 `cover.subject_label`、`cover.large_text`、`cover.subtitle` 驱动。封面不得添加小字免责声明、日期、研究编号或不可读的信息层。
 - **官方资料归档**：公司 subject 在 Phase 1 前归档适用的半年报/年报与公告；其他 subject 按来源类型归档政策、事件、技术或产业原文。下载前先查本地缓存。
 
 ## Phase 0: reference-replication — 建立账号规格
@@ -272,6 +272,7 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 - Phase 2 对明显停顿必须先完成脚本表达设计：长句拆分、问答回合或自然承接优先；不得把“画面里、口播、字幕”等制作元话语写入 spoken text。若确需固定静音，才在受影响 turn 上声明 `intra_turn_breaks`。
 - 句首出现“对/嗯/没错/好”等短回应时，必须同时写入 `response_action=backchannel`、`backchannel`、`backchannel_target`、`filler_position=start`、`delivery=short_pause` 和正值 `pause_after_ms`；不能只把短词拼进普通长句。
 - 数字分别锁定事实、自然口播和紧凑画面表达；不改变口径和事实方向。
+- 口播稿不得直接出现未经自然化的金额小数（如 `7307.06万元`、`2498.99万元`）或带两位小数的百分比；精确值必须留在 evidence/chart 字段，口播使用“约/接近/超过”和整数级别表达。若仍出现此类 token，Phase 2 直接退回，不得进入 TTS。
 - 每个视觉指标卡必须有语义完整的 `label`、`value`、`desc`；同一 topic 的三张卡不得全部使用“观察/指标/数据/待填写”等占位值。页面标签应回答“谁/什么指标/处于什么阶段”，不能只重复状态词。
 - `human-understanding` 先把反馈转成约束；`finance-content-engineering` 直接改写 episode-draft；`humanizer-zh` 审校 episode-polished 并写回最终 episode.json。两者不能只更新 spoken-style-map，也不能在 Phase 3 随意改稿。
 - `spoken-polish-diff.json` 必须记录每个 changed turn 的 before/after；draft/final 的 speaker、topic_id、evidence_ids 不得变化。存在用户口语化反馈时，运行 `scripts/check_spoken_polish.py --require-change`，无实际文本变化不得写 PASS。
@@ -384,6 +385,7 @@ v1 暂不解决 VoxCPM2 的高频颗粒、气声和部分末段动态问题；�
 - `COLD_OPEN`、音频和第一条 caption 均从 0 秒开始；`cover.html` 是独立平台封面，不得出现在正片 timeline。
 - **字幕密度**：默认一回合一条字幕，贴合沪电股份基线；字幕时间覆盖该回合真实语音区间，长句自然换行，不按固定字数机械截断。字幕数字使用阿拉伯数字（如"58亿""7个亿""12%"），不用中文数字。
 - **平台封面**：Phase 4 必须生成独立的 `podcast/project/cover.html`，沿用 Composition 的同一背景、字体和视觉 Token，只展示栏目标识、subject 主角和一组手机端可读的大字；标题字号大于正片标题，副标题可省略。封面主角从行业、产业链、公司、事件或技术中择一，由 evidence brief 说明选择理由。封面必须包含账号 logo，并分别使用 `scripts/render_cover_4x3.js` 导出 4:3 的 `cover.png`（推荐 1440×1080）、使用 `scripts/render_cover_3x4.js` 导出 3:4 的 `cover-3x4.png`（推荐 1080×1440）；封面独立于正片时间轴。
+- 封面不得以“生成了 cover.html”作为完成标志：必须在同一 Phase 实际导出两个 PNG，并用图像信息检查确认尺寸分别为 1440×1080 与 1080×1440。封面主视觉最多保留一个冲突主标题和一个必要辅助标签，禁止底部免责声明、日期、研究注释和不可读的小字进入缩略图。
 - 平台封面默认不进入正片时间轴，不产生音频、字幕或 `segments.json` 时长；正片 `COLD_OPEN` 必须从 0 秒开始。若明确需要片头封面动画，必须将同等时长同步加入音频、字幕和所有 Scene 时间轴，并单独标记为 in-video cover。
 - 底部章节导航和进度条是 root-level persistent layer，章节宽度按真实音频时长比例计算。
 - 进度条、章节边界和 Scene 区间必须共用同一套全局累计时间线：每个区间记录 `start_ms`、`end_ms`、`duration_ms`，首段从 0 开始，后段 `start_ms` 必须等于前段 `end_ms`；不得为章节重新从 0 计时或用局部比例重算。

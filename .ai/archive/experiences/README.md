@@ -27,6 +27,7 @@
 | `impeccable-detect-quality-gate` | `impeccable` 注意事项（detect 阈值与预防起点）+ 回写条目 | 2026-08-19 |
 | `deck-qa-implementation-pitfalls` | `static-html-qa` 注意事项（transform scroll 虚报、notes 显式隐藏）+ 回写条目 | 2026-08-19 |
 | `taste-skill-financial-editorial` | `taste-skill` 注意事项（金融 editorial 应用与边界）+ 辅助脚本登记（scripts/check-em-dash.py）+ 回写条目 | 2026-08-19 |
+| `account-cover-platform-rule` | `account-profile-design`（design.md 平台封面规范；含全角行尾标点 `.qm` 补偿、stroke 加粗合成、渲染管线 `?format=landscape` + 元素全幅截图、验收判据）；`account-cover-reference`（cover-reference 模板与背景/参考资产）；scripts/render_cover_3x4.js / render_cover_4x3.js 与 scripts/build_podcast_composition.py（已固化） | 2026-09-05 |
 
 | `hyperframes-cli-runtime-contract` | investagent-video-by-hyperframes SOP Phase 4/5 Known Issues 回写条目（check 约定/clip class/字体/对比度/确定性验证）；hyperframes 资产记录注意事项 | 2026-08-20 |
 | `video-pilot-media-degradation` | investagent-video-by-hyperframes SOP Phase 4 Known Issues 回写条目（TTS 降级路径/空行分段坑/时长裁决/Audio First 验证） | 2026-08-20 |
