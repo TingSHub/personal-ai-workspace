@@ -16,18 +16,19 @@ VOICE_CONFIG = {
     "zhiwei": {
         "clip": ASSET_ROOT / "voices" / "zhiwei" / "reference.wav",
         "emotion_dir": ASSET_ROOT / "voices" / "zhiwei" / "emotion",
-        "prompt": "大家好，我是林知微。今天我们来聊聊投资这件事。营收九百六十七亿，净利润却只有十六亿，这个反差，值得每一个人认真思考。有人说，这是AI风口上的真龙；也有人说，这不过是一吹就破的泡沫。数据不会说谎，但数据需要被读懂。你，更相信哪一个？欢迎在评论区告诉我。",
+        "prompt": "我先说一个直觉啊，这个数字看起来挺亮眼，可是往下拆，现金流好像没有一起跟上。那这个增长，到底是真的变好了，还是只是表面看起来热闹？",
     },
     "shenyan": {
         "clip": ASSET_ROOT / "voices" / "shenyan" / "reference.wav",
         "emotion_dir": ASSET_ROOT / "voices" / "shenyan" / "emotion",
-        "prompt": "欢迎来到账本两面，我是顾慎言。20多年投资经验，经历过2007年牛市，2015年股灾，见过太多看着贵其实不贵，和看着便宜其实是坑的故事。",
+        "prompt": "等等，这个数字我得先打个问号。收入是涨了没错，可现金流怎么还没跟上？先别急着说业务变好了，利润到底是怎么来的，还得再看一眼。",
     },
 }
 
 EMOTION_PROMPTS = {
     "curious": "等等，这里有个问题……为什么收入增长了，利润却没有同步跟上？",
     "skeptical": "先别急着下结论。收入看起来漂亮，但利润和现金流还得继续核对。",
+    "cautious": "这件事我会把结论压低一点。现在能确认的是阶段性改善，还不能把它直接说成长期趋势。",
     "firm": "这一点可以明确：增长已经发生，但质量还需要连续数据来验证。",
     "thoughtful": "我更愿意把这件事放回时间里看。下一期数据，可能比今天的结论更重要。",
 }
@@ -159,11 +160,16 @@ def main() -> int:
     parser.add_argument("--emotion-override", action="append", default=[], metavar="SPEAKER=DIR")
     parser.add_argument("--reference-override", action="append", default=[], metavar="SPEAKER=PATH")
     parser.add_argument("--voice-prompt", action="append", default=[], metavar="SPEAKER=TEXT")
+    parser.add_argument("--emotion-prompt-file", type=Path, default=None,
+                        help="JSON mapping of speaker -> emotion -> exact reference text")
     args = parser.parse_args()
     voice_overrides = dict(item.split("=", 1) for item in args.voice_override)
     emotion_overrides = dict(item.split("=", 1) for item in args.emotion_override)
     reference_overrides = dict(item.split("=", 1) for item in args.reference_override)
     voice_prompts = dict(item.split("=", 1) for item in args.voice_prompt)
+    emotion_prompts = {}
+    if args.emotion_prompt_file:
+        emotion_prompts = json.loads(args.emotion_prompt_file.read_text(encoding="utf-8"))
     episode = json.loads(args.episode.read_text(encoding="utf-8"))
     format_mode = episode.get("format_mode")
     role_map = episode.get("role_map") or {}
@@ -214,13 +220,13 @@ def main() -> int:
             emotion_clip = emotion_dir / f"{emotion}.wav" if emotion else None
             if turn["speaker"] in emotion_overrides and emotion_clip and emotion_clip.exists():
                 prompt_wav_path = emotion_clip
-                prompt_text = EMOTION_PROMPTS.get(emotion, cfg["prompt"])
+                prompt_text = emotion_prompts.get(turn["speaker"], {}).get(emotion, EMOTION_PROMPTS.get(emotion, cfg["prompt"]))
             elif turn["speaker"] in voice_overrides:
                 prompt_wav_path = Path(voice_overrides[turn["speaker"]])
                 prompt_text = voice_prompts.get(turn["speaker"], cfg["prompt"])
             elif emotion_clip and emotion_clip.exists():
                 prompt_wav_path = emotion_clip
-                prompt_text = EMOTION_PROMPTS.get(emotion, cfg["prompt"])
+                prompt_text = emotion_prompts.get(turn["speaker"], {}).get(emotion, EMOTION_PROMPTS.get(emotion, cfg["prompt"]))
             else:
                 prompt_wav_path = Path(cfg["clip"])
                 prompt_text = EMOTION_PROMPTS.get(emotion, cfg["prompt"])
@@ -313,11 +319,11 @@ def main() -> int:
         concat_wav.replace(full_wav)
     full_mp3 = args.outdir / "narration-full.mp3"
     subprocess.run(["ffmpeg", "-y", "-i", str(full_wav), "-c:a", "libmp3lame", "-q:a", "2", str(full_mp3)], check=True, capture_output=True)
-    (args.outdir / "segments.json").write_text(json.dumps({"backend": BACKEND_NAME, "format_mode": format_mode, "role_map": role_map, "clone_mode": args.clone_mode, "cfg_value": args.cfg_value, "seed_requested": args.seed, "seed_applied": bool(args.seed is not None and seed_supported), "voice_overrides": voice_overrides, "voice_prompts": voice_prompts, "emotion_overrides": emotion_overrides, "reference_overrides": reference_overrides, "inference_timesteps": args.inference_timesteps, "natural_pauses": args.natural_pauses, "post_process": args.post_process, "pause_total_seconds": round(pause_total, 3), "reused_segments": reused_segments, "total_seconds": round(cursor, 3), "segments": segments}, ensure_ascii=False, indent=2), encoding="utf-8")
+    (args.outdir / "segments.json").write_text(json.dumps({"backend": BACKEND_NAME, "format_mode": format_mode, "role_map": role_map, "clone_mode": args.clone_mode, "cfg_value": args.cfg_value, "seed_requested": args.seed, "seed_applied": bool(args.seed is not None and seed_supported), "voice_overrides": voice_overrides, "voice_prompts": voice_prompts, "emotion_prompts": emotion_prompts, "emotion_overrides": emotion_overrides, "reference_overrides": reference_overrides, "inference_timesteps": args.inference_timesteps, "natural_pauses": args.natural_pauses, "post_process": args.post_process, "pause_total_seconds": round(pause_total, 3), "reused_segments": reused_segments, "total_seconds": round(cursor, 3), "segments": segments}, ensure_ascii=False, indent=2), encoding="utf-8")
     with (args.outdir / "subtitles.srt").open("w", encoding="utf-8") as srt:
         for i, segment in enumerate(segments, 1):
             srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['speaker']}：{segment['text']}\n\n")
-    report = {"status": "PASS", "backend": BACKEND_NAME, "format_mode": format_mode, "role_map": role_map, "clone_mode": args.clone_mode, "cfg_value": args.cfg_value, "seed_requested": args.seed, "seed_applied": bool(args.seed is not None and seed_supported), "voice_overrides": voice_overrides, "voice_prompts": voice_prompts, "emotion_overrides": emotion_overrides, "reference_overrides": reference_overrides, "inference_timesteps": args.inference_timesteps, "speaker_alternation": True, "natural_pauses": args.natural_pauses, "post_process": args.post_process, "pause_total_seconds": round(pause_total, 3), "reused_segments": reused_segments, "turn_count": len(segments), "total_seconds": round(cursor, 3), "voices": sorted({s["speaker"] for s in segments})}
+    report = {"status": "PASS", "backend": BACKEND_NAME, "format_mode": format_mode, "role_map": role_map, "clone_mode": args.clone_mode, "cfg_value": args.cfg_value, "seed_requested": args.seed, "seed_applied": bool(args.seed is not None and seed_supported), "voice_overrides": voice_overrides, "voice_prompts": voice_prompts, "emotion_prompts": emotion_prompts, "emotion_overrides": emotion_overrides, "reference_overrides": reference_overrides, "inference_timesteps": args.inference_timesteps, "speaker_alternation": True, "natural_pauses": args.natural_pauses, "post_process": args.post_process, "pause_total_seconds": round(pause_total, 3), "reused_segments": reused_segments, "turn_count": len(segments), "total_seconds": round(cursor, 3), "voices": sorted({s["speaker"] for s in segments})}
     (args.outdir / "audio-qa.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))
     return 0
