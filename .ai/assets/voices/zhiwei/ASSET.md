@@ -12,9 +12,9 @@
 | source | 豆包 TTS / 火山引擎 seed-tts-2.0 |
 | version | conversational mixed v1；豆包 expressive，speech_rate=-10 |
 | license | 账号自有/已确认可用于本 workspace |
-| files | `reference.wav`、`emotion/` |
+| files | `reference.wav`、`emotion/`（含 `surprised.wav`） |
 | requirements | mono 16kHz WAV；VoxCPM2/CosyVoice zero-shot reference |
-| verification | 克隆短句无尾词残留；已通过播客 canary |
+| verification | 克隆短句无尾词残留；已通过播客 canary；`surprised.wav` 为豆包 expressive 生成 |
 
 ## 调用说明
 
