@@ -1,0 +1,33 @@
+# Topic Research Brief: {topic_id}
+
+## Approved Question
+
+{原样引用已批准选题卡中的对象范围、观众问题与内容承诺}
+
+## Current Answer
+
+{研究完成后的明确判断；它必须可争辩、可验证、可被后续证据推翻}
+
+## Mechanism And Time Horizon
+
+{判断成立的因果机制、影响对象与适用时间范围}
+
+## Evidence
+
+{支持判断的一手或已核验来源、口径、日期、定位与 evidence id}
+
+## Strongest Counterargument
+
+{最强反证或替代解释，以及为何当前仍选择上述判断}
+
+## Invalidation Condition
+
+{出现什么证据时必须修改或撤回判断}
+
+## Evidence Gaps
+
+{尚未解决的缺口及其对结论强度的影响}
+
+## Scope Decision
+
+{accepted 或 scope_change_required；若后者，说明被推翻的前提及需要重新确认的对象/问题}

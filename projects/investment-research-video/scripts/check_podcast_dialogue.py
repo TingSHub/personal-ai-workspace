@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Validate the podcast Phase 2 dialogue contract.
+"""Validate the podcast editorial dialogue contract.
 
 Usage:
   python3 scripts/check_podcast_dialogue.py \
-    --episode outputs/companies/<company>/<date>/podcast/script/episode.json \
-    --phase2-execution outputs/companies/<company>/<date>/editorial/phase2-execution.md \
-    --feedback-constraints outputs/companies/<company>/<date>/editorial/feedback-constraints.md \
-    --brokerage-dir outputs/companies/<company>/<date>/research-materials/brokerage \
-    [--out outputs/companies/<company>/<date>/editorial/phase2-dialogue-check.json]
+    --episode outputs/subjects/<subject>/<date>/podcast/script/episode.json \
+    --editorial-execution outputs/subjects/<subject>/<date>/editorial/phase1-execution.md \
+    --feedback-constraints outputs/subjects/<subject>/<date>/editorial/feedback-constraints.md \
+    [--out outputs/subjects/<subject>/<date>/editorial/dialogue-check.json]
 
 Exit codes: 0 = PASS, 1 = findings, 2 = usage or unreadable input error.
 """
@@ -31,12 +30,17 @@ FORBIDDEN_DIRECT_ADVICE = re.compile(
     r"|(?:逢低|逢高)\s*(?:买入|卖出)"
 )
 FORBIDDEN_PRODUCTION_META = ("视频里", "画面里", "字幕里", "镜头里", "观众", "必须把", "必须说", "口播稿")
+GROWTH_FIELDS = {"click_reason", "watch_promise", "interaction_value", "follow_reason"}
+THESIS_FIELDS = {
+    "mechanism", "time_horizon", "affected_segment", "strongest_counterargument",
+    "invalidation_condition", "evidence_ids",
+}
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--episode", type=Path, required=True)
-    parser.add_argument("--phase2-execution", type=Path, required=True)
+    parser.add_argument("--editorial-execution", "--phase2-execution", dest="editorial_execution", type=Path, required=True)
     parser.add_argument("--feedback-constraints", type=Path, required=True)
     parser.add_argument("--brokerage-dir", type=Path)
     parser.add_argument("--out", type=Path)
@@ -47,7 +51,7 @@ def main() -> int:
     args = parse_args()
     try:
         episode = json.loads(args.episode.read_text(encoding="utf-8"))
-        phase2 = args.phase2_execution.read_text(encoding="utf-8")
+        editorial_execution = args.editorial_execution.read_text(encoding="utf-8")
         args.feedback_constraints.read_text(encoding="utf-8")
     except (OSError, json.JSONDecodeError) as exc:
         print(f"ERROR: cannot read validation input: {exc}", file=sys.stderr)
@@ -60,8 +64,22 @@ def main() -> int:
         if turn.get("topic_id") not in topic_order:
             topic_order.append(turn.get("topic_id"))
 
-    if topic_order[:2] != ["COLD_OPEN", "INTRO"]:
-        findings.append("opening order must be COLD_OPEN -> INTRO")
+    if not topic_order or topic_order[0] != "COLD_OPEN":
+        findings.append("episode must start with COLD_OPEN")
+    if "INTRO" in topic_order and topic_order.index("INTRO") != 1:
+        findings.append("optional INTRO must follow COLD_OPEN")
+    if "OUTRO" not in topic_order:
+        findings.append("episode must contain OUTRO")
+    if not episode.get("editorial_thesis"):
+        findings.append("episode requires a clear editorial_thesis")
+    growth_contract = episode.get("growth_contract") or {}
+    for field in sorted(GROWTH_FIELDS):
+        if not growth_contract.get(field):
+            findings.append(f"growth_contract missing {field}")
+    thesis_contract = episode.get("thesis_contract") or {}
+    for field in sorted(THESIS_FIELDS):
+        if not thesis_contract.get(field):
+            findings.append(f"thesis_contract missing {field}")
     cold = [turn for turn in turns if turn.get("topic_id") == "COLD_OPEN"]
     if not cold:
         findings.append("missing COLD_OPEN turns")
@@ -112,8 +130,8 @@ def main() -> int:
                 findings.append(f"valuation context contains forbidden advice wording: {turn.get('turn_id')}")
 
     for resource in ("human-understanding", "humanizer-zh"):
-        if resource not in phase2:
-            findings.append(f"phase2 execution receipt missing {resource}")
+        if resource not in editorial_execution:
+            findings.append(f"editorial execution receipt missing {resource}")
 
     # Comparison episodes must name the objects being compared.  Do not infer
     # or ban names from sibling project directories: industry and comparison

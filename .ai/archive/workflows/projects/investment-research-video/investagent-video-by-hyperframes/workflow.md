@@ -4,7 +4,7 @@
 
 ## Mission
 
-企业研究内容视频的纯 HyperFrames 生产链路：Phase 1 三个研究 Skill 并行原生研究 → Phase 2 Financial Editor Agent 编辑综合（Editorial Master）→ **Phase 3 起由 HyperFrames 技能体系接管**（router 意图捕获与创作路由 → creative/core/animation 创作 → media-use 配音与媒体 → CLI 确定性渲染）→ 最终 MP4。
+企业研究内容视频的纯 HyperFrames 生产链路：Phase 1 按批准问题选择研究资源 → Phase 2 Financial Editor Agent 编辑综合（Editorial Master）→ **Phase 3 起由 HyperFrames 技能体系接管**（router 意图捕获与创作路由 → creative/core/animation 创作 → media-use 配音与媒体 → CLI 确定性渲染）→ 最终 MP4。
 
 服务对象：对上市公司研究感兴趣的普通投资者。产出「看懂公司/行业/周期/财务/经营变化/估值分歧/风险」的企业研究内容视频——**不是投资推荐**。
 
@@ -35,7 +35,7 @@
 
 | 产物 | 位置 | 格式 |
 |---|---|---|
-| 三份研究原生产物 + findings-summary | `outputs/companies/{company_name}/{research_date}/research-materials/{skill}/` | skill 原生格式（HTML/markdown/多文件），不强制转换 |
+| 本期选用的研究原生产物 + findings-summary | `outputs/companies/{company_name}/{research_date}/research-materials/{skill}/` | skill 原生格式（HTML/markdown/多文件），不强制转换 |
 | Editorial Pitch | `outputs/companies/{company_name}/{research_date}/editorial/01-editorial-pitch.md` | markdown（主命题、读者承诺、关键问题、张力与反证） |
 | Editorial Master | `outputs/companies/{company_name}/{research_date}/editorial/02-editorial-master.md` | markdown（视频创作消费的企业研究母稿） |
 | 冲突与编辑决策记录 | `outputs/companies/{company_name}/{research_date}/editorial/unresolved-conflicts.md` | markdown（已裁决 + 未裁决清单；未裁决不得进入视频） |
@@ -54,21 +54,21 @@
 - `SCRIPT.md` 由 Editorial Master 派生并锁定，是全片口播文本唯一 Source of Truth；字幕只能从它派生。
 - 时长和形态由 HyperFrames router 根据 Editorial Thesis 与项目输入裁决；不在 Workflow 中写死内容模板。
 - 不创建新 Agent 类型；内容结构服从 Editorial Master，不服从固定页面或章节模板。
-- `topic_card` 必须来自用户批准的 `topic-forward-lead` 结构化产物；其中的 `review_constraints[]` 是验证约束，导演必须逐条判断适用性，并将适用项翻译为适合本期选题和叙事模式的可执行动作，不得机械复制上一条视频的章节结构。
+- `topic_card` 必须来自用户批准的 `topic-forward-lead` 结构化产物；其中的 `review_constraints[]` 是待验证建议。编辑研究后可不采用，最多保留一个主要内容实验；发布时间等发布实验交发布环节。
 
-## Phase 1: research — 并行原生研究
+## Phase 1: research — 按问题选择研究
 
 ### Goal
 
-三个研究 Skill 按各自原生流程完整执行，产物原格式保留；必要时由 `cninfo-connector` 补充一手披露取证；每份产物附带结构化 findings-summary 作为下游衔接层。研究目标覆盖：公司业务与商业模式、行业与产业链、行业周期、市场地位、核心竞争优势/护城河、财务表现、经营变化、增长驱动、主要风险、长期跟踪变量。
+按已批准问题选择研究资源，产物原格式保留；必要时由 `cninfo-connector` 补充一手披露取证。产品实力核验能力、采用与替代难度，周期题核验供需、库存与产能，盈利质量题再深入三表。研究交付核心答案、最强反证、证据缺口和停止条件。
 
 ### Required Resources
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| industry-analysis | skill | 必选 | github · tree-sha256:a2a363fca3d9 | 行业/产业链 6 阶段（产业链图谱/三高矩阵/标的映射）；产出原生 HTML 可视化报告；要求联网检索，估值需真实来源 |
-| industry-cycle-analysis | skill | 必选 | github · tree-sha256:9e9b5dd25f8e | 供需周期/资本周期/市场预期阶段；产出深研 markdown + 证据台账；用 skill 自带验证器 strict full 校验 |
-| investagent | skill | 必选 | github · tree-sha256:51aa7c2823bd | **内容生产链路只跑「研究+数据」范围**（见 Known Issues）：Buffett 定性 + UZI 22 维 + tushare 采集；跳过 TradingAgents/QuantDinger |
+| industry-analysis | skill | 条件使用 | github · tree-sha256:a2a363fca3d9 | 行业/产业链 6 阶段（产业链图谱/三高矩阵/标的映射）；产出原生 HTML 可视化报告；要求联网检索，估值需真实来源 |
+| industry-cycle-analysis | skill | 条件使用 | github · tree-sha256:9e9b5dd25f8e | 供需周期/资本周期/市场预期阶段；产出深研 markdown + 证据台账；用 skill 自带验证器 strict full 校验 |
+| investagent | skill | 条件使用 | github · tree-sha256:51aa7c2823bd | **内容生产链路只跑「研究+数据」范围**（见 Known Issues）：Buffett 定性 + UZI 22 维 + tushare 采集；跳过 TradingAgents/QuantDinger |
 | cninfo-connector | skill | 条件性必选 | internal · installed_ref: internal | A 股年报/半年报/季报/公告的一手披露取证；当关键财务、经营或口径冲突需要官方核验时启用；下载 PDF 并保存到 `official-information/`，不得把仅下载成功当作正文已核验 |
 
 ### Input
@@ -92,7 +92,7 @@
 
 ### Quality Criteria
 
-- 每个必选 Resource 真实执行并留下独立产物；若触发 `cninfo-connector`，必须逐项记录搜索与下载结果、官方文件存档及正文定位；若 topic card 提供公告索引，必须逐家公司记录主路径/兜底路径和下载状态；若未触发，记录未触发及原因
+- 每个被选用 Resource 真实执行并留下独立产物；未选用资源记录与本期问题无关的理由。若触发 `cninfo-connector`，必须逐项记录搜索与下载结果、官方文件存档及正文定位；若 topic card 提供公告索引，必须逐家公司记录主路径/兜底路径和下载状态
 - findings-summary 满足上述 5 项契约
 - 数据来自真实接口/检索，无模型记忆补数；关键财务/经营事实优先回指公司官方披露；降级路径如实标注，未执行不得写成已执行
 - 原生产物保留原生格式，未为视频强行改造
@@ -108,14 +108,14 @@
 
 ### Goal
 
-由 Financial Editor Agent 接管三份 Phase 1 findings-summary 的编辑综合。Agent 必须先理解公司、行业与当前变化，再自主形成一个 Editorial Thesis，围绕该主命题决定哪些问题值得讲、哪些资料应删除或压缩，并完成事实核验、口径分层、冲突裁决、同行坐标、反证寻找与企业观点表达。
+由 Financial Editor Agent 接管 Phase 1 已选研究的 findings-summary。Agent 必须先理解主体、行业与当前变化，再自主形成一个 Editorial Thesis，围绕该主命题决定哪些问题值得讲、哪些资料应删除或压缩，并完成事实核验、口径分层、冲突裁决、同行坐标、反证寻找与企业观点表达。
 
 本 Phase 的交付目标是形成一份可以被 Human Editor 审阅、被 HyperFrames 创作链路直接消费的 Human-first、Presentation-ready 企业研究母稿。它研究企业状态与经营逻辑，不输出投资观点、买卖建议、目标价或交易策略。无法验证或无法裁决的内容必须留在内部决策记录中，不得进入 Editorial Master 的事实正文。
 
 默认顺序：
 
 ```text
-三份 findings-summary
+已选 findings-summary
 ↓
 理解公司与当前变化
 ↓
@@ -142,7 +142,7 @@
 
 ### Input
 
-- Phase 1 三份 findings-summary.md（已验收）
+- Phase 1 本期选用且已验收的 findings-summary.md
 - 必要时可回看 Phase 1 原生产物与其中引用的一手来源，专门用于核验关键冲突；不得把未核验的单源估计伪装成事实
 - 任务参数：company_id / company_name / research_date
 
@@ -215,8 +215,8 @@ hyperframes 主技能入口接管 Phase 2 已验收的 Editorial Master，完成
 
 ### Phase 3 project constraints
 
-- **开场钩子门禁**：开场 Scene 必须通过 `video-hook-intro` 检查——极端对比数字(2-4 个,感知差距大)+ 悬念二选一问题(片尾必须兑现);每 Scene 始于「事实矛盾」立题(非修辞提问)
-- **数据降维检查**：SCRIPT 每个 Scene 至少一处降维翻译(`number-perception` 三阶:单位换算「每赚100块只有1块7」/生活类比/熟悉参照)或对比锚点(同行倍数/时间极值/预期分歧);数字零漂移、类比机制等价
+- **开场门禁**：前 10 秒说明观看价值，可用观点、案例、事件、技术演示、事实反差或问题；正文必须兑现，不用关键词或固定数字数量代替内容审阅。
+- **理解门禁**：只对理解关键的数字做数量级、生活参照或对比翻译；没有必要数字的 Scene 不强制插入数据类比。
 - **引述式表达(补回冲击)**：允许引述券商目标价/机构预测作为市场预期(标注「市场预期」+来源,口径一致),禁止自创目标价/评级/买卖建议(`boundary-rewrite` 三分类判定)
 - **多空局可选形态**：争议性选题(双方都有可辩护证据)可切换 `debate-rounds` 预编排——SCRIPT 写死双方论点 + 双音色 TTS 分饰 + 画面双方卡片交替;默认形态仍是叙事弧(企业研究定位)
 

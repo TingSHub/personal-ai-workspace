@@ -4,4 +4,6 @@
 
 当前脚本：
 
-- `build-topic-candidates.py`：读取 `signals.json`，按涨停/涨幅信号生成有限规模的公司种子与行业聚集种子，输出 `candidate-pool.json`。重大新闻和公司对比种子必须在新闻证据审阅、产业链归组后由 `topic-forward-lead` 生成，脚本不擅自推断。
+- `build-topic-candidates.py`：读取可选 `signals.json`，并可通过 `--leads` 接收按 `topic-forward-candidate` 模板填写、有来源的事件、产品、行业、观众问题或比较线索，输出 `candidate-pool.json`。行情种子的观众问题保持为空，交策划轻量核验后形成；脚本不把价格变化自动解释成财务问题。
+
+批准卡随后交给 `topic-research`；本目录脚本不负责研究、审批或生成视频。

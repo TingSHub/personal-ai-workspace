@@ -9,7 +9,6 @@ import re
 from pathlib import Path
 
 
-CONTRAST_MARKERS = ("反而", "但", "却", "不过", "只是", "同时")
 BOOKISH_HOOK_PATTERNS = (
     re.compile(r"(?:利润|净利|净利润)快涨(?:了)?三倍"),
 )
@@ -30,10 +29,10 @@ def validate_cold_open(turns: list[dict]) -> None:
     text = str(first.get("text", ""))
     if first.get("turn_id") != "COLD_OPEN-01":
         raise SystemExit("first COLD_OPEN turn must be COLD_OPEN-01")
-    if first.get("question_ending") != "question" or "？" not in text:
-        raise SystemExit("COLD_OPEN-01 must end with an open question")
-    if not any(marker in text for marker in CONTRAST_MARKERS):
-        raise SystemExit("COLD_OPEN-01 must contain an explicit fact contrast")
+    if not text.strip():
+        raise SystemExit("COLD_OPEN-01 must contain spoken text")
+    # Narrative quality is reviewed by the director; a question mark or
+    # contrast keyword is not proof of an effective opening.
     for pattern in BOOKISH_HOOK_PATTERNS:
         if pattern.search(text):
             raise SystemExit(
@@ -50,18 +49,23 @@ def main() -> None:
     episode = json.loads(args.episode.read_text(encoding="utf-8"))
     opening_ids = {"COLD_OPEN", "INTRO"}
     turns = [turn for turn in episode["turns"] if turn["topic_id"] in opening_ids]
-    if not turns or {turn["topic_id"] for turn in turns} != opening_ids:
-        raise SystemExit("episode must contain both COLD_OPEN and INTRO turns")
+    if not turns or episode["turns"][0].get("topic_id") != "COLD_OPEN":
+        raise SystemExit("episode must start with COLD_OPEN; INTRO is optional")
+    if episode["turns"][:len(turns)] != turns:
+        raise SystemExit("opening turns must be a contiguous episode prefix")
     topic_order = []
     for turn in turns:
         if turn["topic_id"] not in topic_order:
             topic_order.append(turn["topic_id"])
-    if topic_order[:2] != ["COLD_OPEN", "INTRO"]:
-        raise SystemExit("opening order must be COLD_OPEN -> INTRO")
+    if topic_order not in (["COLD_OPEN"], ["COLD_OPEN", "INTRO"]):
+        raise SystemExit("optional INTRO must follow COLD_OPEN")
     validate_cold_open(turns)
 
     opening = {
         "episode_id": f"{episode['episode_id']}-opening-canary",
+        "subject_id": episode.get("subject_id") or episode.get("company_id"),
+        "subject_name": episode.get("subject_name") or episode.get("company_name"),
+        "subject_type": episode.get("subject_type") or ("company" if episode.get("company_name") else None),
         "company_id": episode.get("company_id"),
         "company_name": episode.get("company_name"),
         "research_date": episode.get("research_date"),

@@ -1,0 +1,52 @@
+{
+  "episode": {
+    "episode_id": "",
+    "subject_type": "company|industry|theme|event|technology|policy|macro|comparison",
+    "subject_id": "",
+    "subject_name": "",
+    "research_date": "",
+    "show_name": "账本两面",
+    "format_mode": "host_analyst|debate",
+    "role_map": {},
+    "speakers": {}
+  },
+  "topic_card_ref": "",
+  "research_brief_ref": "",
+  "growth_contract": {
+    "click_reason": "",
+    "watch_promise": "",
+    "interaction_value": "",
+    "follow_reason": ""
+  },
+  "editorial_thesis": "",
+  "thesis_contract": {
+    "mechanism": "",
+    "time_horizon": "",
+    "affected_segment": "",
+    "strongest_counterargument": "",
+    "invalidation_condition": "",
+    "evidence_ids": []
+  },
+  "content_angle": "",
+  "narrative_mode": "",
+  "opening_rationale": "",
+  "cover": {
+    "subject_label": "",
+    "title": "",
+    "large_text": "",
+    "subtitle": ""
+  },
+  "opening": {
+    "mode": "",
+    "cards": [],
+    "cold_open": [],
+    "intro": []
+  },
+  "comparison_entities": [],
+  "topics": [],
+  "outro": [],
+  "outro_summary": [],
+  "valuation_context": {
+    "enabled": false
+  }
+}

@@ -1,12 +1,12 @@
 # video-publish-review
 
-对每支已发布视频做标准化发布复盘；复盘候选交给必选的 `topic-forward-lead`，由它结合新信号为每个选题匹配验证方向，再将用户批准的 topic card 作为视频生产的唯一输入。
+对已发布视频做标准化复盘，并从事件、产业、公司实力、观众问题及可选行情线索生成下一批选题。复盘只提供带适用条件的假设；用户批准的 topic card 先进入 `topic-research`，研究验收后再进入视频生产。
 
 ## Goal
 
-让"下一支视频"从上一支的真实流量数据中变好：诊断漏斗断点（2s/5s/中段/完播）、用类型校准比率判断内容性质、归因到可修改的内容与发布变量（钩子/中段结构/评论触发器/发布时间），并把结论沉淀为可执行的改进项。
+让账号逐步积累可复用经验，同时保留新选题的自由度：按曝光 → 点击/播放 → 2 秒/5 秒 → 平均观看/完播 → 互动 → 主页访问 → 关注诊断增长漏斗；指标定位现象，内容证据支持归因，单条复盘形成待验证假设，新视频按适用条件选择零或一个主要内容实验。
 
-## Resources Used
+## 依赖资源
 
 - douyin-creator-tools（登录态官方导出 + 解析 + 详情页补充采集 + 评论导出）
 - experience-curator（回写判定）
@@ -17,7 +17,7 @@
 ## Workflows
 
 - publish-review（发布后数据复盘与改进候选，位于 `workflows/publish-review/workflow.md`）
-- topic-forward-lead（必选的下一条视频输入编排：选题、候选适配与用户审批，位于 `workflows/topic-forward-lead/workflow.md`）
+- topic-forward-lead（唯一选题入口：问题发现、轻量核验、增长契约与一次用户审批）
 
 ## 复盘成果组织
 
@@ -59,7 +59,7 @@ Skill 资源注册在 workspace 的 `.ai/skills/`（如 `.ai/skills/douyin-creat
 ### 必要资源
 
 - `douyin-creator-tools`：数据采集（publish-review P1/P2，必选）
-- `topic-forward-lead`：下一条视频唯一上游输入（必选）
+- `topic-forward-lead`：下一条视频的唯一选题入口，批准后移交 `topic-research`（必选）
 - `experience-curator`：用户确认后的 workspace 经验回写（publish-review P7，条件使用）
 - `boundary-rewrite`：争议性表达合规改写（可选）
 - `video-hook-intro`：改进项的钩子设计参考（可选）

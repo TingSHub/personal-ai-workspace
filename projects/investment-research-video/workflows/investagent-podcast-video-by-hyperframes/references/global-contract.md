@@ -1,67 +1,89 @@
-# Global Contract: investagent-podcast-video-by-hyperframes
+# Production Contract
 
-本文件承载跨 Phase 的稳定契约。执行任一 Phase 前，先读本文件对应章节；Phase 自己的 Quality Criteria 和 Known Issues 仍是该阶段的最终门禁。
+本文件只规定视频生产运行目录、共同输入和媒体交付。研究来源、官方资料归档和证据选择由 `topic-research` 负责，不在生产 Workflow 重复维护。
 
-## 1. Account assets
+## Run Root
 
-- `account-profile/ACCOUNT_PROFILE.md`
-- `account-profile/design.md`
-- `account-profile/content-policy.md`
-- `account-profile/dialogue-policy.md`
-- 顶层 `.ai/assets/` 中由 `resource_key` 选择的通用资源
-- 当前 Workflow profile，例如 `references/podcast-v1-shenyan.md`
-- 账号图形：`account-profile/account/` 下的横版 logo、mark 和 avatar
+每期使用 `outputs/subjects/{subject_id}/{run_date}/`。`subject_id` 是稳定、可读的研究对象标识；公司、行业、主题、事件、技术、政策、宏观和比较议题使用同一目录形态。历史 `outputs/companies/` 保留追溯，不迁移、不作为新运行默认路径。
 
-账号资产先于公司内容；项目只通过 `resource_key` 和 profile 选择资源，不复制资源本体。
+## Accepted Inputs
 
-## 2. Company-run outputs
+- 用户已批准的 topic card，只读引用上游 `topic-forward-lead` 结构化事实源；
+- Scope Decision 为 `accepted` 的 `topic-research` research brief 与 source ledger；
+- `account-profile` 的内容、对白、视觉与音色规则；
+- 按 `investment-video-episode-input.json.template` 生成的 episode input。
 
-- 长期官方原件：`outputs/companies/{company}/official-information/`
-- 本次研究：`outputs/companies/{company}/{run_date}/research-materials/`
-- 编辑与视频：`outputs/companies/{company}/{run_date}/editorial/`、`podcast/`
-- 券商材料：`research-materials/brokerage/`
-- 同行比较：`research-materials/peer-comparison/`
-- 外部深研：`research-materials/deep-research/`
+批准卡与 research brief 的主体或主问题不一致时停止。标题、章节和叙事方式的变化不算改题，由内容导演决定。
 
-同行官方原件使用同级公司目录：`outputs/companies/{peer_company}/official-information/`，不放进当前公司 run。
+## Required Production Outputs
 
-## 3. Official-source archive
+```
+outputs/subjects/{subject_id}/{run_date}/
+├── editorial/
+│   ├── director-treatment.md
+│   ├── topic-order.json
+│   ├── opening-selection.json
+│   ├── scene-intent.json
+│   ├── feedback-constraints.md
+│   ├── episode-input.json
+│   └── phase1-execution.md
+├── podcast/
+│   ├── script/episode.json
+│   ├── audio/segments.json
+│   ├── audio/narration-full.wav
+│   ├── audio/narration-full.mp3
+│   ├── qa/captions.json
+│   ├── qa/audio-qa.json
+│   ├── qa/episode-qa.md
+│   ├── visual-plan/scene-manifest.json
+│   ├── project/cover.html
+│   ├── project/cover.png
+│   ├── project/cover-3x4.png
+│   └── renders/final.mp4
+└── publish/
+    ├── metadata.json
+    ├── sources.md
+    └── platform-results.json
+```
 
-- 下载前先查公司级 `official-information/` 和 `download_record.json`；文件非空且公司、报告期、正文可验证时直接复用。
-- 标准文件名：`{ts_code}_{period}_{document_type}_{announcement_date}.pdf`。
-- 公告、年报、半年报和季报都归档到公司级 `official-information/`，run 只保存引用路径和证据定位。
-- 下载记录至少包含代码、公司名、报告期、类型、公告日期、公告 ID、来源 URL、本地路径、文件大小和文本校验状态。
+未执行真实发布时不创建伪 platform result；未使用可选阶段时不创建占位文件。
 
-执行细则以 cninfo-connector Skill 为准；这里保留路径和 Workflow 级门禁，避免跨公司运行时误归档。
+## Growth Contract
 
-## 3.1 Free data-source routing and degradation
+同一期视频只使用一套增长承诺：
 
-结构化数据不再绑定单一供应商。按以下顺序路由，并在本次 run 的 `research-materials/data-source-ledger.json` 留下每次调用、字段口径、报告期、返回状态和复核结果：
+- topic card 提供点击理由、观看承诺、互动价值和关注理由；
+- 内容导演明确这些价值分别在封面/标题、前 10 秒、正文段落、结尾何处兑现；
+- 成片 QA 检查兑现，不用标题点击替代内容质量；
+- 发布后按曝光、点击/播放、2 秒/5 秒、平均观看/完播、互动、主页访问和关注完整漏斗复盘。
 
-| 数据用途 | 首选 | 免费回退 | 事实等级 |
-|---|---|---|---|
-| 年报/半年报/公告原文 | cninfo-connector / 交易所 | 公司投资者关系页面 | 事实主源；必须归档 PDF 或原文定位 |
-| 单家公司三表与财务指标 | Tushare（有权限时） | AkShare；再回退 BaoStock | 结构化辅助源；关键数字必须回查官方披露 |
-| A 股历史日线 | Tushare daily（120 分可用） | BaoStock；再回退 AkShare | 行情辅助源；记录复权方式和时间戳 |
-| 同行统一期财务数据 | Tushare（有权限时） | AkShare/BaoStock 分别取数后交叉核对 | 只有报告期、单位、并表范围一致才可比较 |
+## Thesis And Closing Contract
 
-Tushare 无权限、token 失效或接口超时不是研究失败；必须进入下一层回退并标记 `degraded=true`。AkShare/BaoStock 的数字不得静默升级为官方披露；若字段语义不一致（例如合并净利润与归母净利润），必须在 ledger 和 findings-summary 中写明，禁止直接横向比较。若三层均无法取得，写明确缺口，不用估算填补。
+- `editorial_thesis` 是本期唯一核心判断；`thesis_contract` 记录机制、时间范围、受影响环节、最强反证、推翻条件和 evidence ids。
+- OUTRO 必须把当前判断说出来，再说明为何成立、适用于什么时间和环节、什么证据会改变判断。
+- “继续看财报”“等待数据”“持续关注”“未来可期”只能作为验证动作或过渡，不能单独收束。
+- 评论问题应来自本期真实分歧或推翻条件，不使用与内容无关的通用二选一。
 
-## 4. Performance contract
+## Performance Contract
 
-- `episode.json` 是事实、对话和角色的锁定输入；`spoken-style-map.json` 保存情绪、delivery、意图和停顿锚点。
-- 需要实际改变语速或停顿时，先由 `resolve_pacing_plan.py` 将 emotion、delivery、interaction_type 和 pause anchors 解析为 turn 级 `pacing_plan`；`delivery` 本身不是声学执行参数。稳定生产基线只执行整句级语速和句间停顿。
-- `pacing_plan` 由现有 podcast-audio-compiler 执行并写入 `segments.json`、`audio-qa.json`。
-- 使用另一个 voice asset 时，必须同步提供对应的 emotion 目录，禁止 reference 与 emotion 静默串用。
+- manifest 以 `COLD_OPEN` 开始，`INTRO` 可选；逐句音频是唯一时间轴。
+- `host_analyst` 是默认角色关系，`debate` 仅显式启用；不要求双方等量发言。
+- 每个 turn 保留 speaker、reply、interaction、evidence、fact/source 和 visual intent；短回应要有明确 backchannel 与停顿。
+- 数字在研究事实层保留精确口径，口播层优先听觉理解，画面层优先数量级和关系；三层不能改变方向或比较结果。
+- 口语化、情绪与停顿在脚本阶段锁定；音频阶段不得临时改观点或数字。
 
-## 5. Visual default and reuse
+## Visual And Cover Contract
 
-- 默认视觉变体为 `editorial-paper`：暖纸面、衬线标题、深墨正文、红涨绿跌、细线结构和低圆角。
-- 公司事实、数字、话题和图表数据必须来自 manifest；生成器不得写死公司品牌色或公司专属内容。
-- 第二家公司只替换 manifest 和研究资产，不改 Composition 模板源码。
-- 生成视频、音频、截图、PDF 和 HTML 是 run 产物，不进入通用资源层。
-- 平台封面是独立 `cover.html` + 4:3 `cover.png` + 3:4 `cover-3x4.png` 产物：复用正片背景和视觉 Token，展示主标题、副标题、公司名/栏目 logo；推荐 PNG 尺寸分别为 1440×1080 和 1080×1440。除非 manifest 显式声明 in-video cover，否则不得挂入正片 timeline，也不得改变音频、字幕或 Composition 的起始时间。
-- `episode-input.json` 的 `cover.title`、`cover.subtitle`、`cover.subject_label`、`cover.large_text`、`outro` 和每个 topic 的 `short_label` 是唯一内容来源；不存在这些字段时，Phase 2 直接失败，不从历史公司或模板补值。封面必须按“账本两面”横幅品牌规范生成 HTML，并截图输出横版与竖版 PNG；旧版亮红/黄色投流海报、无语义几何装饰和反色 Logo 不得复用。
-- 字幕以 `podcast/qa/captions.json` 为唯一显示来源；它由真实 `segments.json` 生成，默认一回合一条 cue、起止时间覆盖该回合真实语音，平台封面不复用字幕时间轴。
-- 内容主线由 Phase 1 的 `research-materials/editorial/company-thesis-card.json` 决定：`earnings_led` 仅适用于研究日前 1–2 天发布且经营变化重大的财报；其他情况使用 `company_led`、`industry_led` 或 `event_led`，财报作为验证或辅助章节。
-- `company-thesis-card.json` 至少记录 `content_angle`、`report_context`、`company_identity`、`core_advantages`、`moat_mechanisms`、`growth_drivers`、`profit_scenarios`、`financial_data_role`、`opening_candidates` 和 `selection_reason`。Phase 2 必须原样交接主线决策，不得用模板默认值覆盖。
+- 视觉样式从 account profile 选择，可按叙事使用 editorial-paper、data-newsroom、dark-terminal、field-notes、timeline-board 或已验证新模式。
+- 每个 scene 由内容目的驱动；图表、B-roll、字幕和口播不重复承担同一信息。
+- 章节、scene、caption、audio 与进度条共用全局累计时间线。
+- 平台封面是独立 HTML/PNG 资产，不进入正片。横版 1440×1080，竖版 1080×1440，分别排版并检查手机可读性。
+- 封面只保留研究对象、一个冲突主标题和必要辅助信息；公司名不再是强制元素。缺省副标题为“{subject} 深度解析”。
+- OUTRO 视觉读取 manifest 的本期结论，不使用固定“毛利、现金流、产能”文案。
+
+## Reuse And QA
+
+- 生成器不得写死公司、行业、话题、开场、结尾或事实数据。
+- 第二个不同 subject/叙事变体应只替换 manifest 即可生成 draft；失败时记录适配边界。
+- 音频必须经过反向对齐、独立 ASR 和 artifact consistency；视觉必须经过 HyperFrames check、关键帧审阅、字幕/时间线和 static HTML QA。
+- 任何新增事实、口径漂移、未兑现增长承诺或结尾立场缺失都必须退回相应上游阶段。

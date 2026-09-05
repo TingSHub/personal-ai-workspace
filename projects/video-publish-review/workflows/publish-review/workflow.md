@@ -33,7 +33,8 @@
 - by-name 引用：Workflow / Skill / Agent / Experience 一律用 by-name 标识符
 - 推断与事实分离：归因报告必须显式标注未验证项
 - 结构开放、功能稳定：叙事原型、章节数量、信息顺序可以变化；验证对象是开头承诺、冲突建立、证据兑现等叙事功能，不是固定章节模板
-- 候选不等于规则：单条复盘生成多个候选，下一支视频只选择一个主候选；重复证据出现后才升级为账号规律或 Workflow 规则
+- 候选不等于规则：单条复盘只形成假设；下一条按适用条件选择零或一个主要内容实验。多次相似表现增加支持度，但不能仅凭两条视频证明因果
+- 增长按完整漏斗诊断：曝光 → 点击/播放 → 2 秒/5 秒 → 平均观看/完播 → 点赞/评论/收藏/分享 → 主页访问 → 关注。某一层的数据不能替代其他层；收藏分享和关注转化对研究型账号通常比单一点赞更接近长期价值，但仍须按题材、时长、来源和样本量解释。
 - 内容与数据必须合并：平台指标只定位现象，归因必须尽量对照原视频、字幕、manifest、封面或评论证据
 
 ## Phase 0: registration-check — 建册与登记核对
@@ -46,7 +47,7 @@
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| published-works.md 条目 | input | 必选 | projects/&lt;source-project&gt;/account-profile/（workspace 相对路径，当前 investment-research-video） | 发布标题可能与工作标题不一致，以实际发布为准 |
+| `douyin-creator-tools` | skill | 可选 | workspace installed_ref | 需要补充作品身份时使用；已有登记则不重复采集 |
 
 ### Input
 
@@ -154,11 +155,12 @@ Phase 1 已验收快照 JSON（有则用于跨视频比较）+ Phase 2 已验收
 
 ### Output
 
-诊断段（attribution 前两节）：漏斗（2s→5s→平均观看→完播）+ 类型校准比率表（藏赞比/转赞比/评赞比/互动率 vs 干货型基准 1:3–1:15 / 1:15–1:40 / 1:30–1:80 / ≥3%）+ 关注漏斗分解（主页访问 → 粉丝增量的转化率，快照含两字段）。
+诊断段（attribution 前两节）：完整漏斗（曝光→点击/播放→2s→5s→平均观看→完播→点赞/评论/收藏/分享→主页访问→关注）+ 类型校准比率表（藏赞比/转赞比/评赞比/互动率 vs 同题材历史基线）+ 关注漏斗分解（主页访问 → 粉丝增量的转化率，快照含两字段）。缺失层必须显式标记，不得从播放量直接推断封面点击或关注意愿。
 
 ### Quality Criteria
 
 - 漏斗分母统一用播放量
+- 曝光与点击数据可得时单列点击/播放转化；不可得时标记缺口，不用播放量倒推曝光。
 - 比率表四项齐全且标注基准来源
 - 关注漏斗分解：主页访问→关注转化率 = follower_delta / profile_visits
 - 内容性质判断明确（干货收藏型/情感共鸣型/争议讨论型/信息差科普型）
@@ -177,17 +179,12 @@ Phase 1 已验收快照 JSON（有则用于跨视频比较）+ Phase 2 已验收
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| detail-exports JSON + metrics-snapshot/detail-snapshot | input | 必选/可选 | Phase 1/2 快照 JSON | 官方详情导出是单作品主事实源；其余为跨视频基线或详情补充 |
-| 完整文稿 | input | 必选 | projects/&lt;source-project&gt;/SCRIPT（Content Lock 唯一事实源，自制视频不需 ASR） | 与 manifest 时序对齐 |
-| manifest 话题时序 | input | 必选 | projects/&lt;source-project&gt;/manifest（话题编号+起止时间） | 话题级流失对照 |
-| 评论区导出 | input | 可选 | douyin-creator-tools comments:export | 归因校验关键；零评论本身即证据 |
-| 关键帧 | input | 可选 | ffmpeg 场景切换+均匀采样双轨，Claude 直接读帧图 | 抽帧参数见 Output |
-| 市场事件 | input | 可选 | news-search / multi-search（发布日±2 天公司与行业事件） | 解释选题关注度与大盘波动 |
-| 竞品数据 | input | 可选 | douyin-blogger-analysis（CDP 挂接用户 Chrome 采集对标账号公开数据） | 竞品三问数据层；未联调，首次使用需用户 Chrome CDP 配合 |
+| `douyin-creator-tools` | skill | 可选 | workspace installed_ref | 采集评论或详情补充；零评论本身即证据 |
+| `multi-search` | skill | 可选 | workspace installed_ref | 核验发布日前后事件；搜索结果必须回到原文 |
 
 ### Input
 
-Phase 3 诊断 + account-rules.md（账号规律先验）+ 上列证据包。
+Phase 3 诊断 + account-rules.md（账号规律先验）+ detail exports、完整文稿、manifest 话题时序、评论、关键帧、市场事件与可选竞品数据组成的证据包。
 
 ### Output
 
@@ -219,20 +216,19 @@ attribution 抽帧参数：场景切换+均匀采样双轨并行不可互替，�
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
 | boundary-rewrite | skill | 可选 | workspace · .ai/skills/boundary-rewrite | 争议性表达合规化 |
-| video-hook-intro | skill | 可选 | workspace · .ai/skills/video-hook-intro | 改进项的钩子设计参考 |
-| account-rules.md | input | 必选 | 本项目 outputs/account-rules.md | 改进项不与已验证规律冲突；新改进项即新假设 |
+| finance-content-engineering | skill | 可选 | workspace installed_ref | 把归因转成可执行叙事动作；不自动升级为规则 |
 
 ### Input
 
-Phase 3 归因报告。
+Phase 3 归因报告 + account-rules.md。账号规律是输入事实，不是 Required Resource。
 
 ### Input 补充（可证伪假设格式）
 
-每条改进项必须能被下一支视频证伪或证实：
+每条改进项说明适用题材、受众、时长和观察窗口；在适配视频中观察支持或反驳信号，不能把下一支视频的变化视为因果证明：
 
 ```
 假设：<成因，引用归因证据>
-改动：<下条视频的具体动作>
+改动：<适配视频中的具体动作；可不采用>
 观察指标：<指标名>（快照字段）
 判定阈值：<数值或方向>（对照 account-rules.md 基线）
 ```
@@ -247,7 +243,8 @@ Phase 3 归因报告。
 
 - 改进候选必须是可执行动作，不接受"继续优化"式空话
 - 改进候选必须可证伪：必须指明观察指标与判定阈值
-- 候选必须说明适用条件和不同叙事结构下的实现方式，不得强制下一条视频复制本条结构
+- 候选必须说明适用条件和不同叙事结构下的实现方式；发布时间、封面等发布实验交对应环节，不强制进入剧情
+- 归因区分观察、假设、行动；同时改动多个变量时明确无法单独归因。均值不能推断具体流失时间；无评论不能证明观众不在意某问题
 - 争议性表达经 boundary-rewrite 合规校验
 - 本 Phase 只生成候选，不在本 Phase 内选择正式规则
 
@@ -302,12 +299,12 @@ Phase 5 回写候选 + 用户确认。
 
 ### Output
 
-满足至少两支同类或可比视频证据、且决定沉淀时，才更新 `outputs/account-rules.md`；每条规律含：规律表述 / 证据视频列表（引用复盘册路径）/ 置信度 / 状态（假设中 → 已验证 → 已证伪）/ 最近复核日期。
+满足跨视频可比性、记录混杂因素且决定沉淀时，才更新 `outputs/account-rules.md`；每条规律含：规律表述 / 证据视频列表（引用复盘册路径）/ 置信度 / 状态（假设中 → 有条件支持 → 待复核/不支持）/ 最近复核日期。
 
 ### Quality Criteria
 
-- 新规律至少需要 2 支同类或可比视频证据才能脱离"假设中"状态（单视频结论只能标"假设中"）
-- 已有规律被新数据支持时提升置信度；被证伪时显式标记并保留证据链
+- 两支可比视频只能增加支持度；须记录题材、时长、流量来源、观察窗口及其他变化，排除明显替代解释后才可标为有条件支持。观察性数据不标因果已验证
+- 新数据支持或反驳时保留适用范围和证据链；冲突样本记为待复核，不删除历史证据
 - 规律表述可操作且带适用条件（能指导选题/结构/时长决策），不写无条件万能模板
 
 ### Known Issues

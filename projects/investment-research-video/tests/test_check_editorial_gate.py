@@ -7,73 +7,105 @@ from pathlib import Path
 
 
 SCRIPT = Path(__file__).parents[1] / "scripts" / "check_editorial_gate.py"
-WORKFLOW = Path(__file__).parents[1] / "workflows" / "investagent-podcast-video-by-hyperframes" / "workflow.md"
-GLOBAL_CONTRACT = WORKFLOW.parent / "references" / "global-contract.md"
 
 
-def write_run(root: Path, approved: bool) -> None:
-    editorial = root / "editorial"
-    editorial.mkdir()
-    candidates = []
-    for index in range(3):
-        candidates.append({
-            "topic_id": f"TOPIC-{index + 1}",
-            "title": f"候选 {index + 1}",
-            "main_question": f"问题 {index + 1}",
-            "audience_value": f"收益 {index + 1}",
-            "opening_candidate": f"事实反差 {index + 1}？",
-            "evidence_ids": [f"E{index + 1}"],
-            "expansion_path": ["机制", "验证"],
-            "max_risk": "证据不足",
-            "content_angle": "company_led",
-        })
-    (editorial / "topic-options.json").write_text(json.dumps({"candidates": candidates}), encoding="utf-8")
-    selected = "TOPIC-1" if approved else ""
-    status = "approved" if approved else "pending"
-    (editorial / "topic-approval.md").write_text(
-        f"status: {status}\ntopic_id: {selected}\napproved_at: 2026-08-26T12:00:00+08:00\n",
+def card(question: str, status: str = "approved") -> dict:
+    return {
+        "topic_id": "TOPIC-7",
+        "title": "技术实力验证",
+        "subject_type": "company",
+        "audience_question": question,
+        "click_reason": "市场把发布会当成商业化，但客户采用才是门槛。",
+        "content_promise": "看懂技术优势如何变成客户采用。",
+        "interaction_value": "讨论哪项采用证据最关键。",
+        "follow_reason": "持续跟踪产品从验证到收入的变化。",
+        "core_tension": "技术领先不等于规模收入。",
+        "evidence": [{"source": "official", "id": "E7"}],
+        "status": status,
+    }
+
+
+def write_inputs(root: Path, question: str, *, status: str = "approved", decision: str = "accepted", treatment: bool = False) -> tuple[Path, Path]:
+    upstream = root / "topic-forward.json"
+    upstream.write_text(json.dumps({
+        "status": status,
+        "approved_topic_id": "TOPIC-7" if status == "approved" else "",
+        "approved_at": "2026-09-05T12:00:00+08:00" if status == "approved" else "",
+        "cards": [card(question, status)],
+    }, ensure_ascii=False), encoding="utf-8")
+    brief = root / "research-brief.md"
+    brief.write_text(
+        f"# Topic Research Brief: TOPIC-7\n\n## Approved Question\n\n{question}\n\n"
+        f"## Current Answer\n\n客户采用是当前更关键的验证。\n\n"
+        f"## Scope Decision\n\n{decision}\n",
         encoding="utf-8",
     )
-    if approved:
+    if treatment:
+        editorial = root / "editorial"
+        editorial.mkdir()
         for filename in ("director-treatment.md", "opening-selection.json", "scene-intent.json", "director-execution.md"):
             (editorial / filename).write_text("approved treatment", encoding="utf-8")
         (editorial / "topic-order.json").write_text(json.dumps({"topics": [
-            {"topic_id": "TOPIC-1", "audience_payoff": "收益 1", "primary_mechanism": "机制 1"},
-            {"topic_id": "TOPIC-2", "audience_payoff": "收益 2", "primary_mechanism": "机制 2"},
-        ]}), encoding="utf-8")
+            {"topic_id": "T01", "audience_payoff": "理解采用门槛", "primary_mechanism": "客户验证"},
+            {"topic_id": "T02", "audience_payoff": "理解收入兑现", "primary_mechanism": "规模交付"},
+        ]}, ensure_ascii=False), encoding="utf-8")
+    return upstream, brief
+
+
+def run_gate(root: Path, upstream: Path, brief: Path, require_approved: bool = False) -> subprocess.CompletedProcess[str]:
+    command = [
+        sys.executable, str(SCRIPT), "--run-root", str(root),
+        "--upstream-topic-card", str(upstream), "--research-brief", str(brief),
+    ]
+    if require_approved:
+        command.append("--require-approved")
+    return subprocess.run(command, text=True, capture_output=True, check=False)
 
 
 class EditorialGateTest(unittest.TestCase):
-    def test_data_source_fallback_contract_is_documented(self):
-        workflow = WORKFLOW.read_text(encoding="utf-8")
-        contract = GLOBAL_CONTRACT.read_text(encoding="utf-8")
-        for text in (workflow, contract):
-            self.assertIn("AkShare", text)
-            self.assertIn("BaoStock", text)
-            self.assertIn("data-source-ledger.json", text)
-        self.assertIn("tushare-connector` | skill | conditional", workflow)
-        self.assertIn("Tushare → AkShare → BaoStock", workflow)
-
-    def run_gate(self, root: Path, require_approved: bool) -> subprocess.CompletedProcess[str]:
-        command = [sys.executable, str(SCRIPT), "--run-root", str(root)]
-        if require_approved:
-            command.append("--require-approved")
-        return subprocess.run(command, text=True, capture_output=True, check=False)
-
-    def test_pending_blocks_downstream(self):
+    def test_upstream_approval_is_reused_without_local_approval(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            write_run(root, approved=False)
-            result = self.run_gate(root, True)
+            upstream, brief = write_inputs(root, "这项技术优势能否转成客户采用？")
+            result = run_gate(root, upstream, brief)
+            self.assertEqual(result.returncode, 0, result.stdout)
+            self.assertFalse((root / "editorial/topic-approval.md").exists())
+
+    def test_pending_topic_blocks_production(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            upstream, brief = write_inputs(root, "这项技术优势能否转成客户采用？", status="pending", treatment=True)
+            result = run_gate(root, upstream, brief, True)
             self.assertEqual(result.returncode, 1, result.stdout)
             self.assertIn("must be approved", result.stdout)
 
     def test_approved_treatment_passes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            write_run(root, approved=True)
-            result = self.run_gate(root, True)
+            upstream, brief = write_inputs(root, "这项技术优势能否转成客户采用？", treatment=True)
+            result = run_gate(root, upstream, brief, True)
             self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_changed_research_question_requires_scope_change(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            upstream, brief = write_inputs(root, "原批准问题")
+            brief.write_text(
+                "# Topic Research Brief: TOPIC-7\n\n## Approved Question\n\n已经改过的问题\n\n"
+                "## Scope Decision\n\naccepted\n",
+                encoding="utf-8",
+            )
+            result = run_gate(root, upstream, brief)
+            self.assertEqual(result.returncode, 1, result.stdout)
+            self.assertIn("differs from the approved", result.stdout)
+
+    def test_scope_change_blocks_production(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            upstream, brief = write_inputs(root, "原批准问题", decision="scope_change_required")
+            result = run_gate(root, upstream, brief)
+            self.assertEqual(result.returncode, 1, result.stdout)
+            self.assertIn("must be accepted", result.stdout)
 
 
 if __name__ == "__main__":
