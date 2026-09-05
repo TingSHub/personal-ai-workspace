@@ -1,11 +1,11 @@
 ---
 name: cninfo-connector
-description: 巨潮资讯（cninfo.com.cn）公告/年报数据连接器（workspace 共享 internal skill）——动态 orgId 构造，按代码+关键词搜索法定披露公告并下载 PDF。当任何项目需要获取 A股年报/半年报/季报/公告 PDF 时使用。
+description: 巨潮资讯（cninfo.com.cn）公告/年报数据连接器（workspace 共享 internal skill）——动态 orgId 构造，按代码+关键词搜索法定披露公告并下载 PDF；巨潮无结果时回退到上交所/深交所官方接口。当任何项目需要获取 A股年报/半年报/季报/公告 PDF 时使用。
 ---
 
 # cninfo-connector
 
-workspace 级共享数据连接器：巨潮资讯（证监会指定法定披露平台）公告/年报获取，公开接口无需凭证。
+workspace 级共享数据连接器：巨潮资讯（证监会指定法定披露平台）公告/年报获取，公开接口无需凭证；巨潮无结果时自动回退到对应交易所官方披露接口。
 
 ## 为什么存在
 
@@ -35,7 +35,10 @@ path = download_pdf(items[0]["announcementId"], items[0]["adjunctUrl"], "artifac
 - 巨潮查询 pageSize ≤ 30，调用间隔 ≥ 1.5s（限速要求）
 - 关键词用"年度报告"可精确匹配年报（"年报"会命中制度类文件）
 - 返回字段：announcementId / announcementTitle / adjunctUrl / publishDate
-- PDF 下载为 `static.cninfo.com.cn` + adjunctUrl
+- 搜索顺序：CNINFO → 上交所（`.SH`）或深交所（`.SZ`）官方接口；返回结果带 `source`（`cninfo`/`sse`/`szse`）
+- PDF 下载：CNINFO 结果使用 `static.cninfo.com.cn`，交易所结果使用其返回的官方完整链接
+- 交易所兜底只解决“公告索引未返回”的问题，不替代正文下载和 PDF 文本校验
+- 若上交所下载端返回反爬 HTML，连接器会拒绝将其保存为 PDF；应保留公告元数据并改用可访问的官方文件入口重试
 
 ## 公司级归档契约
 

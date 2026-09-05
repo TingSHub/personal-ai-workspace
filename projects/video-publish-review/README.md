@@ -1,6 +1,6 @@
 # video-publish-review
 
-对每支已发布视频做标准化发布复盘，并在复盘末端发现下一支视频的选题与叙事方向。发布复盘和选题前瞻分属两条工作流；叙事架构建议由 `topic-forward-lead` 交给 investment-research-video，并根据复盘与新调研结果选择或调整模板。
+对每支已发布视频做标准化发布复盘；复盘候选交给必选的 `topic-forward-lead`，由它结合新信号为每个选题匹配验证方向，再将用户批准的 topic card 作为视频生产的唯一输入。
 
 ## Goal
 
@@ -8,7 +8,7 @@
 
 ## Resources Used
 
-- douyin-creator-tools（登录态指标导出 + 解析 + 评论导出）
+- douyin-creator-tools（登录态官方导出 + 解析 + 详情页补充采集 + 评论导出）
 - experience-curator（回写判定）
 - boundary-rewrite（改进项中争议性表达的合规改写）
 - video-hook-intro（改进项的钩子设计参考）
@@ -16,8 +16,8 @@
 
 ## Workflows
 
-- publish-review（本项目核心 SOP，位于 `workflows/publish-review/workflow.md`）
-- topic-forward-lead（选题前瞻：复盘后自动发现下一个视频话题，位于 `workflows/topic-forward-lead/workflow.md`）
+- publish-review（发布后数据复盘与改进候选，位于 `workflows/publish-review/workflow.md`）
+- topic-forward-lead（必选的下一条视频输入编排：选题、候选适配与用户审批，位于 `workflows/topic-forward-lead/workflow.md`）
 
 ## 复盘成果组织
 
@@ -25,7 +25,7 @@
   - `README.md` — 视频身份与复盘状态
   - `metrics-snapshot-YYYY-MM-DD.json` — 每次采集一个快照
   - `attribution-YYYY-MM-DD.md` — 归因报告（T+3 初版，T+7 增量更新终版）
-- 每期选题前瞻一个日期文件夹：`outputs/topic-forward/<YYYY-MM-DD>/`，包含 `topic-forward.md` 与 `signals.json`
+- 每期选题前瞻一个日期文件夹：`outputs/topic-forward/<YYYY-MM-DD>/`，包含 `topic-forward.md`（阅读视图）、`topic-forward.json`（结构化事实源）、`signals.json` 与候选池产物
 - 已完成复盘：
   - 2026-08-28 中科曙光（迁移自 investment-research-video，见该文件夹内 README）
 - 待复盘队列：
@@ -49,7 +49,7 @@ Skill 资源注册在 workspace 的 `.ai/skills/`（如 `.ai/skills/douyin-creat
 ### 运行规则
 
 - 每支已发布视频一个独立复盘文件夹：`outputs/retrospectives/<published_date>-<slug>/`。
-- 数据快照 JSON 是唯一流量事实源；归因报告只引用快照数据，不引用记忆中的数字。
+- 已验收的结构化数据 JSON 是流量事实源；归因报告只引用已落盘数据，不引用记忆中的数字。
 - 采集通过 `douyin-creator-tools` 登录态自动化完成，遵守低频、不绕风控、失败即停的约束。
 - 复盘报告必须显式标注未验证项，并分离事实与推断。
 - 不在复盘项目内直接做经验回写；候选经用户确认后交给 `experience-curator`。
@@ -58,12 +58,13 @@ Skill 资源注册在 workspace 的 `.ai/skills/`（如 `.ai/skills/douyin-creat
 
 ### 必要资源
 
-- `douyin-creator-tools`：数据采集（publish-review P1，必选）
-- `experience-curator`：回写判定（publish-review P5，必选）
+- `douyin-creator-tools`：数据采集（publish-review P1/P2，必选）
+- `topic-forward-lead`：下一条视频唯一上游输入（必选）
+- `experience-curator`：用户确认后的 workspace 经验回写（publish-review P7，条件使用）
 - `boundary-rewrite`：争议性表达合规改写（可选）
 - `video-hook-intro`：改进项的钩子设计参考（可选）
 - `topic-forward-signal-scanner`：选题前瞻的免费市场信号扫描
 
 ### 已知限制
 
-官方导出不含单视频留存曲线与观众画像（仅页面可视化），中段流失定位依赖推断；T+7 复采时以人工截图作为兜底。
+当前可稳定生成官方详情导出 JSON 及其原始 Excel，覆盖内容吸引力、观众参与度、流量来源、观众分析；章节点击率、搜索关键词、留存曲线等按需通过详情页补充采集，中段流失定位仍依赖原视频对齐。归因、候选、规律库分别是后续条件产物，不要求每次都生成。

@@ -14,7 +14,7 @@
 | invocation | 在安装目录内执行 `npm run <command>`；指标导出走本地辅助脚本（见 scripts） |
 | requirements | Node ≥ 22（本机 v25.9.0）；`npm install` 已装 playwright/express/better-sqlite3；Playwright Chromium 已装；openpyxl 3.1.5（xlsx 解析）；WSL2 有头浏览器需 WSLg 图形支持 |
 | update | git · 进入安装目录 `git pull && npm install`，对比 `git log` 后保留本地说明；verify：`node --check` 两个辅助脚本（未登录态跑导出脚本应报「登录态过期」并退出码 2，属预期验证路径） |
-| scripts | `.ai/skills/douyin-creator-tools/scripts/export-works-metrics.mjs`（登录态内导出作品列表 Excel）；`scripts/parse_works_xlsx.py`（Excel → works-metrics.json） |
+| scripts | `.ai/skills/douyin-creator-tools/scripts/export-works-metrics.mjs`（作品列表 Excel）；`scripts/parse_works_xlsx.py`（Excel → works-metrics.json）；`scripts/export-work-detail.mjs`（单作品详情页官方导出 Excel）；`scripts/parse-work-detail-exports.py`（详情导出 Excel → JSON）；`scripts/collect-work-detail.mjs`（详情页补充 JSON + 页面证据截图） |
 | experience_refs | 无 |
 
 ## 调用说明
@@ -40,7 +40,21 @@ npm run comments:export -- "<作品标题>"   # 该作品未回复评论 -> unre
 # 指标导出（本地辅助脚本，含完播率/5s完播率/2s跳出率/封面点击率）：
 node ../../.ai/skills/douyin-creator-tools/scripts/export-works-metrics.mjs --out /tmp/作品列表.xlsx
 python3 ../../.ai/skills/douyin-creator-tools/scripts/parse_works_xlsx.py /tmp/作品列表.xlsx <输出.json>
+# 单作品详情页（只读）：总览、趋势、章节、搜索词与页面截图
+node ../../.ai/skills/douyin-creator-tools/scripts/collect-work-detail.mjs \
+  --item-id <作品ID> \
+  --output /absolute/path/detail-snapshot-YYYY-MM-DD.json \
+  --screenshot /absolute/path/detail-page-YYYY-MM-DD.png
+# 单作品详情页官方导出：内容吸引力、观众参与度、流量来源、观众分析
+node ../../.ai/skills/douyin-creator-tools/scripts/export-work-detail.mjs \
+  --item-id <作品ID> \
+  --out-dir /absolute/path/work-detail-exports-YYYY-MM-DD
+python3 ../../.ai/skills/douyin-creator-tools/scripts/parse-work-detail-exports.py \
+  /absolute/path/work-detail-exports-YYYY-MM-DD \
+  /absolute/path/detail-exports-YYYY-MM-DD.json
 ```
+
+详情采集优先使用详情页官方“导出”按钮保存 Excel，再解析为 JSON；目前实测覆盖内容吸引力（含进度分析）、观众参与度、流量来源、观众分析。JSON 是结构化事实源，原始 Excel 用于审计；截图和接口采集仅补充章节点击率、搜索关键词、留存曲线等导出文件没有的数据。脚本只保存脱敏后的来源端点，不保存 Cookie、`msToken` 或 `a_bogus` 等请求鉴权参数。
 
 ### 使用约束（合规，写入每次采集 SOP）
 

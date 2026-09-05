@@ -28,6 +28,7 @@
 | company_id | 是 | 公司代码（如 600519） |
 | company_name | 是 | 公司名称（如 贵州茅台） |
 | research_date | 是 | 运行日期（YYYY-MM-DD），同时是输出目录层级 |
+| topic_card | 是 | 用户已批准的 `topic-forward-lead` 结构化选题卡；这是本 Workflow 的唯一视频输入，包含主题范围、观众问题、内容承诺、证据线索、叙事方向和 `review_constraints[]`；Markdown 交接摘要仅作阅读视图 |
 | 已有研究产物 | 否 | 若有当日/近期原生产物，可复用并如实记录，避免重跑 |
 
 ## Output
@@ -53,6 +54,7 @@
 - `SCRIPT.md` 由 Editorial Master 派生并锁定，是全片口播文本唯一 Source of Truth；字幕只能从它派生。
 - 时长和形态由 HyperFrames router 根据 Editorial Thesis 与项目输入裁决；不在 Workflow 中写死内容模板。
 - 不创建新 Agent 类型；内容结构服从 Editorial Master，不服从固定页面或章节模板。
+- `topic_card` 必须来自用户批准的 `topic-forward-lead` 结构化产物；其中的 `review_constraints[]` 是验证约束，导演必须逐条判断适用性，并将适用项翻译为适合本期选题和叙事模式的可执行动作，不得机械复制上一条视频的章节结构。
 
 ## Phase 1: research — 并行原生研究
 
@@ -72,6 +74,8 @@
 ### Input
 
 - 任务参数：company_id / company_name / research_date
+- 必选：用户批准的 `topic-forward-lead` topic card；不得直接以 publish-review 的 attribution 或候选池启动视频生产
+- 若 topic card 含 `announcement_evidence`，研究阶段必须先读取该结构化公告索引，再按其中的 `official-information` 归档要求下载、校验并定位正文；该索引是取证入口，不是正文事实源
 - 研究目标清单（见 Goal）
 - 环境说明：无用户确认场景下自主执行；tushare 凭证从 workspace 根 `.env` 自动加载
 - 一手取证触发条件：关键财务/经营数字、披露口径冲突、或研究结论依赖公司公告时，启用 `cninfo-connector`；无需官方核验时记录为未触发及原因
@@ -88,7 +92,7 @@
 
 ### Quality Criteria
 
-- 每个必选 Resource 真实执行并留下独立产物；若触发 `cninfo-connector`，必须逐项记录搜索与下载结果、官方文件存档及正文定位；若未触发，记录未触发及原因
+- 每个必选 Resource 真实执行并留下独立产物；若触发 `cninfo-connector`，必须逐项记录搜索与下载结果、官方文件存档及正文定位；若 topic card 提供公告索引，必须逐家公司记录主路径/兜底路径和下载状态；若未触发，记录未触发及原因
 - findings-summary 满足上述 5 项契约
 - 数据来自真实接口/检索，无模型记忆补数；关键财务/经营事实优先回指公司官方披露；降级路径如实标注，未执行不得写成已执行
 - 原生产物保留原生格式，未为视频强行改造
@@ -186,6 +190,7 @@ hyperframes 主技能入口接管 Phase 2 已验收的 Editorial Master，完成
 ### Input
 
 - Phase 2 Editorial Master（已验收）
+- 必选：已批准的 `topic_card` 及其来源文件
 - Phase 2 Editorial Pitch（用于核对主命题与内容承诺）
 - Phase 2 冲突与编辑决策记录（unresolved-conflicts.md）
 - 任务参数：company_id / company_name / research_date
@@ -194,6 +199,7 @@ hyperframes 主技能入口接管 Phase 2 已验收的 Editorial Master，完成
 ### Output
 
 - `video/brief/BRIEF.md`：意图确认文档（angle / length / destination / 内容来源），后续每个创作阶段只读此文件
+- `video/review-constraint.md`：从 topic card 的 `review_constraints[]` 读取复盘候选，记录本期适用性判断、具体实现、观察指标与不采用理由（如不适用）
 - `video/script/SCRIPT.md`：由 Editorial Master 派生的最终口播文本（口语化已完成、事实零漂移已校验），锁定为全片唯一文本 Source of Truth
 - `video/routing-decision.md`：路由裁决记录（选中的创作 workflow、超长拆分方案或路由变更依据）
 - 更新 `video/hyperframes-execution.md`（本 Phase 执行状态）

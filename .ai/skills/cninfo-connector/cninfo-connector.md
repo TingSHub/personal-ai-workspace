@@ -13,10 +13,10 @@
 | 调用入口 | $cninfo-connector |
 | 要求 | network |
 | 更新 | internal · 在 workspace 源码中评审修改并同步安装实体；验证：本地归档命中测试 + 已知 A 股代码搜索/下载测试 + PDF 正文定位 |
-| 辅助脚本 | `scripts/check_archive.py`：下载前检查公司级官方原件缓存和 canonical 文件名 |
+| 辅助脚本 | `scripts/cninfo_client.py`：CNINFO 搜索及上交所/深交所官方接口兜底；`scripts/check_archive.py`：下载前检查公司级官方原件缓存和 canonical 文件名 |
 | 经验引用 | financial-analysis；financial-report-workflow |
 
-workspace 共享 internal skill：巨潮资讯（cninfo.com.cn）公告/年报获取连接器（动态 orgId）。
+workspace 共享 internal skill：巨潮资讯（cninfo.com.cn）公告/年报获取连接器（动态 orgId + 交易所官方接口兜底）。
 
 ## 来源
 
@@ -55,3 +55,11 @@ workspace 共享 internal skill：巨潮资讯（cninfo.com.cn）公告/年报�
 
 - 动态 orgId 构造优先（`gssz`/`gssh` + 股票代码），替代旧 cnfinancialscraper 的 orgId 硬编码（如 000938→9900013389 为错误值，正确为 gssz0000938）。
 - 东财 search 接口返回非 JSON，公告/年报检索应走巨潮官方接口，不依赖第三方搜索端点。
+
+## 搜索兜底
+
+- 统一入口先查询 CNINFO；CNINFO 返回空结果或请求失败时，`.SH` 查询上交所官方披露接口，`.SZ` 查询深交所官方披露接口。
+- 兜底结果统一为 `announcementId`、`announcementTitle`、`adjunctUrl`、`publishDate`，并额外保留 `source`、`exchange`、`stockCode`。
+- 交易所接口仍是官方披露源；第三方网页只用于诊断，不进入事实层。
+- CLI 会显示来源和可直接下载的 `adjunctUrl`，便于审计和归档。
+- 下载会校验 `%PDF-` 文件头；若交易所返回反爬 HTML，不会生成伪 PDF，需按公告元数据重试官方文件入口。

@@ -13,6 +13,7 @@
 | Field | Required | Contract |
 |---|---|---|
 | `subject_type` / `subject_id` / `subject_name` | yes | 研究对象类型与标识；`subject_type` 可为 `company`、`industry`、`theme`、`event`、`technology`、`policy`、`macro` 或 `comparison` |
+| `topic_card` | yes | 用户已批准的 `topic-forward-lead` 结构化选题卡；这是本 Workflow 的唯一视频输入，包含主题范围、观众问题、内容承诺、证据线索、叙事方向和 `review_constraints[]`；Markdown 交接摘要仅作阅读视图 |
 | `research_date` | yes | 本次运行日期 |
 | `account-profile` | yes | 账号、角色、音色、视觉和表达规则 |
 | `input_mode` | no | `approved_topic`、`topic_discovery`、`research_revision`；默认按上游输入判断 |
@@ -40,7 +41,7 @@
 - 新闻发现优先使用 `multi-search` 的 `prefer_quality=True`（Tavily）；搜索摘要只做候选发现，最终事实必须打开原文并记录来源、事件日期、发布日期和主体核验。`news-search` 只作热点聚合补充。
 - `deep-research` 只作为外部资料补充源；其报告中的数字和判断必须回到原始来源或结构化数据复核后，才能进入 Research Intelligence Document。
 - 内容主线按 subject_type、观众问题、证据新鲜度和产业/经营重要性动态选择：财报、行业机制、公司案例、重大事件、技术路线和政策变化都可以成为主线；财报只在证据和问题确实支持时作为主线。
-- 上游 `topic-forward-lead` 的选题卡是生产主输入；其中的差异化角度、内容范围和生产提示词必须先被导演吸收，再结合本期研究决定叙事、公司数量、模块顺序和视觉形态。任何行业→公司→特殊公司的路径都只是可选参考。
+- `topic_card` 必须来自用户批准的 `topic-forward-lead` 结构化产物；其中的 `review_constraints[]` 只是验证约束，导演必须判断其是否适用于本期选题，适用时翻译为本期叙事中的具体动作，不适用时记录理由，不得改变研究事实或强行套用结构。任何行业→公司→特殊公司的路径都只是可选参考。
 - 每期先从选题卡提炼一个观众问题和内容承诺，再决定主叙事形态与模块数量；不默认从“若干个话题”开始，也不默认每期都走公司介绍 → 财报 → 风险的顺序。
 - 比较或行业→公司叙事必须在 manifest 声明 `comparison_entities[]`（每项含 `name`、`role`、`source_refs`）以及相关 topic 的 `entity_legend`；口播首次提到“几家公司/几类主体”时，必须在同一回合或前一回合说出具体名称。质量检查不得通过扫描项目目录来禁止其他公司名，跨主体比较是受支持的输入形态。
 - 允许轮换行业拆解、公司案例、公司对比、事件追踪、技术机制、政策影响、神话证伪、产业链地图和问答型节目；轮换必须服从证据和观众问题。
@@ -174,7 +175,7 @@ subject_type、subject_id/subject_name、研究日期、账号 profile、研究�
 
 ### Input
 
-Phase 1 已验收的 subject-thesis brief、topic-evidence-matrix、适用的事实卡/来源 ledger/coverage report、findings-summary、研究 freshness/materiality、账号 audience/content policy 和可用视觉锚点。
+Phase 1 已验收的 subject-thesis brief、topic-evidence-matrix、适用的事实卡/来源 ledger/coverage report、findings-summary、研究 freshness/materiality、账号 audience/content policy 和可用视觉锚点；必选读取用户批准的 `topic-forward-lead` topic card。
 
 ### Output
 
@@ -232,7 +233,7 @@ Phase 1 已验收的 subject-thesis brief、topic-evidence-matrix、适用的事
 
 ### Input
 
-Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修订范围、subject-thesis brief、账号 profile 和导演 treatment。
+Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修订范围、subject-thesis brief、账号 profile、导演 treatment 和已批准的 `topic_card`。
 
 执行前读取 `references/global-contract.md` 的 Performance contract。
 
@@ -240,7 +241,7 @@ Phase 1 已验收证据与适用事实资产、Phase 1.5 的批准记录或修�
 
 `editorial/episode-input.json`、`editorial/feedback-constraints.md`、`editorial/phase2-execution.md`、`podcast/script/episode-draft.json`、`podcast/script/episode-polished.json`、`podcast/script/episode.json`、`podcast/script/spoken-polish-diff.json`、`debate-script.md`、`dialogue-map.json`、`spoken-style-map.json` 和 `visual-plan/chart-spec.json`。
 
-同时必须保留 `editorial/director-treatment.md`、`editorial/topic-order.json`、`editorial/opening-selection.json`、`editorial/scene-intent.json` 和 `editorial/director-execution.md`；当选题存在两种以上可行讲法时，另保留 `editorial/narrative-options.json`。这些是 Phase 2 的硬交接产物。
+同时必须保留 `editorial/director-treatment.md`、`editorial/topic-order.json`、`editorial/opening-selection.json`、`editorial/scene-intent.json` 和 `editorial/director-execution.md`；当选题存在两种以上可行讲法时，另保留 `editorial/narrative-options.json`。`editorial/feedback-constraints.md` 必须记录 topic card 携带的复盘候选适用性、具体实现、观察指标和未采用理由。这些是 Phase 2 的硬交接产物。
 
 ### Quality Criteria
 

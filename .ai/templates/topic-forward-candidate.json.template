@@ -1,0 +1,19 @@
+{
+  "candidate_id": "TOPIC-SEED-YYYYMMDD-NN",
+  "focus_type": "company|industry|news|comparison",
+  "title": "",
+  "scope": "",
+  "subject_type": "company|industry|theme|event|comparison",
+  "companies_or_roles": [],
+  "audience_question": "",
+  "content_promise": "",
+  "core_tension": "",
+  "evidence": [],
+  "review_constraints": [],
+  "narrative_direction": "",
+  "cover": {"title": "", "subtitle": ""},
+  "handoff_view": "",
+  "dedup_status": "new|overlap|discard",
+  "research_required": [],
+  "status": "seed|card|approved|rejected"
+}
