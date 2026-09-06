@@ -4,6 +4,7 @@
 
 当前脚本：
 
-- `build-topic-candidates.py`：读取可选 `signals.json`，并可通过 `--leads` 接收按 `topic-forward-candidate` 模板填写、有来源的事件、产品、行业、观众问题或比较线索，输出 `candidate-pool.json`。行情种子的观众问题保持为空，交策划轻量核验后形成；脚本不把价格变化自动解释成财务问题。
+- `build-topic-candidates.py`：读取可选 `signals.json`，并可通过 `--leads` 接收按 `topic-forward-candidate` 模板填写、有来源的事件、产品、行业、观众问题或比较线索，输出 `candidate-pool.json`。行情种子的观众问题和 `content_line` 保持为空，交 `topic-angle-router-agent` 在轻量核验后形成；脚本不把价格变化自动解释成财务问题。
+- `check-topic-angle-routing.py`：读取含 `cards` 的 `topic-forward.json`，校验 `content_line`、`expression_agent`、`expression_mode` 的固定映射及最低问题字段；只用于 topic card 进入研究前的结构门禁。
 
 批准卡随后交给 `topic-research`；本目录脚本不负责研究、审批或生成视频。

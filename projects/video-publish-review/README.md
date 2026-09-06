@@ -1,6 +1,6 @@
 # video-publish-review
 
-对已发布视频做标准化复盘，并从事件、产业、公司实力、观众问题及可选行情线索生成下一批选题。复盘只提供带适用条件的假设；用户批准的 topic card 先进入 `topic-research`，研究验收后再进入视频生产。
+对已发布视频做标准化复盘，并从事件、产业、公司实力、观众问题及可选行情线索生成下一批选题。选题先按 `market_pulse`、`earnings_gap`、`company_industry`、`valuation_mechanism` 四条内容主线分流，再生成候选卡。复盘只提供带适用条件的假设；用户批准的 topic card 先进入 `topic-research`，研究验收后再进入视频生产。
 
 ## Goal
 
@@ -60,6 +60,7 @@ Skill 资源注册在 workspace 的 `.ai/skills/`（如 `.ai/skills/douyin-creat
 
 - `douyin-creator-tools`：数据采集（publish-review P1/P2，必选）
 - `topic-forward-lead`：下一条视频的唯一选题入口，批准后移交 `topic-research`（必选）
+- `topic-angle-router-agent`：将 discovery seed 拆成互斥内容主线，并绑定表达 Agent（必选）
 - `experience-curator`：用户确认后的 workspace 经验回写（publish-review P7，条件使用）
 - `boundary-rewrite`：争议性表达合规改写（可选）
 - `video-hook-intro`：改进项的钩子设计参考（可选）

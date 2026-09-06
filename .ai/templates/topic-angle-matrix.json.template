@@ -1,0 +1,27 @@
+{
+  "schema_version": "1",
+  "captured_at": "",
+  "source_file": "",
+  "seeds": [
+    {
+      "seed_id": "",
+      "subject": "",
+      "possible_lines": [
+        {
+          "content_line": "market_pulse|earnings_gap|company_industry|valuation_mechanism",
+          "eligible": true,
+          "reason": "",
+          "expression_agent": "",
+          "expression_mode": "",
+          "audience_question": "",
+          "core_tension": "",
+          "title_options": [],
+          "research_required": []
+        }
+      ],
+      "selected_line": "",
+      "discarded_lines": []
+    }
+  ],
+  "notes": []
+}

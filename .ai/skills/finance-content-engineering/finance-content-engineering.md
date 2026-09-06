@@ -10,7 +10,7 @@
 | 来源 | internal · internal adaptation from huashu experiment（2026-08-15 测试提取方法重写为本地财经化版本，不复制 huashu 原 SKILL） |
 | installed_ref | internal |
 | runtime | both |
-| 调用入口 | 选题模式输入 research-intelligence/ 或 research-summary/ → topic-options.md；口播模式输入 draft-script.md → polished-script.md |
+| 调用入口 | 选题模式输入 research-intelligence/ 或 research-summary/ → topic-options.md（先锁定 `content_line` 并绑定表达 Agent）；口播模式输入 draft-script.md → polished-script.md |
 | 要求 | 输入研究资产必须来自已验收产物（research-materials/ → research-intelligence/），本 Skill 不自动搜索、不新增研究事实；重要数字必须可回指来源、时间范围与口径（fact-map 可信度分层） |
 | 更新 | internal · 在 workspace 源码中评审修改并同步安装实体；方法迭代须以真实内容案例验证；验证：用一份已验收研究资产产出选题候选，用一份内容草稿产出口播稿，核对事实保真与 280 字/分语速 |
 | 辅助脚本 | scripts/check-fact-drift.py（口播稿改写事实零漂移校验：新旧版本数字集合对比 + 近似词对比式检测 + 中文读法核验，改写后必跑） |
@@ -28,7 +28,7 @@
 
 ## 用途
 
-- **topic-gen**：输入 `research-intelligence/`（或 `research-summary/`）→ 输出 `topic-options.md`（3-4 个角度互斥的选题候选，含支撑事实与风险提示）
+- **topic-gen**：输入 `research-intelligence/`（或 `research-summary/`）→ 输出 `topic-options.md`（按 `content_line` 路由、角度互斥、含支撑事实与风险提示，并绑定后续表达 Agent）
 - **script-polish**：输入 `draft-script.md` → 输出 `polished-script.md`（280 字/分口播稿 + 停顿/重音/数字朗读建议）
 
 ## 注意事项与踩坑

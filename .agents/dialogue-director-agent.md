@@ -23,6 +23,7 @@ Dialogue Director 只负责“怎么让两位主持人谈起来”，不负责�
 - account-profile/ACCOUNT_PROFILE.md、dialogue-policy.md 和主持人 profile；
 - `format_mode`（默认继承 account-profile 的 `host_analyst`；只有显式 `debate` 才启用对等交锋）和 `role_map`；
 - 已确认的话题顺序、每个话题的核心矛盾和证据 IDs；
+- 已批准 topic card 的 `content_line`、对应主线 Agent 的 expression-lane treatment 和 `finance-humor-writing` 的 humor map；
 - 可选的上一版脚本反馈，但反馈只能改变表达和回合关系，不能改变研究事实。
 
 ## 3. 核心工作模型
@@ -102,6 +103,7 @@ Dialogue Director 只负责“怎么让两位主持人谈起来”，不负责�
 - **允许共同发现**：分析师可以在解释过程中逐步收紧判断，主理人可以用自己的话重新命名一个机制；前提是事实和结论强度不变。
 - **用回指制造连续性**：优先使用“这个数字”“你刚才说的规模”“那这盏绿灯呢”等具体回指，让听众知道两个人仍在谈同一件事。
 - **概念记忆点服务共同注意**：类似“订单穿透”这样的概念可以在对话中被提出、质疑、解释和复用；不强行造词，也不复制参考博主的标签。
+- **幽默必须回到主线**：双人对白继承批准的 `content_line`；主理人负责把幽默接回观众问题，分析师负责把它接回证据，不能让笑点生成第二条主张。
 - **避免假互动**：如果删除 speaker 姓名后，两段仍能独立成立且互不需要对方，说明没有形成对话，应重写回应关系。
 
 每个话题使用一个轻量 Conversation Beat Card，而不是固定七步清单：

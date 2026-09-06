@@ -8,7 +8,7 @@
 
 ## Input
 
-- 用户批准的 `topic-forward-lead` topic card；
+- 用户批准的 `topic-forward-lead` topic card，包含已锁定的 `content_line`、`expression_agent` 和 `expression_mode`；
 - 研究日期、账号 profile、目标平台和制作参数；
 - 可用来源与访问边界。
 
@@ -20,6 +20,7 @@
 
 - `topic-research` 是事实层必经 Workflow；没有 `Scope Decision: accepted` 的研究包不能进入表达层。
 - 表达层只消费冻结的 `research-brief.md`、`source-ledger.md` 和 evidence IDs，不补研究、不改事实口径。
+- 表达层必须沿批准卡的 `content_line` 调用对应主线 Agent；`finance-humor-writing` 只作为表达层，不得把不同主线混成一条稿件。
 - 执行层只消费锁定的表达包，不重新判断主张、不改写对白、不从字幕反推内容。
 - 内容问题向表达层退回，事实问题向 `topic-research` 退回，音频/视觉/渲染/发布问题留在执行层处理。
 - 子 Workflow 各自拥有 Required Resources、执行产物和质量门禁；父 Workflow 不复制子 Workflow 的资源表。
@@ -76,6 +77,7 @@ Phase 1 已验收的 research package、账号 profile、目标平台和时长�
 ### Quality Criteria
 
 - 唯一核心主张、增长承诺、模块顺序和结尾判断已锁定；
+- `content_line`、对应主线 Agent 和表达模式在导演执行记录中可追溯；
 - `host_analyst` 中主理人负责观众问题与承接，分析师负责回答、证据和边界；
 - 每个事实、数字和判断均来自冻结研究包；
 - 口语、概念记忆点、幽默和节奏只改变表达，不改变事实与结论强度；

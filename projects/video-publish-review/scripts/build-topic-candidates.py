@@ -2,7 +2,9 @@
 """Normalize optional market signals and sourced leads into auditable seeds.
 
 The output is a discovery pool. It deliberately leaves the audience question
-blank for raw market seeds so a price move cannot silently become a thesis.
+and content-line routing blank for raw market seeds so a price move cannot
+silently become a thesis. topic-angle-router-agent fills the content line
+after discovery validation.
 """
 import argparse
 import copy
@@ -27,6 +29,7 @@ def main():
 
     def seed(**values):
         result = copy.deepcopy(template)
+        result.update({"content_line": "", "expression_agent": "", "expression_mode": ""})
         result.update(values)
         return result
     for item in data.get("zt_pool", []):
@@ -77,6 +80,8 @@ def main():
                 raise SystemExit("each lead requires candidate_id, title and evidence")
             if lead.get("focus_type") not in {"company", "industry", "news", "comparison"}:
                 raise SystemExit("invalid lead focus_type")
+            if lead.get("content_line") not in {"", "market_pulse", "earnings_gap", "company_industry", "valuation_mechanism"}:
+                raise SystemExit("invalid lead content_line")
             if set(lead) - set(template):
                 raise SystemExit("lead fields must come from topic-forward-candidate.json.template")
             seeds.append(seed(**{**lead, "status": "seed", "review_constraints": []}))

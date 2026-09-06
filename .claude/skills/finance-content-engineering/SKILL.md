@@ -26,13 +26,15 @@ internal adaptation from huashu experiment（2026-08-15 实测）：提取 huash
 1. 从 `content-opportunity.md` 与 `conflict-map.md` 提取核心矛盾与故事线候选。
 2. 从 `fact-map.md` 校验每个选题的支撑事实（来源、可信度分层）。
 3. 从 `evidence-gap.md` 检查选题是否触碰未验证信息。
-4. 生成 3-4 个**角度互斥**的选题候选。
+4. 先按 `content_line` 生成角度互斥的候选：`market_pulse`、`earnings_gap`、`company_industry`、`valuation_mechanism`；只保留证据真正支持的主线，不为凑四类硬造候选。
+5. 每张候选卡绑定 `expression_agent` 与 `expression_mode`，标题在主线和观众问题锁定后生成。
 
 **输出**：`topic-options.md`
 
 字段：
 
 - 主题方向
+- `content_line`、`expression_agent`、`expression_mode`
 - 核心问题
 - 叙事角度
 - 支撑事实（含来源与口径）

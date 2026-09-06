@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+*.swp
+.idea/
+.vscode/
+
+# skill package artifacts (distributable build, not source)
+*.skill
+dist/
