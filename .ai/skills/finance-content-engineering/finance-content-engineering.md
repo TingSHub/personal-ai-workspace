@@ -18,7 +18,7 @@
 
 ## 作用
 
-为财经研究内容提供：选题设计辅助（topic-gen）、口播脚本工程化处理（script-polish）、内容表达优化。不是研究 Agent、投资分析 Agent、Content Director Agent。
+为财经研究内容提供：选题设计辅助（topic-gen）、统一口播脚本工程化处理（script-polish）、内容表达优化。统一口播入口内部吸收听觉理解、真实双人承接、概念命名意识、适度幽默和 AI 腔清理。不是研究 Agent、投资分析 Agent、Content Director Agent。
 
 ## 来源
 
@@ -35,6 +35,7 @@
 
 - 输入研究资产必须来自已验收产物（research-materials/ → research-intelligence/），不自动搜索、不新增研究事实。
 - 财经化规则：事实约束（重要数字必须来源 + 时间范围 + 口径）、投资纪律（反标题党/反绝对化/反荐股，保留 Bull Case / Bear Case / 不确定性）、口播规则（280 字/分、单句宜 ≤25 字、大数读法、术语不失准）。
+- 口语表达统一入口：本 Skill 内部依次处理听觉理解、对话连续性、概念命名机会、适度幽默和 AI 腔清理；调用方不再逐个调度拆分的表达 Skill。真实 speaker、角色比例和回合关系由 `dialogue-director-agent` 负责。
 - 三遍审校：Review 1 事实检查 → Review 2 表达检查 → Review 3 传播检查。
 - 不代替 Content Director：只输出资产（topic-options / polished-script），不做内容决策。
 - 应用于 speaker script、notes 或 narration 时，改写只能做表达层调整；不得新增、删除、近似化事实或改变结论强度。改写后必须运行 `scripts/check-fact-drift.py`。

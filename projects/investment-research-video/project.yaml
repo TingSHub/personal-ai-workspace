@@ -1,0 +1,9 @@
+# Project 元数据模板（V0.1.5）
+name: investment-research-video
+description: 把公司、行业、事件和技术变化转成有明确判断、可验证证据和增长目标的财经视频
+workflows:
+  - topic-research
+  - investagent-podcast-video-by-hyperframes
+  - investagent-content-expression
+  - investagent-video-execution
+  - creator-spoken-content-analysis

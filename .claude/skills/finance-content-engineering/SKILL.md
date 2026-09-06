@@ -1,6 +1,6 @@
 ---
 name: finance-content-engineering
-description: 财经内容工程（workspace 共享 internal skill）——从研究资产生成选题候选（topic-gen：输入 research-intelligence/ → topic-options.md），把内容草稿优化为财经口播稿（script-polish：输入 draft-script.md → polished-script.md），内置财经化规则（事实约束/投资内容纪律/280 字口播规范）与三遍审校流程。当需要从研究资产做内容选题、把书面稿改写成财经口播稿、或对财经内容做事实与表达审校时使用。
+description: 财经内容工程（workspace 共享 internal skill）——从研究资产生成选题候选，并把内容草稿统一编排成自然易懂、真实双人承接、有记忆点但不油腻的财经口播稿；内部吸收听觉理解、概念命名意识、适度幽默、AI 腔清理、事实零漂移与财经边界审校。当需要选题或完整口播表达工程时使用。
 ---
 
 # finance-content-engineering
@@ -75,6 +75,18 @@ internal adaptation from huashu experiment（2026-08-15 实测）：提取 huash
 - 专业术语保持准确，不因口语化牺牲准确性。
 
 ## 三遍审校流程
+
+### 统一口语表达编排
+
+本 Skill 是一个可复用的统一财经口播表达能力，内部按以下顺序处理；项目 Workflow 只需按需调用本 Skill，不需要了解或逐个调度其内部方法：
+
+1. **听觉理解**：先解释必要概念，再用术语；短句优先但不切断因果；数字保留口径并降低记忆峰值。
+2. **真实双人承接**：按 `host_analyst` 组织共同问题、即时反应、回答、追问和暂时落点；每句都要接住上一句，不把真实播客写成两篇单口稿。
+3. **概念命名意识**：发现某个机制会反复出现、且命名能降低记忆负担时，再提出原创概念候选；命名不是必选动作，不复制参考博主的词。
+4. **趣味与记忆点**：只在事实冲突处加入有限的类比、轻反应、自我修正或克制调侃；趣味后必须回到机制或证据。
+5. **自然度与边界**：清理 AI 腔、机械三段式和无功能语气词；不得新增事实、改变数字口径、制造交易建议或用幽默掩盖风险。
+
+这五步由一个 Skill 统一产出 `polished-script.md`、`spoken-style-map.json` 和 `spoken-polish-diff.json`；`dialogue-director-agent` 负责把它们落实到真实 speaker、turn、reply 和 manifest 字段。对话感由真实回应关系证明，不由语气词数量证明。
 
 ### Review 1：事实检查
 

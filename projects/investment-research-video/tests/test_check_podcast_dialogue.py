@@ -38,7 +38,7 @@ class DialogueGateTest(unittest.TestCase):
                 },
             }
             (root / 'episode.json').write_text(json.dumps(episode), encoding='utf-8')
-            (root / 'receipt.md').write_text('human-understanding humanizer-zh', encoding='utf-8')
+            (root / 'receipt.md').write_text('finance-content-engineering', encoding='utf-8')
             result = subprocess.run([sys.executable, str(SCRIPT), '--episode', str(root / 'episode.json'),
                 '--phase2-execution', str(root / 'receipt.md'), '--feedback-constraints', str(root / 'receipt.md')],
                 capture_output=True, text=True)

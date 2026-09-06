@@ -6,7 +6,10 @@
 
 1. `topic-forward-lead`：从事件、产业、公司、观众问题和可选行情线索生成选题卡；用户只确认“研究什么”。
 2. `topic-research`：围绕已批准问题定向研究，交付当前判断、机制、最强反证、时间范围、证据缺口和推翻条件；不重新选题。
-3. `investagent-podcast-video-by-hyperframes`：内容导演选择主张、叙事、开场和证据顺序，再完成对白、音频、视觉、渲染与发布；不补研究、不重复审批。
+3. `investagent-podcast-video-by-hyperframes`：父 Workflow，只负责事实层、表达层和执行层的顺序与交接。
+   - `topic-research`：事实层，冻结研究证据与当前判断；
+   - `investagent-content-expression`：表达层，锁定主张、叙事和真实双人对白；
+   - `investagent-video-execution`：执行层，编译音频、视觉、渲染、QA 和发布。
 4. `publish-review`：按曝光到关注的完整漏斗复盘，将观察、归因假设和下一轮实验分开；复盘只影响适用的新选题。
 
 研究若推翻选题前提，或必须改变主体范围、主问题，标记 `scope_change_required` 并返回 `topic-forward-lead`。标题、章节、叙事模式和口播措辞的调整由内容导演负责，不触发重复审批。

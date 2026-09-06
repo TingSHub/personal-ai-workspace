@@ -129,9 +129,8 @@ def main() -> int:
             if any(word in turn.get("text", "") for word in FORBIDDEN_VALUATION):
                 findings.append(f"valuation context contains forbidden advice wording: {turn.get('turn_id')}")
 
-    for resource in ("human-understanding", "humanizer-zh"):
-        if resource not in editorial_execution:
-            findings.append(f"editorial execution receipt missing {resource}")
+    if "finance-content-engineering" not in editorial_execution:
+        findings.append("editorial execution receipt missing finance-content-engineering")
 
     # Comparison episodes must name the objects being compared.  Do not infer
     # or ban names from sibling project directories: industry and comparison
