@@ -50,6 +50,32 @@ html,body{background:#faf7f1;color:#211d18}
 .risk-matrix{border-color:#e7e0d2}.flow-node{background:#f3efe6;border-color:#c9c0ae;border-radius:2px}.flow-node:not(:last-child):after{color:#a6192e}
 '''
 
+# The composition is 1920x1080, but it is primarily consumed as a phone-sized
+# landscape video.  These values are intentionally video-sized rather than
+# web-sized: at a 390px display width, the important text still has a useful
+# reading scale after the whole frame is fitted to the phone.
+MOBILE_FIRST_CSS = r'''
+.header{left:80px;right:80px;top:28px;height:92px;border-bottom-width:3px}
+.show{font-size:34px}.show small{font-size:24px;margin-left:20px}.disclaimer{font-size:22px;line-height:1.35}
+.title{left:80px;right:80px;top:142px;font-size:78px;line-height:1.38;max-height:130px;overflow:hidden}
+.title.title-compact{font-size:62px}.title.title-dense{font-size:54px}
+.title .index{margin-right:22px}.subtitle{left:80px;right:80px;top:244px;font-size:40px;line-height:1.2;max-height:54px;overflow:hidden}
+.metrics{left:80px;right:80px;top:332px;height:310px;gap:28px}
+.metric{padding:28px 32px;border-top-width:5px}.metric .label{font-size:40px;line-height:1.45;white-space:normal;text-overflow:clip}.metric .value{font-size:104px;height:150px;line-height:1.18;margin:16px 0 10px}.metric .value.metric-value-compact{font-size:76px}.metric .desc{font-size:36px;line-height:1.4;white-space:normal;text-overflow:clip}
+.hook .metrics{top:350px;height:370px}.hook .metric .value{font-size:104px}.hook .metric .desc{font-size:34px}
+.topic-layer.metrics .metrics{top:342px;height:380px}
+.speaker{font-size:42px;height:74px}.caption-line{left:120px;right:120px;bottom:68px;font-size:48px;line-height:1.25;min-height:72px;max-height:245px;padding:0 24px;display:flex;align-items:center;justify-content:center;white-space:normal;overflow:hidden}
+.persistent-nav{left:48px;right:48px;bottom:8px;height:42px;font-size:20px}.chapter-strip{height:24px}.chapter b{font-size:16px}.persistent-progress{height:3px}
+.chart-first .chart-stage .chart-zone{left:80px;right:80px;top:326px;height:450px;padding:32px 48px;border-top-width:5px}
+.chart-first .chart-title{font-size:56px;line-height:1.25;margin-bottom:24px}.chart-first .chart-title small{font-size:32px}
+.chart-first .chart-row{height:84px;gap:28px;font-size:56px}.chart-first .chart-row>span{width:300px}.chart-first .chart-track{height:32px}.chart-first .chart-row b{width:210px;font-size:52px}
+.chart-first .svg-chart{height:334px}.chart-first .chart-footnote{font-size:24px;margin-top:10px}
+.chart-first .validation{gap:24px}.chart-first .validation-item{padding:28px;font-size:44px}.chart-first .validation-item span{font-size:40px;line-height:1.3}
+.chart-first .risk-matrix{height:276px;margin:12px 36px}.chart-first .flow-map{height:280px;display:flex;align-items:center;justify-content:space-between;gap:22px}.chart-first .flow-node{position:relative;left:auto!important;top:auto;width:280px;flex:0 0 280px;padding:24px 16px;font-size:48px;line-height:1.25}.chart-first .flow-arrow{display:block;flex:0 0 auto;color:#a6192e;font-size:50px;line-height:1.2}
+.agenda .agenda-zone{top:250px;height:570px;padding:34px 48px}.agenda .agenda-label{font-size:48px;margin-bottom:24px}.agenda .agenda-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px}.agenda .agenda-item{font-size:48px;line-height:1.25;padding:18px 10px}.agenda .agenda-item b{margin-right:14px}
+.summary .summary-zone{top:326px;height:382px;gap:28px}.summary .summary-card{padding:32px 34px}.summary .summary-card .kicker{font-size:30px}.summary .summary-card .headline{font-size:48px;line-height:1.2;margin:32px 0 18px}.summary .summary-card .detail{font-size:30px;line-height:1.42}.summary .summary-footer{top:744px;font-size:36px;padding:24px 30px}
+'''
+
 STYLE_PALETTES = {
     'default': {
         'primary': '#2166d1', 'secondary': '#d17c1d', 'up': '#d52b2b',
@@ -65,7 +91,7 @@ STYLE_PALETTES = {
 
 
 def css_for_style(style, font_family):
-    css = CSS + (EDITORIAL_PAPER_CSS if style == 'editorial-paper' else '')
+    css = CSS + (EDITORIAL_PAPER_CSS if style == 'editorial-paper' else '') + MOBILE_FIRST_CSS
     css = re.sub(r'@font-face\{font-family:"(?:Noto Sans SC|Microsoft YaHei|Source Han Serif SC|Songti SC|STSong)"[^}]*src:local[^}]*\}', '', css)
     return css.replace('__DISPLAY_FONT__', html.escape(font_family))
 
@@ -93,7 +119,9 @@ def metric_cards(metrics):
             normalized.append((metric.get('label',''),metric.get('display_value',metric.get('value','')),metric.get('display_desc',metric.get('desc','')),metric.get('color','blue')))
         else:
             normalized.append(tuple(metric))
-    for label,value,desc,color in (normalized+[('', '', '', 'blue')]*3)[:3]:
+    # Do not manufacture empty cards.  The old padding-to-three behavior made
+    # every topic look like the same three-card template on screen.
+    for label,value,desc,color in normalized[:3]:
         value_text=str(value)
         match=re.match(r'^([+-]?\d+(?:\.\d+)?)(.*)$', value_text)
         count_attrs=''
@@ -101,7 +129,8 @@ def metric_cards(metrics):
             numeric=match.group(1)
             decimals=len(numeric.split('.',1)[1]) if '.' in numeric else 0
             count_attrs=f' data-count-target="{html.escape(numeric)}" data-count-decimals="{decimals}" data-count-suffix="{html.escape(match.group(2))}"'
-        cards.append(f'<div class="metric {html.escape(str(color))}"><div class="label">{html.escape(str(label))}</div><div class="value"{count_attrs}>{html.escape(value_text)}</div><div class="desc">{html.escape(str(desc))}</div></div>')
+        value_density=' metric-value-compact' if len(value_text) > 5 else ''
+        cards.append(f'<div class="metric {html.escape(str(color))}"><div class="label">{html.escape(str(label))}</div><div class="value{value_density}"{count_attrs}>{html.escape(value_text)}</div><div class="desc">{html.escape(str(desc))}</div></div>')
     return ''.join(cards)
 
 def validate_metric_semantics(topic_id, metrics):
@@ -174,15 +203,15 @@ def chart_markup(specs, style='default'):
             if points:
                 color=palette['secondary'] if index else palette['primary']
                 series.append(f'<polyline points="{" ".join(points)}" fill="none" stroke="{color}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="45" y1="88" x2="690" y2="88" stroke="{palette["grid"]}"/>{"".join(series)}</svg></div>'
+        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="45" y1="88" x2="690" y2="88" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(series)}</svg></div>'
     if chart_type in ('waterfall','stacked-bar'):
         maximum=max([abs(number(r.get('value',0))) for r in rows] or [1])
         items=[]
         for index,row in enumerate(rows):
             value=number(row.get('value',0)); height=max(8,round(abs(value)/maximum*75,1)); color=palette['positive'] if value>=0 else palette['negative']
             left=34 + index*100
-            items.append(f'<rect x="{left}" y="{90-height}" width="58" height="{height}" rx="2" fill="{color}"/><text x="{left+29}" y="108" text-anchor="middle" font-size="12" fill="{palette["secondary"]}">{html.escape(str(row.get("label","")))}</text><text x="{left+29}" y="{max(16,84-height)}" text-anchor="middle" font-size="13" fill="#211d18">{html.escape(str(row.get("value","")))}</text>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="20" y1="90" x2="700" y2="90" stroke="{palette["grid"]}"/>{"".join(items)}</svg></div>'
+            items.append(f'<rect x="{left}" y="{90-height}" width="58" height="{height}" rx="2" fill="{color}"/><text x="{left+29}" y="108" text-anchor="middle" font-size="28" fill="{palette["secondary"]}">{html.escape(str(row.get("label","")))}</text><text x="{left+29}" y="{max(28,84-height)}" text-anchor="middle" font-size="30" fill="#211d18">{html.escape(str(row.get("value","")))}</text>')
+        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="20" y1="90" x2="700" y2="90" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(items)}</svg></div>'
     if chart_type=='range-band':
         items=[]
         for row in rows:
@@ -198,8 +227,9 @@ def chart_markup(specs, style='default'):
     if chart_type=='flow-map':
         items=[]
         for index,row in enumerate(rows[:4]):
-            left=30+index*170
-            items.append(f'<div class="flow-node" style="left:{left}px">{html.escape(str(row.get("label",row.get("name",""))))}</div>')
+            if index:
+                items.append('<span class="flow-arrow" aria-hidden="true">→</span>')
+            items.append(f'<div class="flow-node">{html.escape(str(row.get("label",row.get("name",""))))}</div>')
         return f'<div class="chart-zone"><div class="chart-title">{title}</div><div class="flow-map">{"".join(items)}</div></div>'
     if chart_type=='validation-dashboard':
         items=[]
@@ -258,6 +288,23 @@ def summary_markup(cards, footer, start=0):
     return f'<div id="summary-zone" class="summary-zone clip" data-start="{start}" data-duration="999" data-track-index="82">{"".join(items)}</div><div class="summary-footer">{html.escape(str(footer))}</div>'
 
 
+def visual_layout(topic_id, chart_specs, metrics):
+    """Choose a composition shape from the evidence available in the episode.
+
+    The layout is intentionally content-driven.  A chart owns the frame when
+    one exists; cards are a fallback for context that genuinely has no chart.
+    """
+    if topic_id == 'COLD_OPEN':
+        return 'hook'
+    if topic_id == 'INTRO':
+        return 'agenda'
+    if topic_id in {'SUMMARY', 'OUTRO'}:
+        return 'summary'
+    if chart_specs:
+        return 'chart-first'
+    return 'signal' if len(metrics) <= 1 else 'metrics'
+
+
 def motion_script(runs, total):
     lines=["const tl=window.__timelines.main;", "const add=(target,from,to,at)=>{if(!target || (target.length!==undefined && target.length===0)) return; tl.fromTo(target,from,to,at);};", "const countFormat=(value,decimals,suffix)=>value.toFixed(decimals)+suffix;", "document.querySelectorAll('[data-count-target]').forEach(el=>{el.textContent='0'+el.dataset.countSuffix;});"]
     for index,group in enumerate(runs):
@@ -266,7 +313,10 @@ def motion_script(runs, total):
         lines.append(f"{{const scene=document.querySelector({json.dumps(selector)}); if(scene){{")
         lines.append(f"add(scene.querySelector('.title'),{{y:24,opacity:0}},{{y:0,opacity:1,duration:.55,ease:'power3.out'}},{start+.12});")
         lines.append(f"add(scene.querySelector('.subtitle'),{{x:-18,opacity:0}},{{x:0,opacity:1,duration:.4,ease:'power2.out'}},{start+.28});")
-        lines.append(f"add(scene.querySelectorAll('.metric'),{{y:26,opacity:0,scale:.98}},{{y:0,opacity:1,scale:1,duration:.48,stagger:.08,ease:'power3.out'}},{start+.35});")
+        # Keep metric cards in their fixed bounds while fading them in.  A
+        # translated/scaled flex child expands the scroll box and creates a
+        # false overflow on the phone-readability QA pass.
+        lines.append(f"add(scene.querySelectorAll('.metric'),{{opacity:0}},{{opacity:1,duration:.48,stagger:.08,ease:'power3.out'}},{start+.35});")
         lines.append(f"scene.querySelectorAll('[data-count-target]').forEach(el=>{{const target=Number(el.dataset.countTarget),decimals=Number(el.dataset.countDecimals||0),suffix=el.dataset.countSuffix||''; tl.fromTo(el,{{textContent:'0'+suffix}},{{textContent:target,duration:.72,ease:'power2.out',snap:{{textContent:decimals?0.1:1}},onUpdate:()=>{{const raw=Number(el.textContent)||0; el.textContent=countFormat(raw,decimals,suffix);}}}},{start+.48});}});")
         lines.append(f"add(scene.querySelectorAll('.chart-row i'),{{scaleX:0}},{{scaleX:1,duration:.72,stagger:.09,ease:'power3.out'}},{start+.62});")
         lines.append(f"add(scene.querySelectorAll('.flow-node'),{{x:-24,opacity:0}},{{x:0,opacity:1,duration:.42,stagger:.12,ease:'power3.out'}},{start+.62});")
@@ -287,7 +337,7 @@ def persistent_nav_markup(runs, topic_order, topics, topic_number, total):
     chapters=[]
     for topic_id in topic_order:
         nav_topic=topics.get(topic_id,{})
-        label='冷开场' if topic_id=='COLD_OPEN' else ('开场' if topic_id=='INTRO' else ('总结' if topic_id in {'SUMMARY','OUTRO'} else (nav_topic.get('short_label') or nav_topic.get('title',topic_id).split('，')[0])))
+        label='先看结论' if topic_id=='COLD_OPEN' else ('导览' if topic_id=='INTRO' else ('总结' if topic_id in {'SUMMARY','OUTRO'} else (nav_topic.get('short_label') or nav_topic.get('title',topic_id).split('，')[0])))
         number=f'{topic_number[topic_id]:02d} ' if topic_id in topic_number else ''
         width=max(0.8,round(durations.get(topic_id,0.0)/total*100,3))
         chapters.append((topic_id,number+label,width))
@@ -302,6 +352,15 @@ def main():
     ap=argparse.ArgumentParser(); ap.add_argument('--episode',type=Path,required=True); ap.add_argument('--segments',type=Path,required=True); ap.add_argument('--charts',type=Path); ap.add_argument('--visual-plan',type=Path); ap.add_argument('--style',choices=sorted(STYLE_PALETTES),default='editorial-paper'); ap.add_argument('--account-media-dir',type=Path,default=Path(__file__).resolve().parents[1]/'account-profile/account'); ap.add_argument('--font-dir',type=Path,default=Path(__file__).resolve().parents[3]/'.ai/assets/fonts/noto-serif-sc'); ap.add_argument('--font-family',default='Noto Serif SC'); ap.add_argument('--font-regular',default='NotoSerifSC-Regular.otf'); ap.add_argument('--font-bold',default='NotoSerifSC-Bold.otf'); ap.add_argument('--out',type=Path,required=True); args=ap.parse_args()
     episode=json.loads(args.episode.read_text(encoding='utf-8')); data=json.loads(args.segments.read_text(encoding='utf-8')); segs=data['segments']; total=data['total_seconds']
     chart_data=json.loads(args.charts.read_text(encoding='utf-8')) if args.charts else {'charts':[]}
+    # A locked episode already contains the chart contract.  The separate
+    # chart-spec artifact is preferred, but the renderer must not silently
+    # drop all charts when that derived artifact has not been materialized.
+    if not chart_data.get('charts'):
+        chart_data = {'charts': [
+            {**topic.get('chart', {}), 'topic_id': topic.get('topic_id')}
+            for topic in episode.get('topics', [])
+            if isinstance(topic.get('chart'), dict) and topic.get('chart')
+        ]}
     visual_plan=json.loads(args.visual_plan.read_text(encoding='utf-8')) if args.visual_plan else {'version':'v2','agenda':{'mode':'grid','columns':3}}
     charts_by_topic={}
     for chart in chart_data.get('charts',[]): charts_by_topic.setdefault(chart.get('topic_id'),[]).append(chart)
@@ -352,10 +411,7 @@ def main():
             subtitle=''
             intro_speakers=list(episode.get('speakers',{}))[:2] or ['zhiwei','shenyan']
             metrics=[]
-            for speaker_id in intro_speakers:
-                meta=speaker_meta.get(speaker_id,default_speakers['zhiwei'])
-                metrics.append((meta.get('display_name','主持人'),meta.get('role','研究视角'),'关注结构、趋势与验证','pink' if speaker_id=='zhiwei' else 'orange'))
-            metrics.append(('本期目录',f'{len(agenda_items)} 个话题','从现象走到验证','blue'))
+            # The intro is an agenda scene, not another set of pseudo-KPIs.
         elif topic_id in {'SUMMARY','OUTRO'}: title='双人总结'; subtitle='把判断交给下一期数据验证'; metrics=[]
         else:
             title=t.get('title',topic_id)
@@ -366,24 +422,28 @@ def main():
         labels=[]
         for nav_index, nav_id in enumerate(topic_order):
             nav_topic=topics.get(nav_id,{})
-            nav_label='冷开场' if nav_id=='COLD_OPEN' else ('开场' if nav_id=='INTRO' else ('总结' if nav_id in {'SUMMARY','OUTRO'} else (nav_topic.get('short_label') or nav_topic.get('title',nav_id).split('，')[0])))
+            nav_label='先看结论' if nav_id=='COLD_OPEN' else ('导览' if nav_id=='INTRO' else ('总结' if nav_id in {'SUMMARY','OUTRO'} else (nav_topic.get('short_label') or nav_topic.get('title',nav_id).split('，')[0])))
             nav_number=f'{topic_number[nav_id]:02d} ' if nav_id in topic_number else ''
             labels.append(f'<span class="{"active" if nav_id==topic_id else ""}">{nav_number}{html.escape(nav_label)}</span>')
         progress=min(100, round(end/total*100,1))
-        title_index=f'{topic_number[topic_id]:02d}' if topic_id in topic_number else ('' if topic_id=='INTRO' else ('开场' if topic_id=='COLD_OPEN' else '总结'))
+        title_index=f'{topic_number[topic_id]:02d}' if topic_id in topic_number else ('' if topic_id in {'INTRO','COLD_OPEN'} else '总结')
         agenda=agenda_markup(agenda_items, start, agenda_labels) if topic_id=='INTRO' else ''
         chart_specs=charts_by_topic.get(topic_id,[])
-        if topic_id=='COLD_OPEN' and not chart_specs:
-            chart_specs=charts_by_topic.get('T01',[])
+        layout=visual_layout(topic_id, chart_specs, metrics)
         chart_html=chart_markup(chart_specs,args.style)
         if topic_id in {'SUMMARY','OUTRO'}:
             source_topic=(episode.get('topics') or [{}])[-1]
             summary_cards=episode.get('outro_summary') or source_topic.get('metrics',[])[:3]
             footer=visual_plan.get('outro',{}).get('footer') or episode.get('editorial_thesis') or '本期判断见结尾口播'
             chart_html=summary_markup(summary_cards, footer, start)
-        if agenda and chart_html:
-            chart_html=f'<div id="chart-stage-{topic_id}-{index}" class="chart-stage clip" data-start="{start+8}" data-duration="{max(0.1,end-(start+8))}" data-track-index="81">{chart_html}</div>'
-        layers.append(f'<div id="topic-{topic_id}-run-{index}" class="topic-layer clip" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="{index+2}"><div class="title"><span class="index">{title_index}</span>{html.escape(title)}</div><div class="subtitle">{html.escape(subtitle)}</div><div class="metrics" data-layout-ignore>{metric_cards(metrics)}</div>{chart_html}{agenda}</div>')
+        if chart_html and layout == 'chart-first':
+            # The chart starts with the topic and remains present for the full
+            # topic duration, so the spoken evidence has a stable visual home.
+            chart_html=f'<div id="chart-stage-{topic_id}-{index}" class="chart-stage clip" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="81">{chart_html}</div>'
+        metric_html=metric_cards(metrics) if layout in {'hook','metrics','signal'} else ''
+        title_prefix=f'<span class="index">{title_index}</span>' if title_index else ''
+        title_density=' title-dense' if len(title) > 24 else (' title-compact' if len(title) > 18 else '')
+        layers.append(f'<div id="topic-{topic_id}-run-{index}" class="topic-layer {layout} clip" data-layout="{layout}" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="{index+2}"><div class="title{title_density}">{title_prefix}{html.escape(title)}</div><div class="subtitle">{html.escape(subtitle)}</div><div class="metrics" data-layout-ignore>{metric_html}</div>{chart_html}{agenda}</div>')
     turns=[]
     for i,s in enumerate(segs):
         speaker=s['speaker']; meta=speaker_meta.get(speaker,{'display_name':speaker,'color':'#e4a33d','accent':'#9a5c00'}); label=meta.get('display_name',speaker)

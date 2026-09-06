@@ -12,7 +12,7 @@ growth_green: '#1e6b4c'
 neutral_amber: '#8a5e15'
 hairline: '#e7e0d2'
 card_radius: 2px
-content_density: medium
+content_density: mobile-first
 speaker_pills: false
 topic_navigation: true
 visual_priority: chart > table > text
@@ -28,12 +28,20 @@ persistent_progress_height: 2px
 persistent_progress_opacity: 1
 ```
 
+## Mobile-first readability gate
+
+- The video remains 1920×1080, but composition decisions are made for phone viewing at fitted width.
+- Do not force every topic into three cards. A topic with a valid chart uses a chart-first scene; card count is data-driven and may be zero, one, two or three.
+- A chart is the main visual for the full evidence-explanation segment. It must not be reduced to a small footer panel beneath cards.
+- Important text must be legible without pausing or zooming: topic headlines, chart titles, chart labels, values and current-turn subtitles all use video-sized type. Decorative metadata and navigation may be smaller, but cannot compete with or replace the evidence.
+- `scripts/check_mobile_legibility.py` is a static gate. A final run also requires rendered screenshot inspection at phone-fitted scale; clipping, overlap, or unreadable labels fails the gate.
+
 ## Component contract
 
 - `ShowHeader(company, showName, disclaimer)`
 - `SpeakerPill(speaker, active)`
 - `TopicTitle(index, question)`
-- `MetricCard(color, label, value, explanation)`
+- `MetricCard(color, label, value, explanation)` — only when the evidence needs a metric card; never pad the layout with empty cards
 - `ChartFrame(type, claim, data, source_ids)`
 - `AgendaStrip(items)`
 - `TableFallback(rows, unit)`
