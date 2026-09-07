@@ -32,6 +32,9 @@ EMOTION_PROMPTS = {
     "cautious": "这件事我会把结论压低一点。现在能确认的是阶段性改善，还不能把它直接说成长期趋势。",
     "firm": "这一点可以明确：增长已经发生，但质量还需要连续数据来验证。",
     "thoughtful": "我更愿意把这件事放回时间里看。下一期数据，可能比今天的结论更重要。",
+    # 问句专用（2026-09-07）：curious 参考结尾升调不明显，
+    # delivery=rising_question 时改用 questioning 参考；音频与文案来自豆包生成。
+    "questioning": "先别急着说好事。价格是回来了，可这次的回暖，真的能站得住吗？我顺着你的逻辑再问一句：如果利润还留在低位，那现在这组价格，是不是已经提前预支了反弹呢？",
 }
 
 BACKEND_NAME = "VoxCPM2"
@@ -218,6 +221,10 @@ def main() -> int:
             cfg = VOICE_CONFIG[turn["speaker"]]
             emotion = turn.get("emotion")
             emotion_dir = Path(emotion_overrides.get(turn["speaker"], cfg["emotion_dir"]))
+            # 问句升调用专用参考：问号只表达语义，不保证 TTS 升调；
+            # 门禁要求 delivery=rising_question 后，这里换成 questioning 情绪参考。
+            if turn.get("delivery") == "rising_question" and (emotion_dir / "questioning.wav").exists():
+                emotion = "questioning"
             emotion_clip = emotion_dir / f"{emotion}.wav" if emotion else None
             if turn["speaker"] in emotion_overrides and emotion_clip and emotion_clip.exists():
                 prompt_wav_path = emotion_clip
@@ -293,7 +300,7 @@ def main() -> int:
         if index == len(turns):
             pause_ms = 0
         realized_rate = round(speech_chars(turn["text"]) / max(speech_duration, 0.001), 3)
-        segments.append({"index": index, "turn_id": turn["turn_id"], "topic_id": turn["topic_id"], "speaker": turn["speaker"], "role": turn.get("role"), "beat_group_id": turn.get("beat_group_id"), "text": turn["text"], "reply_to_turn_id": turn.get("reply_to_turn_id"), "interaction_type": turn.get("interaction_type"), "backchannel": turn.get("backchannel"), "backchannel_target": turn.get("backchannel_target"), "filler_position": turn.get("filler_position"), "question_ending": turn.get("question_ending"), "emotion": turn.get("emotion"), "delivery": turn.get("delivery"), "pacing_plan": turn.get("pacing_plan"), "target_rate_cps": plan["target_rate_cps"], "realized_rate_cps": realized_rate, "speech_duration": round(speech_duration, 3), "pause_after_ms": pause_ms, "file": str(output), "start": round(start, 3), "end": round(end, 3), "duration": round(length, 3)})
+        segments.append({"index": index, "turn_id": turn["turn_id"], "topic_id": turn["topic_id"], "speaker": turn["speaker"], "role": turn.get("role"), "beat_group_id": turn.get("beat_group_id"), "text": turn["text"], "display_text": turn.get("display_text", turn["text"]), "reply_to_turn_id": turn.get("reply_to_turn_id"), "interaction_type": turn.get("interaction_type"), "backchannel": turn.get("backchannel"), "backchannel_target": turn.get("backchannel_target"), "filler_position": turn.get("filler_position"), "question_ending": turn.get("question_ending"), "emotion": turn.get("emotion"), "delivery": turn.get("delivery"), "pacing_plan": turn.get("pacing_plan"), "target_rate_cps": plan["target_rate_cps"], "realized_rate_cps": realized_rate, "speech_duration": round(speech_duration, 3), "pause_after_ms": pause_ms, "file": str(output), "start": round(start, 3), "end": round(end, 3), "duration": round(length, 3)})
         if pause_ms:
             pause_file = segments_dir / f"pause-{index:02d}.wav"
             if not pause_file.exists():
@@ -323,7 +330,7 @@ def main() -> int:
     (args.outdir / "segments.json").write_text(json.dumps({"backend": BACKEND_NAME, "format_mode": format_mode, "role_map": role_map, "clone_mode": args.clone_mode, "cfg_value": args.cfg_value, "seed_requested": args.seed, "seed_applied": bool(args.seed is not None and seed_supported), "voice_overrides": voice_overrides, "voice_prompts": voice_prompts, "emotion_prompts": emotion_prompts, "emotion_overrides": emotion_overrides, "reference_overrides": reference_overrides, "inference_timesteps": args.inference_timesteps, "natural_pauses": args.natural_pauses, "post_process": args.post_process, "pause_total_seconds": round(pause_total, 3), "reused_segments": reused_segments, "total_seconds": round(cursor, 3), "segments": segments}, ensure_ascii=False, indent=2), encoding="utf-8")
     with (args.outdir / "subtitles.srt").open("w", encoding="utf-8") as srt:
         for i, segment in enumerate(segments, 1):
-            srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['speaker']}：{segment['text']}\n\n")
+            srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['display_text']}\n\n")
     report = {"status": "PASS", "backend": BACKEND_NAME, "format_mode": format_mode, "role_map": role_map, "clone_mode": args.clone_mode, "cfg_value": args.cfg_value, "seed_requested": args.seed, "seed_applied": bool(args.seed is not None and seed_supported), "voice_overrides": voice_overrides, "voice_prompts": voice_prompts, "emotion_prompts": emotion_prompts, "emotion_overrides": emotion_overrides, "reference_overrides": reference_overrides, "inference_timesteps": args.inference_timesteps, "speaker_alternation": True, "natural_pauses": args.natural_pauses, "post_process": args.post_process, "pause_total_seconds": round(pause_total, 3), "reused_segments": reused_segments, "turn_count": len(segments), "total_seconds": round(cursor, 3), "voices": sorted({s["speaker"] for s in segments})}
     (args.outdir / "audio-qa.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))

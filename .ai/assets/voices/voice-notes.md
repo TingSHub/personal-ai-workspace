@@ -28,3 +28,6 @@
 
 - `voice.shenyan`：已验证基础男声资源，可被不同项目 profile 选择。
 - CosyVoice3、IndexTTS 和 boundary-clean 均属于 Workflow 实验分支，不改变已登记音色资源。
+- 2026-09-07：猪周期完播反馈显示女声问句升调不可靠——问号句没有可执行的升调控制。处置：新增 `zhiwei/emotion/questioning.wav`（豆包 expressive 生成，吗/呢 结尾，14.28s），`delivery=rising_question` 由编译器自动切到该参考；不修改 `reference.wav`。VoxCPM2 canary（Q1 吗 / Q3 呢）在 `outputs/experiments/doubao-question-reference-v1/`。
+  - **canary 试听结论（用户 2026-09-07）**：2×2 四格（旧/新参考 × 有无语气颗粒）用户判定**都还行**——单句独立问号句本身就能被两种参考升调。综合判定：升调失败不是参考音频或颗粒拿一个就够，而是**零信号叠加**（裸结构问句 × delivery=normal × curious 参考自身也是裸问句结尾「……跟上？」，相当于延续基线教模型“问号句=平调”）。新链路三层一起上：问句带颗粒（表达层规则）+ `delivery=rising_question`（门禁）+ questioning 参考（编译器映射）。
+  - 已知弱参考：`curious.wav` 结尾为无颗粒问句，其语气参考与“问号句=平调”相关；未更换（避免动已验证情绪资产），仅记录。下一期真实长段运行中抽听问句段落复核（canary 只证单句，未证长段承接）。

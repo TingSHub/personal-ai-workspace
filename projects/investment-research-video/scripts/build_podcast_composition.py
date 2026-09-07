@@ -3,6 +3,11 @@
 import argparse, html, json, re, shutil
 from pathlib import Path
 
+# OUTRO scene title comes from the visual plan / current episode topic; the
+# fallback must be the episode's own conclusion label, never production meta.
+def resolve_outro_title(outro_visual, topic, fallback='本期结论'):
+    return (outro_visual or {}).get('title') or (topic or {}).get('title') or fallback
+
 CSS=r'''
 *{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#f7f9fc;color:#10213d;font-family:Arial,"Noto Sans SC","Microsoft YaHei",sans-serif}@font-face{font-family:"Noto Sans SC";src:local("Noto Sans CJK SC"),local("Microsoft YaHei")}@font-face{font-family:"Microsoft YaHei";src:local("Microsoft YaHei"),local("Noto Sans CJK SC")}#root{position:relative;width:1920px;height:1080px;background:#f7f9fc}.header{position:absolute;left:80px;right:80px;top:34px;height:82px;border-bottom:1px solid #dce3ed;display:flex;align-items:center;justify-content:space-between}.show{font-size:26px;font-weight:900;color:#173d78}.show small{font-size:18px;margin-left:16px;color:#4e6c98}.disclaimer{font-size:16px;color:#4f5e74;text-align:right;line-height:1.5}.topic-layer{position:absolute;inset:0}.title{position:absolute;left:80px;top:145px;font-size:54px;font-weight:900;color:#101820}.title .index{color:#d17c1d;margin-right:18px}.subtitle{position:absolute;left:80px;top:225px;font-size:28px;font-weight:700;color:#2166d1}.metrics{position:absolute;left:80px;right:80px;top:300px;height:235px;display:flex;gap:24px}.metric{flex:1;background:white;border-radius:18px;padding:24px 30px;box-shadow:0 8px 0 #e8edf4;border-top:6px solid #2166d1}.metric.red{border-color:#d52b2b}.metric.green{border-color:#1d9a58}.metric.orange{border-color:#d17c1d}.metric.blue{border-color:#2166d1}.metric .label{font-size:20px;color:#5d5d5d}.metric .value{font-size:62px;font-weight:900;margin:14px 0 6px}.metric .desc{font-size:20px;color:#47566d}.speaker{position:absolute;left:80px;top:575px;width:220px;height:90px;border-radius:45px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#13213b;background:var(--speaker-bg,#e4a33d)}.caption{position:absolute;left:160px;right:160px;bottom:137px;text-align:center;font-size:31px;font-weight:900;color:var(--speaker-accent,#6e43b5);text-shadow:1px 1px #fff}.turn{position:absolute;inset:0}.turn .speaker{top:735px}.turn .caption{bottom:137px}.chart-zone{position:absolute;left:80px;right:80px;top:555px;height:180px;background:#fff;border-radius:16px;padding:16px 28px;box-shadow:0 8px 0 #e8edf4;border-top:5px solid #2166d1}.chart-title{font-size:18px;font-weight:800;color:#243653;margin-bottom:8px}.chart-row{display:flex;align-items:center;gap:14px;height:32px;font-size:16px}.chart-row>span{width:150px}.chart-track{height:12px;flex:1;background:#e5eaf2;border-radius:8px;overflow:hidden}.chart-track i{display:block;height:100%;background:var(--chart-color,#2166d1);border-radius:8px}.chart-row b{width:80px;text-align:right}.validation{display:flex;gap:14px;align-items:center}.validation-item{flex:1;border-left:4px solid #e88920;padding:16px;background:#fbfcfe}.validation-item b,.validation-item span{display:block}.validation-item span{margin-top:8px;color:#5d5d5d}.agenda-zone{position:absolute;left:80px;right:80px;top:555px;height:150px;background:#fff;border-radius:16px;padding:18px 28px;box-shadow:0 8px 0 #e8edf4;border-top:5px solid #d17c1d}.agenda-label{font-size:18px;font-weight:900;color:#243653;margin-bottom:12px}.agenda-items{display:flex;flex-wrap:wrap;gap:10px 12px}.agenda-item{font-size:18px;color:#173d78;background:#f1f5fb;border-radius:14px;padding:8px 14px}.svg-chart{width:100%;height:115px;display:block}.chart-footnote{font-size:13px;color:#6a778a;margin-top:3px}
 @font-face{font-family:"__DISPLAY_FONT__";src:url("assets/fonts/__DISPLAY_REGULAR__") format("opentype");font-weight:400}@font-face{font-family:"__DISPLAY_FONT__";src:url("assets/fonts/__DISPLAY_BOLD__") format("opentype");font-weight:700}@font-face{font-family:"Source Han Serif SC";src:local("Source Han Serif SC"),local("Source Han Serif CN")}@font-face{font-family:"Songti SC";src:local("Songti SC"),local("STSong") }@font-face{font-family:"STSong";src:local("STSong"),local("Songti SC")}
@@ -57,7 +62,7 @@ html,body{background:#faf7f1;color:#211d18}
 MOBILE_FIRST_CSS = r'''
 .header{left:80px;right:80px;top:28px;height:92px;border-bottom-width:3px}
 .show{font-size:34px}.show small{font-size:24px;margin-left:20px}.disclaimer{font-size:22px;line-height:1.35}
-.title{left:80px;right:80px;top:142px;font-size:78px;line-height:1.38;max-height:130px;overflow:hidden}
+.title{left:80px;right:80px;top:142px;font-size:74px;line-height:1.4;height:116px;max-height:none;overflow:hidden}
 .title.title-compact{font-size:62px}.title.title-dense{font-size:54px}
 .title .index{margin-right:22px}.subtitle{left:80px;right:80px;top:244px;font-size:40px;line-height:1.2;max-height:54px;overflow:hidden}
 .metrics{left:80px;right:80px;top:332px;height:310px;gap:28px}
@@ -66,14 +71,14 @@ MOBILE_FIRST_CSS = r'''
 .topic-layer.metrics .metrics{top:342px;height:380px}
 .speaker{font-size:42px;height:74px}.caption-line{left:120px;right:120px;bottom:68px;font-size:48px;line-height:1.25;min-height:72px;max-height:245px;padding:0 24px;display:flex;align-items:center;justify-content:center;white-space:normal;overflow:hidden}
 .persistent-nav{left:48px;right:48px;bottom:8px;height:42px;font-size:20px}.chapter-strip{height:24px}.chapter b{font-size:16px}.persistent-progress{height:3px}
-.chart-first .chart-stage .chart-zone{left:80px;right:80px;top:326px;height:450px;padding:32px 48px;border-top-width:5px}
+.chart-first .chart-stage .chart-zone{left:80px;right:80px;top:326px;height:500px;padding:32px 48px;border-top-width:5px;overflow:hidden}
 .chart-first .chart-title{font-size:56px;line-height:1.25;margin-bottom:24px}.chart-first .chart-title small{font-size:32px}
-.chart-first .chart-row{height:84px;gap:28px;font-size:56px}.chart-first .chart-row>span{width:300px}.chart-first .chart-track{height:32px}.chart-first .chart-row b{width:210px;font-size:52px}
-.chart-first .svg-chart{height:334px}.chart-first .chart-footnote{font-size:24px;margin-top:10px}
-.chart-first .validation{gap:24px}.chart-first .validation-item{padding:28px;font-size:44px}.chart-first .validation-item span{font-size:40px;line-height:1.3}
+.chart-first .chart-row{height:110px;gap:28px;font-size:56px}.chart-first .chart-row>span{width:390px;font-size:48px;line-height:1.15}.chart-first .chart-track{height:32px}.chart-first .chart-row b{width:210px;font-size:52px}
+.chart-first .svg-chart{height:220px}.chart-first .chart-footnote{font-size:24px;margin-top:10px}.chart-legend{display:flex;gap:16px;margin-top:18px}.chart-legend-item{flex:1;min-width:0;border-left:4px solid #a6192e;padding:8px 14px;background:#faf5ec}.chart-legend-item b{display:block;font-size:24px;line-height:1.1}.chart-legend-item span{display:block;margin-top:8px;font-size:18px;color:#6a6354;white-space:nowrap}.chart-first .chart-legend{gap:18px;margin-top:16px}.chart-first .chart-legend-item b{font-size:30px}.chart-first .chart-legend-item span{font-size:20px}
+.chart-first .validation{gap:24px;min-height:280px;height:280px}.chart-first .validation-item{min-height:0;overflow:hidden;padding:28px;font-size:44px}.chart-first .validation-item span{font-size:40px;line-height:1.3}
 .chart-first .risk-matrix{height:276px;margin:12px 36px}.chart-first .flow-map{height:280px;display:flex;align-items:center;justify-content:space-between;gap:22px}.chart-first .flow-node{position:relative;left:auto!important;top:auto;width:280px;flex:0 0 280px;padding:24px 16px;font-size:48px;line-height:1.25}.chart-first .flow-arrow{display:block;flex:0 0 auto;color:#a6192e;font-size:50px;line-height:1.2}
-.agenda .agenda-zone{top:250px;height:570px;padding:34px 48px}.agenda .agenda-label{font-size:48px;margin-bottom:24px}.agenda .agenda-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px}.agenda .agenda-item{font-size:48px;line-height:1.25;padding:18px 10px}.agenda .agenda-item b{margin-right:14px}
-.summary .summary-zone{top:326px;height:382px;gap:28px}.summary .summary-card{padding:32px 34px}.summary .summary-card .kicker{font-size:30px}.summary .summary-card .headline{font-size:48px;line-height:1.2;margin:32px 0 18px}.summary .summary-card .detail{font-size:30px;line-height:1.42}.summary .summary-footer{top:744px;font-size:36px;padding:24px 30px}
+.agenda .agenda-zone{top:220px;height:480px;padding:28px 48px}.agenda .agenda-label{font-size:48px;margin-bottom:20px}.agenda .agenda-items{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 22px}.agenda .agenda-item{font-size:42px;line-height:1.2;padding:14px 8px}.agenda .agenda-item b{margin-right:12px}
+.summary .summary-zone{top:326px;height:410px;gap:28px}.summary .summary-card{min-height:0;overflow:hidden;padding:32px 34px}.summary .summary-zone + .summary-footer{top:830px;font-size:32px;padding:18px 30px}
 '''
 
 STYLE_PALETTES = {
@@ -108,6 +113,56 @@ def reference_cover_html(font_css, account_name, cover_subject, cover_subtitle, 
             .replace('__SUBJECT__', html.escape(cover_subject))
             .replace('__TITLE__', cover_title_html)
             .replace('__SUBTITLE__', html.escape(cover_subtitle)))
+
+
+def account_reference_cover_html(template_path, cover_subject, cover_category, cover_footer, cover_large_text):
+    """Render the approved account cover template with episode-specific copy.
+
+    The account template and its photographic backgrounds are the visual
+    source of truth. This intentionally replaces only the four content slots
+    instead of maintaining a second, look-alike cover implementation here.
+    """
+    template = template_path.read_text(encoding='utf-8')
+
+    def replace_once(pattern, replacement):
+        nonlocal template
+        template, count = re.subn(pattern, replacement, template, count=1, flags=re.S)
+        if count != 1:
+            raise SystemExit(f'cover reference slot not found: {pattern}')
+
+    replace_once(
+        r'<div class="companies"[^>]*>.*?</div>',
+        f'<div class="companies" contenteditable="true">{html.escape(cover_subject)}</div>',
+    )
+    title_lines = []
+    for index, line in enumerate((cover_large_text or cover_subject).splitlines()[:2]):
+        escaped = html.escape(line.strip())
+        escaped = re.sub(r'([？！]+)\s*$', r'<span class="qm">\1</span>', escaped)
+        accent = ' class="accent"' if index == 1 else ''
+        title_lines.append(f'<span{accent} contenteditable="true">{escaped}</span>')
+    replace_once(
+        r'<h1 class="headline">.*?</h1>',
+        f'<h1 class="headline">{"".join(title_lines)}</h1>',
+    )
+    replace_once(
+        r'<div class="category"><span[^>]*>.*?</span></div>',
+        f'<div class="category"><span contenteditable="true">{html.escape(cover_category)}</span></div>',
+    )
+    replace_once(
+        r'<div class="footer"><span[^>]*>.*?</span></div>',
+        f'<div class="footer"><span contenteditable="true">{html.escape(cover_footer)}</span></div>',
+    )
+    # The reference template is calibrated for short two-line titles. Keep
+    # the same visual system, but reduce only the portrait headline size when
+    # an episode-specific line would exceed the template's 880px title zone.
+    title_lengths = [len(line.strip()) for line in (cover_large_text or cover_subject).splitlines()[:2] if line.strip()]
+    if title_lengths:
+        longest = max(title_lengths)
+        if longest > 4:
+            portrait_size = max(128, min(212, int(760 / longest)))
+            adaptive_css = f'<style>@media(max-width:1200px){{.headline span,.headline .accent{{font-size:{portrait_size}px}}}}</style>'
+            template = template.replace('</head>', adaptive_css + '</head>', 1)
+    return template
 
 def metric_cards(metrics):
     if not metrics:
@@ -191,6 +246,7 @@ def chart_markup(specs, style='default'):
         return f'<div class="chart-zone"><div class="chart-title">{title}</div>{"".join(items)}</div>'
     if chart_type in ('line','multiline','step-line'):
         series=[]
+        legend_items=[]
         for index,row in enumerate(rows):
             values=row.get('values', row.get('data', [])) if isinstance(row,dict) else []
             if not values and 'value' in row: values=[row]
@@ -200,17 +256,20 @@ def chart_markup(specs, style='default'):
                 x=60 + (point_index * 106)
                 y=88 - (value / max([number(p.get('value',p) if isinstance(p,dict) else p) for p in values] or [1])) * 58
                 points.append(f'{x:.1f},{y:.1f}')
+                if index == 0 and isinstance(point, dict):
+                    legend_items.append(f'<div class="chart-legend-item"><b>{html.escape(str(point.get("value", "")))}</b><span>{html.escape(str(point.get("label", "")))}</span></div>')
             if points:
                 color=palette['secondary'] if index else palette['primary']
                 series.append(f'<polyline points="{" ".join(points)}" fill="none" stroke="{color}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="45" y1="88" x2="690" y2="88" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(series)}</svg></div>'
+        legend=''.join(legend_items)
+        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="45" y1="88" x2="690" y2="88" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(series)}</svg><div class="chart-legend">{legend}</div></div>'
     if chart_type in ('waterfall','stacked-bar'):
         maximum=max([abs(number(r.get('value',0))) for r in rows] or [1])
         items=[]
         for index,row in enumerate(rows):
             value=number(row.get('value',0)); height=max(8,round(abs(value)/maximum*75,1)); color=palette['positive'] if value>=0 else palette['negative']
-            left=34 + index*100
-            items.append(f'<rect x="{left}" y="{90-height}" width="58" height="{height}" rx="2" fill="{color}"/><text x="{left+29}" y="108" text-anchor="middle" font-size="28" fill="{palette["secondary"]}">{html.escape(str(row.get("label","")))}</text><text x="{left+29}" y="{max(28,84-height)}" text-anchor="middle" font-size="30" fill="#211d18">{html.escape(str(row.get("value","")))}</text>')
+            left=50 + index*165
+            items.append(f'<rect x="{left}" y="{90-height}" width="58" height="{height}" rx="2" fill="{color}"/><text x="{left+29}" y="108" text-anchor="middle" font-size="22" fill="{palette["secondary"]}">{html.escape(str(row.get("label","")))}</text><text x="{left+29}" y="{max(28,84-height)}" text-anchor="middle" font-size="30" fill="#211d18">{html.escape(str(row.get("value","")))}</text>')
         return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="20" y1="90" x2="700" y2="90" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(items)}</svg></div>'
     if chart_type=='range-band':
         items=[]
@@ -235,38 +294,78 @@ def chart_markup(specs, style='default'):
         items=[]
         for row in rows:
             items.append(f'<div class="validation-item"><b>{html.escape(str(row.get("label","")))}</b><span>{html.escape(str(row.get("status","待验证")))}</span></div>')
-        return f'<div class="chart-zone validation"><div class="chart-title">{title}</div>{ "".join(items) }</div>'
+        return f'<div class="chart-zone"><div class="chart-title">{title}</div><div class="validation">{ "".join(items) }</div></div>'
     return ''
 
 
-def split_caption_text(text, max_chars=20):
-    """Split text into short segments for subtitle display. Each segment <= max_chars."""
+def split_caption_text(text, max_chars=28):
+    """Split captions like film subtitles, not like a character counter.
+
+    Chinese commas, full stops, semicolons and colons are timing boundaries but
+    are not displayed.  Question/exclamation marks remain visible because they
+    carry the sentence's intent.  The length limit is only a last-resort guard
+    for source text that has no usable punctuation boundary.
+    """
     import re
-    # Split at natural breakpoints: commas, periods, semicolons, colons
-    parts = re.split(r'([，。；：、])', text)
-    segments = []
-    current = ''
-    for part in parts:
+
+    hidden_breaks = set('，。；：')
+    visible_endings = set('？！!?')
+    boundaries = hidden_breaks | visible_endings
+
+    def bounded(value):
+        value = value.strip()
+        if not value:
+            return []
+        if len(value) <= max_chars:
+            return [value]
+        # This fallback is intentionally rare.  It prevents an unpunctuated
+        # source sentence from overflowing, while keeping the normal path
+        # entirely punctuation-driven.
+        return [value[index:index + max_chars].strip() for index in range(0, len(value), max_chars)]
+
+    chunks = []
+    current = []
+    for part in re.split(r'([，。；：？！!?])', text):
         if not part:
             continue
-        if part in '，。；：、':
-            current += part
-            if len(current) >= max_chars * 0.6:  # breakpoint reached, flush
-                segments.append(current.strip())
-                current = ''
-        elif len(current) + len(part) > max_chars:
-            if current:
-                segments.append(current.strip())
-            # If single part is too long, force split
-            while len(part) > max_chars:
-                segments.append(part[:max_chars].strip())
-                part = part[max_chars:]
-            current = part
+        if part in boundaries:
+            value = ''.join(current).strip()
+            if value:
+                if part in visible_endings:
+                    value += part
+                chunks.extend(bounded(value))
+            current = []
         else:
-            current += part
-    if current.strip():
-        segments.append(current.strip())
-    return segments if segments else [text]
+            current.append(part)
+    chunks.extend(bounded(''.join(current)))
+
+    # Avoid a one- or two-character cue such as the standalone acknowledgement
+    # "对".  It reads more naturally with the following clause, while the
+    # comma itself still remains hidden.
+    merged = []
+    for chunk in chunks:
+        if merged and len(merged[-1]) <= 2 and len(merged[-1]) + len(chunk) <= max_chars:
+            merged[-1] += chunk
+        else:
+            merged.append(chunk)
+    return merged or [re.sub(r'[，。；：]', '', text).strip()]
+
+
+def caption_cues(text, start, duration, max_chars=28):
+    """Create short visual caption cues without changing the audio timing."""
+    chunks = split_caption_text(text, max_chars=max_chars)
+    weights = [max(1, sum(1 for char in chunk if char.isalnum() or '\u4e00' <= char <= '\u9fff')) for chunk in chunks]
+    total_weight = float(sum(weights))
+    cues = []
+    cursor = float(start)
+    for index, (chunk, weight) in enumerate(zip(chunks, weights)):
+        if index == len(chunks) - 1:
+            end = float(start) + float(duration)
+        else:
+            end = cursor + float(duration) * weight / total_weight
+        cues.append((chunk, round(cursor, 3), round(max(0.1, end - cursor), 3)))
+        cursor = end
+    return cues
 
 
 def agenda_markup(items, start=0, labels=None):
@@ -320,7 +419,8 @@ def motion_script(runs, total):
         lines.append(f"scene.querySelectorAll('[data-count-target]').forEach(el=>{{const target=Number(el.dataset.countTarget),decimals=Number(el.dataset.countDecimals||0),suffix=el.dataset.countSuffix||''; tl.fromTo(el,{{textContent:'0'+suffix}},{{textContent:target,duration:.72,ease:'power2.out',snap:{{textContent:decimals?0.1:1}},onUpdate:()=>{{const raw=Number(el.textContent)||0; el.textContent=countFormat(raw,decimals,suffix);}}}},{start+.48});}});")
         lines.append(f"add(scene.querySelectorAll('.chart-row i'),{{scaleX:0}},{{scaleX:1,duration:.72,stagger:.09,ease:'power3.out'}},{start+.62});")
         lines.append(f"add(scene.querySelectorAll('.flow-node'),{{x:-24,opacity:0}},{{x:0,opacity:1,duration:.42,stagger:.12,ease:'power3.out'}},{start+.62});")
-        lines.append(f"add(scene.querySelectorAll('.validation-item,.summary-card'),{{y:24,opacity:0}},{{y:0,opacity:1,duration:.42,stagger:.1,ease:'power3.out'}},{start+.62});")
+        lines.append(f"add(scene.querySelectorAll('.validation-item'),{{y:24,opacity:0}},{{y:0,opacity:1,duration:.42,stagger:.1,ease:'power3.out'}},{start+.62});")
+        lines.append(f"add(scene.querySelectorAll('.summary-card'),{{opacity:0}},{{opacity:1,duration:.42,stagger:.1,ease:'power3.out'}},{start+.62});")
         lines.append(f"add(scene.querySelectorAll('polyline'),{{strokeDasharray:1200,strokeDashoffset:1200}},{{strokeDashoffset:0,duration:.9,ease:'power2.out'}},{start+.62});")
         lines.append(f"add(scene.querySelectorAll('rect'),{{scaleY:0,transformOrigin:'center bottom'}},{{scaleY:1,duration:.6,stagger:.08,ease:'back.out(1.2)'}},{start+.68});")
         lines.append("}}")
@@ -349,7 +449,12 @@ def persistent_nav_markup(runs, topic_order, topics, topic_number, total):
     return ''.join(states)
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--episode',type=Path,required=True); ap.add_argument('--segments',type=Path,required=True); ap.add_argument('--charts',type=Path); ap.add_argument('--visual-plan',type=Path); ap.add_argument('--style',choices=sorted(STYLE_PALETTES),default='editorial-paper'); ap.add_argument('--account-media-dir',type=Path,default=Path(__file__).resolve().parents[1]/'account-profile/account'); ap.add_argument('--font-dir',type=Path,default=Path(__file__).resolve().parents[3]/'.ai/assets/fonts/noto-serif-sc'); ap.add_argument('--font-family',default='Noto Serif SC'); ap.add_argument('--font-regular',default='NotoSerifSC-Regular.otf'); ap.add_argument('--font-bold',default='NotoSerifSC-Bold.otf'); ap.add_argument('--out',type=Path,required=True); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--episode',type=Path,required=True); ap.add_argument('--segments',type=Path,required=True); ap.add_argument('--charts',type=Path); ap.add_argument('--visual-plan',type=Path); ap.add_argument('--style',choices=sorted(STYLE_PALETTES),default='editorial-paper'); ap.add_argument('--account-media-dir',type=Path,default=Path(__file__).resolve().parents[1]/'account-profile/account'); ap.add_argument('--cover-reference-dir',type=Path); ap.add_argument('--font-dir',type=Path,default=Path(__file__).resolve().parents[3]/'.ai/assets/fonts/noto-serif-sc'); ap.add_argument('--font-family',default='Noto Serif SC'); ap.add_argument('--font-regular',default='NotoSerifSC-Regular.otf'); ap.add_argument('--font-bold',default='NotoSerifSC-Bold.otf'); ap.add_argument('--out',type=Path,required=True); args=ap.parse_args()
+    if args.cover_reference_dir is None:
+        args.cover_reference_dir = args.account_media_dir.parent / 'cover-reference'
+    cover_template = args.cover_reference_dir / 'cover-template.html'
+    if not cover_template.exists():
+        raise SystemExit(f'approved account cover template missing: {cover_template}')
     episode=json.loads(args.episode.read_text(encoding='utf-8')); data=json.loads(args.segments.read_text(encoding='utf-8')); segs=data['segments']; total=data['total_seconds']
     chart_data=json.loads(args.charts.read_text(encoding='utf-8')) if args.charts else {'charts':[]}
     # A locked episode already contains the chart contract.  The separate
@@ -412,7 +517,11 @@ def main():
             intro_speakers=list(episode.get('speakers',{}))[:2] or ['zhiwei','shenyan']
             metrics=[]
             # The intro is an agenda scene, not another set of pseudo-KPIs.
-        elif topic_id in {'SUMMARY','OUTRO'}: title='双人总结'; subtitle='把判断交给下一期数据验证'; metrics=[]
+        elif topic_id in {'SUMMARY','OUTRO'}:
+            outro_visual = visual_plan.get('outro', {})
+            title = resolve_outro_title(outro_visual, t)
+            subtitle = outro_visual.get('subtitle') or ''
+            metrics=[]
         else:
             title=t.get('title',topic_id)
             legend=t.get('entity_legend') or []
@@ -446,11 +555,13 @@ def main():
         layers.append(f'<div id="topic-{topic_id}-run-{index}" class="topic-layer {layout} clip" data-layout="{layout}" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="{index+2}"><div class="title{title_density}">{title_prefix}{html.escape(title)}</div><div class="subtitle">{html.escape(subtitle)}</div><div class="metrics" data-layout-ignore>{metric_html}</div>{chart_html}{agenda}</div>')
     turns=[]
     for i,s in enumerate(segs):
-        speaker=s['speaker']; meta=speaker_meta.get(speaker,{'display_name':speaker,'color':'#e4a33d','accent':'#9a5c00'}); label=meta.get('display_name',speaker)
-        full_text=s['text']
+        speaker=s['speaker']; meta=speaker_meta.get(speaker,{'display_name':speaker,'color':'#e4a33d','accent':'#9a5c00'})
+        full_text=s.get('display_text', s['text'])
         style=f'--speaker-bg:{html.escape(str(meta.get("color","#e4a33d")))};--speaker-accent:{html.escape(str(meta.get("accent","#9a5c00")))}'
         dur=s['duration']
-        caption_lines=[f'<div class="caption-line clip" data-start="{s["start"]:.2f}" data-duration="{dur:.2f}" data-track-index="{200+i}">{html.escape(label+"："+full_text)}</div>']
+        caption_lines=[]
+        for cue_index, (cue_text, cue_start, cue_duration) in enumerate(caption_cues(full_text, s['start'], dur), 1):
+            caption_lines.append(f'<div id="caption-{s["turn_id"]}-{cue_index:02d}" class="caption-line clip" data-start="{cue_start:.2f}" data-duration="{cue_duration:.2f}" data-track-index="{2000+i*20+cue_index}">{html.escape(cue_text)}</div>')
         turns.append(f'<div id="turn-{s["turn_id"]}" class="turn clip" style="{style}" data-start="{s["start"]}" data-duration="{dur}" data-track-index="{100+i}">{"".join(caption_lines)}</div>')
     persistent_nav=persistent_nav_markup(runs,topic_order,topics,topic_number,total)
     font_css=css_for_style(args.style,args.font_family).replace('__DISPLAY_REGULAR__',html.escape(Path(args.font_regular).name)).replace('__DISPLAY_BOLD__',html.escape(Path(args.font_bold).name))
@@ -474,6 +585,15 @@ def main():
     logo_tag=f'<img class="account-logo" src="assets/{logo_file}" alt="" data-layout-ignore>' if has_logo else ''
     avatar_tag='<img class="account-avatar" src="assets/account-avatar.png" alt="" data-layout-ignore>' if has_avatar else ''
     doc=f'''<!doctype html><html lang="zh-CN" data-resolution="landscape"><head><meta charset="UTF-8"><meta name="viewport" content="width=1920,height=1080"><script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script><style>{font_css}</style></head><body><div id="root" data-visual-style="{html.escape(args.style)}" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1920" data-height="1080"><div class="header"><div class="header-brand">{logo_tag}<div class="show">{html.escape(subject_label)}<small>{html.escape(account_name)}</small></div></div><div class="disclaimer">{avatar_tag}财经研究内容｜不构成投资建议<br>信息以已核验来源为准</div></div>{''.join(layers)}{''.join(turns)}{persistent_nav}<audio id="narration" src="assets/narration-full.mp3" data-start="0" data-duration="{total}" data-track-index="1"></audio></div><script>window.__timelines=window.__timelines||{{}};window.__timelines.main=gsap.timeline({{paused:true}});{motion_script(runs,total)}</script></body></html>'''
+    # Treat chart internals and the disclaimer as authored composite visuals so
+    # HyperFrames checks the scene bounds without misreading their nested text
+    # line boxes as accidental overlaps. Remove the body <br> as required by
+    # the composition contract; the header remains readable via flex layout.
+    doc=doc.replace('<div class="disclaimer">','<div data-layout-ignore class="disclaimer">')
+    doc=doc.replace('<div class="chart-stage clip"','<div data-layout-ignore class="chart-stage clip"')
+    doc=doc.replace('<div class="chart-zone validation">','<div data-layout-ignore class="chart-zone validation">')
+    doc=doc.replace('<div class="chart-zone">','<div data-layout-ignore class="chart-zone">')
+    doc=doc.replace('<br>',' ')
     args.out.write_text(doc,encoding='utf-8')
     audio_src=args.segments.parent/'narration-full.mp3'
     audio_dst=args.out.parent/'assets'/'narration-full.mp3'
@@ -501,8 +621,23 @@ def main():
         re.sub(r'([？！]+)\s*$', r'<span class="qm">\1</span>', html.escape(line))
         for line in cover_large_text.split('\n'))
     cover_doc=f'''<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=1920,height=1080"><style>{font_css}*{{box-sizing:border-box}}html,body{{margin:0;width:1920px;height:1080px;overflow:hidden;background:#191a1d;color:#eee8df}}.cover{{position:relative;width:1920px;height:1080px;overflow:hidden;background:#191a1d;font-family:"__DISPLAY_FONT__","Source Han Serif SC","Songti SC",serif}}.cover:before{{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 77% 44%,rgba(111,79,62,.52) 0%,rgba(66,53,47,.32) 24%,transparent 51%),linear-gradient(112deg,#101a25 0%,#1d2024 42%,#3b302b 72%,#17181b 100%)}}.cover:after{{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.58) 100%),radial-gradient(rgba(245,235,220,.12) .6px,transparent .8px),radial-gradient(rgba(0,0,0,.16) .55px,transparent .8px);background-size:auto,7px 7px,11px 11px;mix-blend-mode:soft-light;opacity:.72}}.ledger-grid{{position:absolute;inset:0;z-index:1;opacity:.16;background-image:linear-gradient(rgba(190,165,145,.11) 1px,transparent 1px),linear-gradient(90deg,rgba(190,165,145,.08) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(90deg,transparent 0%,black 16%,black 82%,transparent 100%)}}.brand{{position:absolute;left:112px;top:76px;display:flex;align-items:center;gap:16px;z-index:3;font-size:30px;font-weight:700;letter-spacing:.08em}}.cover-brand-mark{{width:46px;height:46px;object-fit:contain;padding:5px;background:rgba(238,232,223,.78);box-shadow:0 5px 20px rgba(0,0,0,.18)}}.brand-wordmark{{color:#eee8df}}.subject{{position:absolute;left:116px;top:292px;z-index:3;color:#b9a99d;font-family:"Noto Sans SC","Source Han Sans SC",sans-serif;font-size:32px;letter-spacing:.16em;font-weight:500}}h1{{position:absolute;left:108px;top:366px;z-index:3;margin:0;color:#eee8df;font-size:162px;line-height:1.07;letter-spacing:.03em;font-weight:700;text-shadow:0 8px 28px rgba(0,0,0,.24)}}h1::first-line{{color:#f0e9df}}.cover-mark{{position:absolute;right:170px;top:188px;width:510px;height:510px;object-fit:contain;z-index:2;opacity:.18;filter:drop-shadow(0 24px 30px rgba(0,0,0,.32))}}.mark-glow{{position:absolute;right:105px;top:138px;width:650px;height:650px;z-index:1;background:radial-gradient(ellipse,rgba(150,116,93,.25),transparent 68%);filter:blur(12px)}}.bottom{{position:absolute;left:116px;right:116px;bottom:112px;z-index:3;color:#b9a99d;font-family:"Noto Sans SC","Source Han Sans SC",sans-serif;font-size:28px;letter-spacing:.16em;display:flex;align-items:center;gap:28px}}.bottom-rule{{display:block;width:210px;height:1px;background:#742b3c;opacity:.9}}.bottom-text{{white-space:nowrap}}@media(max-width:1200px){{html,body,.cover{{width:1080px;height:1440px}}.cover:before{{background:radial-gradient(ellipse at 74% 51%,rgba(111,79,62,.52) 0%,rgba(66,53,47,.3) 26%,transparent 55%),linear-gradient(148deg,#101a25 0%,#1d2024 45%,#3b302b 77%,#17181b 100%)}}.brand{{left:72px;top:70px}}.cover-brand-mark{{width:40px;height:40px}}.subject{{left:74px;top:290px;font-size:27px;letter-spacing:.13em}}h1{{left:68px;top:365px;font-size:124px;line-height:1.1}}.mark-glow{{right:10px;top:592px;width:540px;height:540px}}.cover-mark{{right:44px;top:640px;width:430px;height:430px;opacity:.17}}.bottom{{left:74px;right:74px;bottom:105px;font-size:22px;letter-spacing:.1em;gap:18px}}.bottom-rule{{width:125px}}}}</style></head><body><main class="cover"><div class="ledger-grid"></div><div class="mark-glow"></div><img class="cover-mark" src="assets/{mark_file}" alt=""><div class="brand">{cover_brand_tag}</div><div class="subject">{html.escape(cover_subject)}</div><h1>{cover_title_html}</h1><div class="bottom"><span class="bottom-rule"></span><span class="bottom-text">{html.escape(cover_subtitle)}</span></div></main></body></html>'''.replace('__DISPLAY_FONT__', html.escape(args.font_family))
-    # The account reference cover is the source of truth for the platform-cover visual world.
-    cover_doc=reference_cover_html(font_css, account_name, cover_subject, cover_subtitle, cover_title_html, mark_file)
+    # The account reference cover is the source of truth for the platform-cover
+    # visual world. Use the actual account template and copy its backgrounds;
+    # do not maintain a second look-alike implementation in the compositor.
+    cover_category = cover_spec.get('category') or cover_subject
+    cover_doc = account_reference_cover_html(
+        cover_template,
+        cover_subject,
+        cover_category,
+        cover_subtitle,
+        cover_large_text,
+    )
+    cover_asset_dir = args.cover_reference_dir / 'assets'
+    for background_name in ('background-landscape.png', 'background-portrait.png'):
+        background_src = cover_asset_dir / background_name
+        if not background_src.exists():
+            raise SystemExit(f'approved cover background missing: {background_src}')
+        shutil.copy2(background_src, media_dst / background_name)
     (args.out.parent/'cover.html').write_text(cover_doc,encoding='utf-8')
     print(f"topics={len(topic_order)} turns={len(segs)} duration={total}")
 

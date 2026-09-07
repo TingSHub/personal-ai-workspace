@@ -12,7 +12,7 @@
 | source | 火山引擎(bytedance openspeech API)· 非开源服务 |
 | installed_ref | seed-tts-2.0(API) |
 | runtime | both |
-| invocation | 项目脚本：`projects/investment-research-video/scripts/tts-doubao-v3-ws-test.py`；参考音频：`generate-doubao-conversational-references.py` / `generate-doubao-surprised-references.py` |
+| invocation | 项目脚本：`projects/investment-research-video/scripts/tts-doubao-v3-ws-test.py`；参考音频：`generate-doubao-conversational-references.py` / `generate-doubao-surprised-references.py` / `generate-doubao-question-reference.py`（问句专用，吗/呢 结尾，2026-09-07） |
 | requirements | 网络可达 `openspeech.bytedance.com`；工作区 `.env` 中按接口配置凭证；不要把凭证写入 Skill 或脚本 |
 | update | API 版本演进由火山引擎管理;脚本本地维护 |
 | 辅助脚本 | 旧版 `doubao-voice-ref.py`/`tts-doubao.py`；V3 双向 WebSocket `tts-doubao-v3-ws-test.py`；参考音频生成脚本见 `projects/investment-research-video/scripts/` |

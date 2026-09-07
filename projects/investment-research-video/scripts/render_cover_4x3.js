@@ -29,7 +29,7 @@ if (!coverPath || !outputPath) {
   });
   await page.waitForTimeout(200);
   // 只截 #cover 元素，输出画布原生 1440×1080 全幅 PNG
-  await page.locator('#cover').screenshot({ path: path.resolve(outputPath), type: 'png' });
+  await page.locator('#cover, .cover').first().screenshot({ path: path.resolve(outputPath), type: 'png' });
   await browser.close();
   console.log(JSON.stringify({ status: 'PASS', width: 1440, height: 1080, output: path.resolve(outputPath) }));
 })().catch((error) => {

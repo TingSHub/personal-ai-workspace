@@ -29,17 +29,20 @@ DELIVERY_RATE = {
     "short_pause": 0.98,
 }
 
+# Turn gaps should support conversation, not make every answer sound like a
+# paragraph break. The old resolver used 220–360ms by default and became
+# especially slow when a deep episode had many turns.
 INTERACTION_PAUSE = {
-    "hook": 360,
-    "challenge": 300,
-    "clarify": 240,
-    "question": 300,
-    "answer": 240,
-    "acknowledge": 160,
-    "counter_evidence": 220,
-    "summarize": 320,
-    "self_introduction": 200,
-    "transition": 260,
+    "hook": 220,
+    "challenge": 180,
+    "clarify": 150,
+    "question": 180,
+    "answer": 150,
+    "acknowledge": 100,
+    "counter_evidence": 150,
+    "summarize": 180,
+    "self_introduction": 140,
+    "transition": 160,
 }
 
 
@@ -50,17 +53,14 @@ def clamp(value: float, low: float, high: float) -> float:
 def resolve_turn(turn: dict) -> dict:
     result = copy.deepcopy(turn)
     existing = result.get("pacing_plan") or {}
-    emotion = str(result.get("emotion") or "neutral")
-    delivery = str(result.get("delivery") or "normal")
     interaction = str(result.get("interaction_type") or "normal")
-    rate = float(existing.get("speech_rate", EMOTION_RATE.get(emotion, 1.0)))
-    if "speech_rate" not in existing:
-        rate *= DELIVERY_RATE.get(delivery, 1.0)
-    rate = round(clamp(rate, 0.88, 1.04), 3)
-    target_rate = float(existing.get("target_rate_cps", SPEAKER_BASELINE_CPS.get(result.get("speaker"), 3.9)))
-    if "target_rate_cps" not in existing:
-        target_rate *= EMOTION_RATE.get(emotion, 1.0) * DELIVERY_RATE.get(delivery, 1.0)
-    target_rate = round(clamp(target_rate, 3.2, 4.3), 2)
+    # VoxCPM native timing is the profile baseline. Retiming is allowed only
+    # when a director explicitly supplies speech_rate/target_rate_cps.
+    rate = float(existing["speech_rate"]) if "speech_rate" in existing else 1.0
+    rate = round(clamp(rate, 0.5, 2.0), 3)
+    target_rate = None
+    if "target_rate_cps" in existing and existing["target_rate_cps"] is not None:
+        target_rate = round(clamp(float(existing["target_rate_cps"]), 3.0, 5.5), 2)
 
     pause_after = existing.get("pause_after_ms")
     if pause_after is None:

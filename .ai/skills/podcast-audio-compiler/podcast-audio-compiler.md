@@ -46,6 +46,8 @@ scripts/check_dialogue_repetition.py  episode manifest 的跨段重复句与固�
 
 - TTS 完成后，对每个 turn 执行已知文本对齐或反向转写检查；QA 必须记录 turn 数、异常句和重生成闭环，不能只检查文件存在。
 - 全局时间线校验应将相邻 turn 间隔与 `pause_after_ms` 对照，避免把已记录停顿误判为时间线断裂。
+- **问句 canary（能力验证，先于规则承诺）**：`delivery=rising_question` 只是标注契约，不等于声学升调。使用 `voice.zhiwei` 的问句参考/emotion 资产必须先行生成问句 canary（2–3 个不同句型的问句 turn）并试听：升调稳定才允许把 `rising_question` 作为生产依赖；canary 失败时回退——更换问句参考音频与 emotion 资产，或把该问句改写为不依赖升调的表达（如陈述式引导），并把结论追加到 `.ai/assets/voices/voice-notes.md`。门禁只能证明标注存在，不能证明声学结果。
+- **句首单音节风险**：以“对/嗯/好”开启且无句内 break 的 turn 属于该音色的吞音/黏连高风险形态，禁止再生产（契约源头：dialogue-director 实体）；单字回应必须在完整短语中生成，并在 QA 中抽查首字可辨识度。
 
 ## Notes
 
@@ -56,12 +58,14 @@ scripts/check_dialogue_repetition.py  episode manifest 的跨段重复句与固�
 ## 节奏控制现状与复用路径
 
 - 当前 VoxCPM2 编译器已复用 emotion 对应的情绪参考音频、逐句 WAV、natural-pauses 和 pause_after_ms；这些能力应继续作为默认生产链路。
+- 问句专用参考：`voice.zhiwei` 的 `emotion/questioning.wav`（豆包 expressive，吗/呢 结尾）；`compile_podcast_audio.py` 遇到 `delivery=rising_question` 时自动切换（2026-09-07）。canary 在 `outputs/experiments/doubao-question-reference-v1/canary-voxcpm/`，升调试听稳定前不视为可信生产能力。
 - 当逻辑 speaker 显式 override 到另一个 voice asset 时，使用 emotion-override 同步切换情绪参考目录，避免 reference 与 emotion 来自不同音色。
 - 当前 delivery（如 pause_before_number、stress_contrast、short_pause）会写入音频元数据，但不会直接改变 VoxCPM2 的语速或句内停顿；natural-pauses 也只按 interaction_type 生成 turn 间静音。
-- pacing_plan 已由现有逐句编译器执行：speech_rate 使用 FFmpeg atempo 做逐句变速，intra_turn_breaks 按文本标记拆分合成并插入静音，pause_after_ms 覆盖句尾停顿。再用同一批 WAV/SRT/QA 做 A/B，不先换 TTS 后端，也不把 HyperFrames Audio 当作口播语速控制器。
+- pacing_plan 已由现有逐句编译器执行：speech_rate 使用 FFmpeg atempo 做逐句变速，intra_turn_breaks 按文本标记拆分合成并插入静音，pause_after_ms 覆盖句尾停顿。默认解析必须保留 VoxCPM 原生语速，不得凭通用 speaker baseline 自动生成 target_rate_cps；只有导演明确标注的节奏才允许 atempo。发现“整体变慢”时先比较 raw WAV 与 paced WAV 的字速和时长，再决定是否需要局部节奏标注。
 - 开场应允许比普通 turn 更长的句间停顿，并在“事实反差”和开放问题前声明句内停顿；停顿设计必须进入 segments.json 和 QA，而不是只写在 delivery 标签里。
 - 生产前先对 episode manifest 做跨段重复检查，重点检查每个角色的段首、段尾和总结句；相同句式重复出现时必须改写推进关系，不能用固定口头禅填充每一节。可运行 `scripts/check_dialogue_repetition.py <episode.json>`，发现重复时退出码为 1。
 - 生产后按开场、中段、转场、收束抽查每个角色的真实 WAV；局部音色变化、单字异常停顿、拼接边界或音量突变都应回到配音阶段重生成，并在 audio-qa 中记录时间点。
+- 对单字回应（如“对”“没错”）不得单独切成极短 TTS 片段；应在完整短语中生成，并可用 `pause_anchors` 在完整短语后插入确定性停顿，避免首字被模型吞掉。
 
 ### pacing_plan 字段
 

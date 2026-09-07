@@ -8,13 +8,13 @@
 |---|---|
 | kind | agent |
 | 来源 | internal · created for investagent-podcast-video-by-hyperframes |
-| installed_ref | internal · v0.1 |
+| installed_ref | internal · v0.2 |
 | runtime | both |
 | 调用入口 | Phase 2 Required Resources 的 by-name `dialogue-director-agent`；加载实体定义执行 |
-| 要求 | 已验收 Editorial Master、topic-evidence-matrix、account-profile、content_line treatment 和 humor map；默认执行 `host_analyst`，仅显式 `debate` 时加载 debate-rounds；输出必须包含 format/role/reply/interaction/emotion/delivery 字段 |
+| 要求 | 已验收 Editorial Master、topic-evidence-matrix、account-profile、content_line treatment、content_depth、knowledge route 和事实锚定 humor map；默认执行 `host_analyst`，仅显式 `debate` 时加载 debate-rounds；输出必须包含 format/role/reply/interaction/emotion/delivery 字段 |
 | 更新 | manual · 修改顶层实体定义后同步；验证：用一个话题生成 6–8 个交替 turn，检查回应关系、证据引用和企业研究边界 |
 | 辅助脚本 | — |
-| 经验引用 | — |
+| 经验引用 | published-video-dialogue-caption-visual-sync |
 
 ## 作用
 
@@ -37,3 +37,4 @@
 - 不把情绪标签当作情绪音频保证；TTS 需要消费 account-profile 的情绪参考资产或明确的 style adapter。
 - 不新增研究事实，不自行改数字口径，不把自然口播舍入变成事实舍入。
 - 不使用上游短视频的时长、平台钩子或恐惧叙事作为长篇财经播客规则。
+- 踩坑（2026-09-07 猪周期）：顾慎言句首单音节会被吞音/黏连，标点无法稳定制造停顿——已在实体定义 §4/§5/§6 写入“不得以对/嗯/好起句”；问号句必须 `delivery=rising_question`（问号不保证升调）；含数字 turn 必须同时给 `text`/`display_text` 且数值等价。

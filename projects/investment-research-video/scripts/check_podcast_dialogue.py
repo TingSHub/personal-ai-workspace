@@ -22,6 +22,7 @@ from pathlib import Path
 
 CONTRAST_MARKERS = ("反而", "但", "却", "不过", "只是", "同时")
 SHORT_PREFIXES = ("没错", "对", "嗯", "好")
+MONOSYLLABLE_PREFIX = re.compile(r"^[对嗯好](?:[，。；：！？!?]|$)")
 BOOKISH_HOOK = re.compile(r"(?:利润|净利|净利润)快涨(?:了)?三倍")
 FORBIDDEN_VALUATION = ("目标价", "评级", "买入", "卖出", "持有", "仓位", "交易策略")
 FORBIDDEN_DIRECT_ADVICE = re.compile(
@@ -35,6 +36,80 @@ THESIS_FIELDS = {
     "mechanism", "time_horizon", "affected_segment", "strongest_counterargument",
     "invalidation_condition", "evidence_ids",
 }
+
+# --- 数字双文本兜底（第三层）：主防线是表达层契约（dialogue-director 实体 §4/§5），
+# 这里的检查只兜"硬性缺失"和"百分比不等价"，不追求覆盖全部读法，避免误报淹没门禁。
+CN_DIGITS = {"零": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
+             "六": 6, "七": 7, "八": 8, "九": 9}
+SPOKEN_PERCENT = re.compile(r"百分之([零一二两三四五六七八九十百千点]+)")
+DISPLAY_PERCENT = re.compile(r"(\d+(?:\.\d+)?)\s*[%％]")
+# 问句句尾语气颗粒/疑问语尾：TTS 靠语气词和疑问词识别疑问语调，不是靠问号。
+# 裸结构问句（“是不是反转了？”“为什么还不反转？”→ 加“呢/吗”收尾），
+# 而“怎么看/怎么读/什么”类疑问语汇本身即升调句，允许。2026-09-07 实测。
+QUESTION_PARTICLE_OK = re.compile(
+    r"(?:吗|呢|吧|么|呀|啊|什么|为什么|怎么看|怎么办|怎么读|怎么算|怎么讲|怎么理解|"
+    r"在哪里|哪儿|哪个|哪|谁|啥|对不对|是不是|对吗|在哪|多少)$"
+)
+NUMERIC_TEXT = re.compile(
+    r"\d+(?:\.\d+)?"
+    r"|百分之[零一二两三四五六七八九十百千点]+"
+    r"|[零一二两三四五六七八九十百千]+(?:点[零一二两三四五六七八九十]+)?"
+    r"(?:亿|万|倍|成|块|元|个百分点|点(?!数|子))"
+)
+
+
+def _cn_int(numerals: str) -> int | None:
+    """中文整数位值解析：'三千七百八十一' -> 3781；解析失败返回 None。"""
+    result, section, number = 0, 0, 0
+    for ch in numerals:
+        if ch in CN_DIGITS:
+            number = CN_DIGITS[ch]
+        elif ch == "十":
+            section += (number or 1) * 10
+            number = 0
+        elif ch == "百":
+            section += (number or 1) * 100
+            number = 0
+        elif ch == "千":
+            section += (number or 1) * 1000
+            number = 0
+        elif ch == "万":
+            result += (section or number) * 10000
+            section, number = 0, 0
+        elif ch == "亿":
+            result += (section or number) * 100000000
+            section, number = 0, 0
+        else:
+            return None
+    return result + section + number
+
+
+def _cn_percent_value(numerals: str) -> float | None:
+    """'六点五' -> 6.5；'一百点八' -> 100.8；纯整数按位值返回。"""
+    if "点" in numerals:
+        int_part, frac_part = numerals.split("点", 1)
+        whole = _cn_int(int_part)
+        if whole is None:
+            return None
+        frac = 0.0
+        scale = 0.1
+        for ch in frac_part:
+            if ch not in CN_DIGITS:
+                return None
+            frac += CN_DIGITS[ch] * scale
+            scale /= 10
+        return whole + frac
+    value = _cn_int(numerals)
+    return float(value) if value is not None else None
+
+
+def spoken_percent_values(text: str) -> set[float]:
+    features = {float(m.group(1)) for m in DISPLAY_PERCENT.finditer(text)}
+    for m in SPOKEN_PERCENT.finditer(text):
+        value = _cn_percent_value(m.group(1))
+        if value is not None:
+            features.add(value)
+    return features
 
 
 def parse_args() -> argparse.Namespace:
@@ -97,6 +172,32 @@ def main() -> int:
 
     for index, turn in enumerate(turns):
         text = turn.get("text", "")
+        if turn.get("speaker") == "shenyan" and MONOSYLLABLE_PREFIX.search(text):
+            findings.append(
+                f"{turn.get('turn_id')} analyst turn starts with a monosyllable backchannel; "
+                "rewrite it as a meaningful phrase instead of relying on punctuation for TTS separation"
+            )
+        if text.rstrip().endswith(("？", "?")):
+            if turn.get("delivery") != "rising_question":
+                findings.append(f"{turn.get('turn_id')} question requires delivery=rising_question")
+        if text.rstrip().endswith(("？", "?")):
+            question_body = text.rstrip().rstrip("？?")
+            if not QUESTION_PARTICLE_OK.search(question_body):
+                findings.append(
+                    f"{turn.get('turn_id')} question lacks a final particle (吗/呢/吧…); "
+                    "rewrite with a particle tail so TTS produces a reliable rising contour"
+                )
+        if NUMERIC_TEXT.search(text):
+            if not turn.get("display_text"):
+                findings.append(
+                    f"{turn.get('turn_id')} numeric turn missing display_text; "
+                    "provide viewer-facing arabic numbers so captions do not show Chinese readings"
+                )
+            elif spoken_percent_values(text) - spoken_percent_values(turn["display_text"]):
+                findings.append(
+                    f"{turn.get('turn_id')} display_text differs from spoken numbers; "
+                    "keep text (reading) and display_text (viewer) numerically equivalent"
+                )
         for phrase in FORBIDDEN_PRODUCTION_META:
             if phrase in text:
                 findings.append(f"{turn.get('turn_id')} contains production metadata in spoken text: {phrase}")

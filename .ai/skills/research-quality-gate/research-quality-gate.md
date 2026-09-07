@@ -29,6 +29,7 @@
 - 每次更新数字归一化规则，都要保留一个合法交付物正例和一个注入母稿外数字的反例；只验证“能通过”不足以证明门禁有效。
 - `PASS WITH WARNINGS` 不是最终放行，必须完成报告末尾的语义复核清单。
 - SRT 没有最终配音时只能验证格式与时序，不能验证真实音画同步。
+- `content_depth=deep_explainer` 还要语义检查 Knowledge Map、Historical And Market Relation、新闻事件线、价格—利润—市场预期关系和事实锚定幽默；缺失时退回研究或表达层，不在门禁内补写。
 
 ## 脚本
 

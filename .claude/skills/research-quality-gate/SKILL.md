@@ -48,6 +48,15 @@ python3 scripts/validate_research.py \
 
 旧项目可继续使用 `--scripts <聚合长短脚本.md>`，不能与三项 Content Layer 输入混用。新项目优先使用独立输入，确保每个 Capability Result 可单独验收。
 
+若输入标记 `content_depth=deep_explainer`，在通用自动检查后必须增加以下语义门禁：
+
+- `Knowledge Map` 存在，并能从普通观众直觉、必要术语、证据到判断变化形成完整路径；不能用术语清单代替；
+- `Historical And Market Relation` 存在，并至少区分历史事实、市场叙事/观点和编辑推断；周期题不能只给当前价格点；
+- 涉及行业股价时，至少有一段带时间窗口和来源的“价格—利润—市场预期”关系材料；允许定性趋势，不允许无来源的涨跌故事；
+- 新闻事实包含事件日、主体、动作和机制意义；“市场传闻/某股上涨”不能独立作为证据；
+- 主要幽默点能回指事实、观众误读或数字反差，并在笑点后回到机制、证据或验证条件；无事实锚点的段子退回表达层；
+- 深度素材不足时只能降低为 `standard` 并记录原因，不能在脚本层自行补历史或股价事实。
+
 Research Intelligence 检查：十章、Bull/Base/Bear、Evidence Ledger 的 claim/source/date/confidence/notes 字段及研究阶段边界。内容回归检查继续兼容历史母稿八章节、证据引用、内容策划、长短视频结构、数字一致性、禁语、SRT与素材引用。
 
 随后完成语义复核，并把结果追加到同一 `quality-report.md`：

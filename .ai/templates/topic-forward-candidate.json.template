@@ -5,6 +5,7 @@
   "content_line": "market_pulse|earnings_gap|company_industry|valuation_mechanism",
   "expression_agent": "",
   "expression_mode": "",
+  "content_depth": "standard|deep_explainer",
   "title": "",
   "title_options": [],
   "scope": "",

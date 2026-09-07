@@ -22,7 +22,7 @@
 - 所有时序以真实音频为准；字幕和画面跟随音频，不估算替代真实时长。
 - 任何事实、主张、对白或数字问题都退回表达层；TTS、音频、视觉、渲染和发布问题留在执行层。
 - 原始研究材料不在执行层重新研究；只使用已锁定 evidence IDs 和来源引用。
-- 音频阶段固定使用 VoxCPM2 continuation、`--natural-pauses`、`--post-process natural` 和 inference timesteps 10；voice override 只作用于当前运行，父 Workflow 不提供执行参数。
+- 音频阶段固定使用 VoxCPM2 continuation、`--natural-pauses`、`--post-process natural` 和 inference timesteps 10；voice override 只作用于当前运行，父 Workflow 不提供执行参数。默认保留 TTS 原生语速，不能由通用 baseline 自动把所有 turn 变速；任何 atempo 必须来自明确 pacing_plan，并在 QA 中同时比较 raw/paced 字速。
 
 ## Phase 1: audio-compile — 音频与字幕编译
 
@@ -53,6 +53,8 @@
 - 文本、speaker、voice/profile 和 pacing 可追溯；
 - 文本或 speaker 变化会使缓存失效；
 - 字幕来自真实音频；
+- `pause_anchors` 必须在实际需要的句内位置落地，逗号不能只依赖 TTS 自行解释；单字回应要在完整短语中生成并抽查首字可辨识度；
+- 问句 turn 必须基于 `voice.zhiwei` 的问句 canary 抽查升调（canary 未做或失败时，`rising_question` 不能作为已依赖的生产能力，问句须改写为不依赖升调的表达）；
 - 反向对齐、独立 ASR 和 artifact consistency 通过。
 - `audio-qa.json` 记录 backend、voice override、停顿、后处理和复用片段数；参考音频、emotion 和 prompt_text 必须与登记的 voice asset 一致。
 
@@ -90,8 +92,12 @@
 - 视觉只表达已锁定的机制、比较和证据；
 - chart 数字回指 evidence IDs，不能写死事实；
 - 口播、图表、B-roll、字幕职责不重复；
+- 多步图（折线/多折线/step-line/流程/检查清单/验证看板）必须提供绑定真实 turn 的 `narration_beats`，并通过 `scripts/check_podcast_visual_sync.py`（兜底验证；契约源头在 `information-visualization-architect` 实体 §3）；在 Composition 实现按真实 segment start 逐点 reveal 之前，多步图一律不得通过本门禁；
 - 视觉按手机观看优先验收：图表、标题、标签、数字和字幕必须在手机适配尺寸下直接可读；有图表的话题使用图表主视觉并覆盖完整数据解释段；
+- 字幕按影视字幕习惯在自然标点处生成多个 cue；逗号、句号、分号和冒号只负责切分，不显示在字幕末尾，问号和感叹号保留；一条 cue 默认不超过 28 个汉字，仅在没有可用标点且确实会溢出时兜底切分，并以真实 turn 时长做确定性区间映射；
+- 正片不显示说话人姓名或角色 badge；双人身份通过各自稳定的字幕颜色区分，SRT/字幕 manifest 的 viewer-facing text 也不添加角色前缀；
 - 不固定三张卡片，卡片数量和版式由内容决定；不在正片画面显示“开场”作为标题或导航标签；
+- 封面必须直接复制 `account-profile/cover-reference/cover-template.html` 及其背景资产；不得用独立 CSS 仿写封面风格；
 - 所有 scene 使用同一真实音频累计时间轴。
 
 ### Known Issues

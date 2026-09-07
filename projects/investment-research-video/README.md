@@ -5,10 +5,10 @@
 ## 主链路
 
 1. `topic-forward-lead`：从事件、产业、公司、观众问题和可选行情线索生成选题卡；用户只确认“研究什么”。
-2. `topic-research`：围绕已批准问题定向研究，交付当前判断、机制、最强反证、时间范围、证据缺口和推翻条件；不重新选题。
+2. `topic-research`：围绕已批准问题定向研究，按 `content_depth` 区分标准机制课与深度解释型视频；后者额外交付知识地图、历史验证线、当前新闻事实和必要的市场预期关系；不重新选题。
 3. `investagent-podcast-video-by-hyperframes`：父 Workflow，只负责事实层、表达层和执行层的顺序与交接。
    - `topic-research`：事实层，冻结研究证据与当前判断；
-   - `investagent-content-expression`：表达层，锁定主张、叙事和真实双人对白；
+   - `investagent-content-expression`：表达层，锁定主张、知识路径、叙事和真实双人对白；
    - `investagent-video-execution`：执行层，编译音频、视觉、渲染、QA 和发布。
 4. `publish-review`：按曝光到关注的完整漏斗复盘，将观察、归因假设和下一轮实验分开；复盘只影响适用的新选题。
 

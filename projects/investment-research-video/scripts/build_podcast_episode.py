@@ -68,6 +68,7 @@ def make_turn(turn_id: str, topic_id: str, item: dict | list, previous: str | No
         "fact_role": spec.get("fact_role", "none"),
         "source_refs": spec.get("source_refs", []),
         "visual_intent": spec.get("visual_intent", "none"),
+        "pause_anchors": spec.get("pause_anchors", []),
         "pause_after_ms": int(spec.get("pause_after_ms", SHORT_PAUSE_MS if backchannel else 0)),
         "response_action": "backchannel" if backchannel else "content",
         "text": spec["text"],

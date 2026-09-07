@@ -234,7 +234,7 @@ def main() -> int:
     (args.outdir / "segments.json").write_text(json.dumps({**report, "segments": segments}, ensure_ascii=False, indent=2), encoding="utf-8")
     with (args.outdir / "subtitles.srt").open("w", encoding="utf-8") as srt:
         for i, segment in enumerate(segments, 1):
-            srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['speaker']}：{segment['text']}\n\n")
+            srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['text']}\n\n")
     (args.outdir / "audio-qa.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))
     return 0

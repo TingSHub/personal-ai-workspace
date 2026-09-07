@@ -56,7 +56,7 @@ def main() -> int:
         if turn.get("text") != segment.get("text"):
             findings.append(f"{turn.get('turn_id', index)} text differs from measured segment")
     for index, (segment, cue) in enumerate(zip(segments, cues), 1):
-        expected = f"{segment.get('speaker')}：{segment.get('text')}"
+        expected = segment.get('text')
         if cue.get("turn_id") != segment.get("turn_id") or cue.get("text") != expected:
             findings.append(f"caption row {index} differs from measured segment")
         try:

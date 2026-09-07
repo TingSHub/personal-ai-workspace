@@ -46,6 +46,22 @@ description: Information Visualization Architect——将投资者理解路径�
 
 输出 `chart-spec.md`：按六图形模式 + 决策矩阵选择图型（折线/对比/时间线/信息卡片等），每张图包含：图表类型、数据字段、承担结论、位置、标注与诚实性。**数据回指 evidence-reference.md（继承 fact-map Level 1-4）**——Level 1-2 可进图表坐标，Level 3 需角标标注口径，Level 4 不进坐标系统（观点卡/灰底虚线形式呈现），禁用项绝不出现。优先遵循 visual-brief 的推荐表现形式与"不应视觉强化"约束。
 
+**narration_beats 契约（多步图，2026-09-07 猪周期踩坑）**：折线/多折线/step-line/流程/检查清单/验证看板等**多步图必须声明 `narration_beats`**，每一项绑定一个真实 turn_id（且属于同一 topic）并给出该步 reveal 的数据点/节点/指标：
+
+```json
+{
+  "chart_id": "P01-price",
+  "type": "line",
+  "topic_id": "T01",
+  "narration_beats": [
+    {"turn_id": "T01-02", "reveal": ["point:2024-06", "point:2024-09"]},
+    {"turn_id": "T01-04", "reveal": ["point:2025-03", "point:2025-06"]}
+  ]
+}
+```
+
+约束：至少两个 beat；所有 turn_id 必须是 episode.json 中同一 topic 的真实 turn；每个 beat 必须给出 `reveal`。口播说到哪一步，图表揭示到哪一步——只在 topic 开头一次性绘制整张图不算口播同步。单镜头只表达一个静态结论时，不强制拆成多步 reveal。当前轮次的渲染器（Composition）尚未实现逐点/逐节点 reveal，因此**在实现之前，多步图一律不得通过叙事同步门禁**（`check_podcast_visual_sync.py`，见下）。
+
 ### 4. 资产需求
 
 输出 `asset-requirements.md`：所需视觉资产清单（图表/图形/图片/动画/交互元素），不实际制作。
@@ -87,5 +103,5 @@ style-guide.md           # 风格/信息密度/色彩/字体/视觉一致性
 
 - 我读取什么：`content-assets/`（content-thesis + narrative-plan + visual-brief）。
 - 我的职责：视觉叙事决策——场景/图表/资产/风格四件套方案。
-- 我输出什么：`visual-plan/` 四件套，图表数字回指 fact-map、禁用项零出现。
+- 我输出什么：`visual-plan/` 四件套，图表数字回指 fact-map、禁用项零出现；多步图提供 `narration_beats` 并通过 `check_podcast_visual_sync.py`（在实现逐点 reveal 前，多步图一律不通过）。
 - 我不做什么：不编码渲染、不改变研究事实、不做投资判断、不设计内容观点。

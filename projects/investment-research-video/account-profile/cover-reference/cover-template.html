@@ -74,7 +74,7 @@ document.getElementById('save').onclick=()=>{
   const clone=document.documentElement.cloneNode(true);
   // 将上传后的背景也保存进新文件，编辑的文字已包含在DOM中。
   for(const script of clone.querySelectorAll('script')){
-    script.textContent=script.textContent.replace(/const backgrounds=\{portrait:'[^']*',landscape:'[^']*'\};/,()=>`const backgrounds={portrait:'assets/background-portrait.png',landscape:'assets/background-landscape.png'};`);
+    script.textContent=script.textContent.replace(/const backgrounds=\{portrait:'[^']*',landscape:'[^']*'\};/,()=>`const backgrounds={portrait:'${backgrounds.portrait}',landscape:'${backgrounds.landscape}'};`);
   }
   const url=URL.createObjectURL(new Blob(['<!doctype html>\n'+clone.outerHTML],{type:'text/html;charset=utf-8'}));
   const link=document.createElement('a');link.href=url;link.download='cover-edited.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1500);

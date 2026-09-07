@@ -21,6 +21,8 @@
 
 清单和生成记录见 `.ai/assets/voices/emotion-assets.json`。项目通过 `resource_key` 选择资源，不重新依赖参考视频。
 
+问句专用参考：`.ai/assets/voices/zhiwei/emotion/questioning.wav`（吗/呢 结尾，2026-09-07）；编译器遇到 `delivery=rising_question` 时自动使用，详见 `zhiwei/ASSET.md`。
+
 ## Hard rules
 
 - 项目不得复制音色本体；只在 `account-profile` 保存资源选择和用途。

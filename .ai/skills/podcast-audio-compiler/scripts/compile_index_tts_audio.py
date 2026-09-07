@@ -145,7 +145,7 @@ def main() -> int:
     (args.outdir / "segments.json").write_text(json.dumps({"backend": "IndexTTS-2.5", "format_mode": format_mode, "role_map": role_map, "reused_segments": reused_segments, "total_seconds": round(cursor, 3), "segments": segments}, ensure_ascii=False, indent=2), encoding="utf-8")
     with (args.outdir / "subtitles.srt").open("w", encoding="utf-8") as srt:
         for i, segment in enumerate(segments, 1):
-            srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['speaker']}：{segment['text']}\n\n")
+            srt.write(f"{i}\n{srt_time(segment['start'])} --> {srt_time(segment['end'])}\n{segment['text']}\n\n")
     report = {"status": "PASS", "backend": "IndexTTS-2.5", "format_mode": format_mode, "role_map": role_map, "speaker_alternation": True, "reused_segments": reused_segments, "turn_count": len(segments), "total_seconds": round(cursor, 3), "voices": sorted({s["speaker"] for s in segments})}
     (args.outdir / "audio-qa.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))

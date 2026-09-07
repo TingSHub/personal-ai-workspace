@@ -29,6 +29,14 @@
   },
   "content_angle": "",
   "narrative_mode": "",
+  "content_depth": "standard|deep_explainer",
+  "knowledge_contract": {
+    "plain_language_frame": "",
+    "concepts_to_teach": [],
+    "historical_anchor_ids": [],
+    "market_relation": "",
+    "humor_fact_anchors": []
+  },
   "opening_rationale": "",
   "cover": {
     "subject_label": "",
@@ -44,6 +52,25 @@
   },
   "comparison_entities": [],
   "topics": [],
+  "turns": [
+    {
+      "turn_id": "",
+      "topic_id": "",
+      "speaker": "zhiwei|shenyan",
+      "role": "host|analyst",
+      "reply_to_turn_id": "",
+      "interaction_type": "acknowledge|challenge|clarify|counter_evidence|interrupt|summarize",
+      "backchannel": "none|对|嗯|好|没错",
+      "backchannel_target": null,
+      "filler_position": "none|start|middle|end",
+      "question_ending": "none|rising|falling",
+      "emotion": "",
+      "delivery": "normal|short_pause|pause_before_number|stress_contrast|rising_question|steady",
+      "evidence_ids": [],
+      "text": "",
+      "display_text": ""
+    }
+  ],
   "outro": [],
   "outro_summary": [],
   "valuation_context": {
