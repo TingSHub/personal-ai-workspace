@@ -11,7 +11,7 @@
 | installed_ref | 975ecf3 · Financial Editor Agent v0.2 |
 | runtime | both |
 | 调用入口 | 按 Workflow Required Resources 的 by-name `financial-editor-agent` 调用；加载实体定义执行 |
-| 要求 | 已验收的企业研究资料、findings-summary 或研究原生产物；需要来源核验时可联网/读取法定披露；不得输出证券交易建议 |
+| 要求 | 已验收的企业研究资料、findings-summary 或研究原生产物，以及可选的 `content-collaboration.md`；需要来源核验时可联网/读取法定披露；不得输出证券交易建议 |
 | 更新 | manual · 修改顶层实体定义后同步检查 installed_ref；验证：加载 Agent，执行结构契约、边界、来源、输出和质量门禁检查 |
 | 辅助脚本 | — |
 | 经验引用 | multi-source-conflict-check；investagent-research-only-scope；html-ppt-longform-report |
@@ -28,8 +28,8 @@
 
 ## 调用方式
 
-- 输入：目标公司、研究目标、已验收 findings-summary、研究原生产物或其他可核验资料。
-- 先形成 Editorial Thesis，再输出 Editorial Pitch；Human Review 通过或自主流程明确允许后，生成 Editorial Master。
+- 输入：目标公司、研究目标、已验收 findings-summary、研究原生产物、用户与研究协作记录或其他可核验资料。
+- 先形成 Editorial Thesis，再输出 Editorial Pitch 和母稿；`content-collaboration.md` 的 `manual` 模式下，Human Review 通过后才能把母稿交给表达层；只有明确的 autonomous 模式才允许跳过用户审核。
 - 输出：Editorial Pitch、Editorial Master、Sources、Editorial Notes，以及必要的冲突/不确定性记录。
 - 下游交接：Presentation Agent 只能消费已验收的 Editorial Master 和编辑决策记录，不得自行修改核心事实、因果关系或 Thesis。
 

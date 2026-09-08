@@ -10,6 +10,7 @@
 
 - 用户已批准的 topic card，只读引用上游 `topic-forward-lead` 结构化事实源；
 - Scope Decision 为 `accepted` 的 `topic-research` research brief 与 source ledger；
+- 同一期唯一的 `content-collaboration.md`，且研究讨论已由用户与 `research-collaboration-agent` 双方确认收敛；
 - `account-profile` 的内容、对白、视觉与音色规则；
 - 按 `investment-video-episode-input.json.template` 生成的 episode input。
 
@@ -47,6 +48,8 @@ outputs/subjects/{subject_id}/{run_date}/
 ```
 
 未执行真实发布时不创建伪 platform result；未使用可选阶段时不创建占位文件。
+
+`content-collaboration.md` 由 `topic-research` 创建并在后续表达阶段原位更新；它是人工协作稿，不替代现有 `episode.json`、manifest 和媒体 QA 产物，也不为每轮讨论创建副本。
 
 ## Growth Contract
 

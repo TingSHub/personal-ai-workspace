@@ -1,0 +1,74 @@
+---
+topic_id: "{topic_id}"
+review_mode: "manual|autonomous"
+discussion_status: "active|closed|scope_change_required"
+assistant_ready: false
+user_ready: false
+mother_review: "pending|approved|revise|return_to_research"
+spoken_review: "pending|approved|revise|return_to_mother|return_to_research"
+---
+
+# Content Collaboration: {topic_id}
+
+## Input And Scope
+
+- Approved topic:
+- Content line:
+- Content depth:
+- Audience question:
+- User-provided materials:
+- Scope boundaries:
+
+## Topic Research Discussion
+
+### Round 1
+
+#### User Input
+
+#### Evidence And Verification
+
+#### Strongest Counterargument
+
+#### Current Synthesis
+
+#### Next Question
+
+## Current Synthesis
+
+- Current judgment:
+- Mechanism:
+- Time horizon:
+- Evidence IDs:
+- Strongest counterargument:
+- Invalidation condition:
+- Evidence gaps:
+- User disagreements still open:
+
+## Mother Draft
+
+<!-- Filled after discussion_status=closed. Keep the factual research brief as the evidence source of truth. -->
+
+## Mother Draft Review
+
+- Status: pending
+- User notes:
+- Changes made:
+- Unresolved concerns:
+
+## Spoken Draft And Review
+
+- Draft reference:
+- Naturalness notes:
+- Dialogue-value notes:
+- Thesis-fidelity notes:
+- Fact-or-number drift notes:
+- Status: pending
+- Changes made:
+
+## Handoff
+
+- Research status:
+- Mother draft status:
+- Spoken status:
+- Execution allowed:
+- Final notes:

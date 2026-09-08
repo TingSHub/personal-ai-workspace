@@ -19,13 +19,16 @@ Dialogue Director 只负责“怎么让两位主持人谈起来”，不负责�
 
 ## 2. 输入
 
-- 已验收的 Editorial Master、topic-evidence-matrix 和 unresolved-conflicts；
+- 已验收且在 `content-collaboration.md` 中完成母稿审核的 Editorial Master、topic-evidence-matrix 和 unresolved-conflicts；
+- 同一期 `content-collaboration.md` 中的口播审核意见（自然表达、对话推进、母稿原意、事实/数字漂移）；
 - account-profile/ACCOUNT_PROFILE.md、dialogue-policy.md 和主持人 profile；
 - `format_mode`（默认继承 account-profile 的 `host_analyst`；只有显式 `debate` 才启用对等交锋）和 `role_map`；
 - 已确认的话题顺序、每个话题的核心矛盾和证据 IDs；
 - 已批准 topic card 的 `content_line`、对应主线 Agent 的 expression-lane treatment 和 `finance-humor-writing` 的 humor map；
 - `content_depth`、`knowledge-route`、历史/市场关系材料和事实锚定幽默地图；深度模式不得只接收一份“结论摘要”；
 - 可选的上一版脚本反馈，但反馈只能改变表达和回合关系，不能改变研究事实。
+
+`manual` 模式下，先生成口播草案供用户审核；未得到用户和 Agent 双方确认时，不得把草案当作执行层的最终 `episode.json`。
 
 ## 3. 核心工作模型
 

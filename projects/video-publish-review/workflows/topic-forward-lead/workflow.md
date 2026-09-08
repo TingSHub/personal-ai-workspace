@@ -56,9 +56,9 @@ Phase 4 在交付前运行项目脚本 `check-topic-angle-routing.py`，确保�
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| `multi-search` | skill | 必选 | workspace installed_ref | 发现并打开关键原文；摘要不能直接作事实 |
+| `multi-search` | skill | 必选 | workspace installed_ref | 先通过 workspace `.env` 注入入口调用，默认 Tavily-first；失败再降级到当前会话原生 Web 搜索，摘要不能直接作事实 |
 | `topic-forward-signal-scanner` | skill | 可选 | workspace internal v0.1 | 免费行情发现；接口失败只降级该来源 |
-| `news-search` | skill | 可选 | workspace installed_ref | 新闻热度聚合；必须回原文核验 |
+| `news-search` | skill | 可选/降级 | workspace installed_ref | `multi-search` 与原生 Web 均不可用时走 Iwencai API；也可用浏览器聚合新闻；必须回原文核验 |
 | `social-trend-monitor` | skill | 可选 | workspace installed_ref | 海外科技与产业风向；需验证本地相关性 |
 
 ### Input
@@ -78,7 +78,7 @@ Phase 4 在交付前运行项目脚本 `check-topic-angle-routing.py`，确保�
 
 ### Known Issues
 
-免费行情接口可能断连；失败时保留 errors 并继续事件、产业、产品和观众来源。
+免费行情接口可能断连；失败时保留 errors 并继续事件、产业、产品和观众来源。搜索路由按“本地 `multi-search`（默认 Tavily-first）→ 当前会话原生 Web → Iwencai API（`news-search`）”降级；每一层失败都保留错误，只有全部不可用才记录网络阻断。
 
 ## Phase 2: candidate-pool — 问题化与去重
 
@@ -126,7 +126,7 @@ Phase 1 已验收来源、`published-works.md`、历史复盘册和账号内容�
 
 | Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
 |---|---|---|---|---|
-| `multi-search` | skill | 必选 | workspace installed_ref | 打开原文，核验主体、日期与关键前提 |
+| `multi-search` | skill | 必选 | workspace installed_ref | 默认 Tavily-first 打开原文；本地适配器失败时转当前会话原生 Web，核验主体、日期与关键前提 |
 | `boundary-rewrite` | skill | 必选 | workspace installed_ref | 保留张力，移除直接交易引导 |
 
 ### Input

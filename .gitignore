@@ -67,6 +67,9 @@ external/
 # Multi-search runtime artifacts.
 .claude/skills/multi-search/network_cache.json
 .claude/skills/multi-search/quota.json
+
+# Project Python runtime caches.
+projects/video-publish-review/**/__pycache__/
 .skills_store_lock.json
 
 # Known large vendor/test assets.

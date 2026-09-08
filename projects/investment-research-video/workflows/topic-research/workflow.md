@@ -4,11 +4,11 @@
 
 ## Mission
 
-围绕用户已经批准的选题问题做定向研究，产出可供内容导演直接使用的当前答案、机制、证据、最强反证、时间范围、受影响环节和推翻条件，并按 `content_depth` 区分短机制课与深度解释型视频。深度解释型视频还必须交付面向普通观众的知识地图、历史验证线和必要的市场预期关系。它不重新生成候选、不重复审批，也不默认把财报作为研究主线。
+围绕用户已经批准的选题问题做定向研究，并通过 `research-collaboration-agent` 与用户共同检验观点、补充材料和寻找反例。产出可供内容导演直接使用的当前答案、机制、证据、最强反证、时间范围、受影响环节和推翻条件，并按 `content_depth` 区分短机制课与深度解释型视频。深度解释型视频还必须交付面向普通观众的知识地图、历史验证线和必要的市场预期关系。它不重新生成候选、不重复审批，也不默认把财报作为研究主线。
 
 ## Input
 
-用户已批准的 `topic-forward-lead` topic card（字段来自 `topic-forward-candidate.json.template`）、研究日期、可用来源与访问边界。公司、行业、事件、技术、政策、宏观和比较议题均可进入；只有问题涉及公司时才要求公司标识，只有问题涉及财务时才要求财报与三表资料。`content_depth` 为 `standard` 或 `deep_explainer`；旧卡缺失时按 `standard` 兼容，但若用户明确要求历史、新闻事实、股价关系和深度科普，必须升级为 `deep_explainer`。
+用户已批准的 `topic-forward-lead` topic card（字段来自 `topic-forward-candidate.json.template`）、研究日期、可用来源与访问边界，以及可选的用户观点、疑问、文章链接/摘录和参考视频章节。公司、行业、事件、技术、政策、宏观和比较议题均可进入；只有问题涉及公司时才要求公司标识，只有问题涉及财务时才要求财报与三表资料。`content_depth` 为 `standard` 或 `deep_explainer`；旧卡缺失时按 `standard` 兼容，但若用户明确要求历史、新闻事实、股价关系和深度科普，必须升级为 `deep_explainer`。
 
 ## Output
 
@@ -18,18 +18,21 @@
 - `source-ledger.md`：实际采用的一手/结构化/外部来源、日期、定位、口径与缺口；
 - `evidence/`：各 Required Resource 的独立执行产物和引用原件；
 - `research-brief.md`：按 `topic-research-brief.md.template` 生成的研究结论；
+- `content-collaboration.md`：同一期唯一的研究讨论、母稿和口播审核协作稿；每轮追加到同一文件，不创建轮次副本；
 - `knowledge-map.md`：深度解释型视频的普通观众知识路径；标准模式记录本期最小解释范围；
 - `historical-market-relation.md`：涉及周期/估值/行业轮动时的历史阶段与市场预期关系；不适用时记录原因；
 - `research-quality-gate.md`：`research-quality-gate` 的验收结果；
 - `research-execution.md`：实际资源、installed_ref、输入、产物与降级记录。
 
-只有 Scope Decision 为 `accepted` 且质量门禁通过的 `research-brief.md` 才能交给视频生产。`scope_change_required` 必须返回 `topic-forward-lead` 重新确认，不得由研究或制作阶段自行改题。
+只有 Scope Decision 为 `accepted`、研究讨论已由用户与 Agent 双方同意收敛且质量门禁通过的 `research-brief.md` 才能交给视频生产。`scope_change_required` 必须返回 `topic-forward-lead` 重新确认，不得由研究或制作阶段自行改题。
 
 ## Principles
 
 - best_available_resource：按实际效果、输出质量、稳定性、依赖成本、维护成本和当前问题适配性选择资源，禁止 local first。
 - 真实执行留痕：被选中的 Required Resource 必须真实运行并在 `evidence/` 留下独立产物；未运行不得写成已执行。
 - 只研究批准问题：允许缩小无关资料，但不能改变主体、主问题或内容承诺。研究推翻前提时报告范围变化，不在本阶段另选题。
+- 研究讨论没有固定轮数；`research-collaboration-agent` 可以建议收敛，用户也可以提出收敛，但只有双方都确认后才结束。
+- 用户提供的材料进入 `content-collaboration.md` 作为线索与讨论记录，必须先核验再进入事实正文。
 - 问题决定资源：产品实力核验产品、客户、认证与交付；行业逻辑核验供需、瓶颈与利润分配；重大事件核验时间线与传导；盈利质量才深入三表。不得为了“完整”固定跑一套财报清单。
 - 观点先有证据：研究必须给出当前更可信的解释及最强反证。模棱两可只允许作为真实证据不足的结论，并必须说明缺什么证据能改变状态。
 - 报告是证据，不是结论：最终要回答利润、权力、瓶颈或竞争优势可能向哪里移动，以及判断能持续多久。
@@ -113,6 +116,40 @@ Phase 1 已验收的研究计划、批准卡和 source ledger。
 
 资源越多不代表结论越好；互相复制的二手文章不构成独立交叉验证。
 
+## Phase 2.5: collaborative-research — 用户观点与证据协作
+
+### Goal
+
+在首轮定向取证之后，让用户提供的观点、疑问、文章、摘录和参考视频进入研究过程。通过多轮对话查证主张、补充知识、寻找最强反例，并由用户与 `research-collaboration-agent` 双方确认后收敛。
+
+### Required Resources
+
+| Resource | Type | 必选/可选 | 来源/版本 | 适用与已知限制 |
+|---|---|---|---|---|
+| `research-collaboration-agent` | agent | 必选 | internal · v0.1 | 维护同一期唯一协作稿；每轮只推进一个最高价值问题；不替代研究资源、不单方面结束讨论 |
+
+### Input
+
+Phase 2 已验收的证据映射、source ledger、批准卡，以及用户本轮提供的观点、疑问、链接、摘录或视频章节。没有额外用户材料时，Agent 仍需向用户确认是否有初始判断或关键疑问。
+
+### Output
+
+更新 `outputs/research/{subject_id}/{research_date}/content-collaboration.md`。该文件是本期唯一的人工协作稿，按轮次追加讨论，并在同一文件中维护当前综合、母稿、母稿审核、口播审核和交接状态；不创建每轮独立文件。
+
+### Quality Criteria
+
+- 用户输入与 Agent 的研究事实、推断、表达偏好和未决问题分开记录；
+- 用户提供的链接、摘录和视频章节先作为线索，关键事实核验后才能进入 `research-brief.md`；
+- 每个重要主张都有支持、反驳、部分支持或未解决状态；
+- 当前综合明确当前判断、机制、时间范围、最强反例、推翻条件和证据缺口；
+- Agent 可以建议收敛，用户也可以提出收敛，但只有双方都确认后才把讨论标记为 closed；
+- 若主体、主问题或 `content_line` 需要改变，写入 `scope_change_required` 并返回 `topic-forward-lead`；
+- 只有协作稿已 closed，且后续研究质量门通过，才允许进入母稿与表达层。
+
+### Known Issues
+
+协作稿是人工交互产物，不应由自动流程在用户未回应时伪造“双方同意”；用户暂时离开时保留 active 状态，下一次继续同一个文件。
+
 ## Phase 3: synthesis-and-challenge — 判断综合与反证
 
 ### Goal
@@ -128,11 +165,11 @@ Phase 1 已验收的研究计划、批准卡和 source ledger。
 
 ### Input
 
-Phase 2 已验收的证据映射、source ledger、批准卡和账号 content-policy。
+Phase 2 已验收的证据映射、source ledger、批准卡、账号 content-policy，以及已 closed 的 `content-collaboration.md`。
 
 ### Output
 
-按 `topic-research-brief.md.template` 生成 `outputs/research/{subject_id}/{research_date}/research-brief.md`，并留下 `knowledge-map.md`、`historical-market-relation.md`（按适用性）、`evidence/financial-editor-execution.md` 与 `evidence/boundary-rewrite-execution.md`。
+按 `topic-research-brief.md.template` 生成 `outputs/research/{subject_id}/{research_date}/research-brief.md`，同步回填 `content-collaboration.md` 的 Current Synthesis，并留下 `knowledge-map.md`、`historical-market-relation.md`（按适用性）、`evidence/financial-editor-execution.md` 与 `evidence/boundary-rewrite-execution.md`。
 
 ### Quality Criteria
 
@@ -140,6 +177,8 @@ Phase 2 已验收的证据映射、source ledger、批准卡和账号 content-po
 - 说明成立机制、适用时间、直接受益/受压或关键环节、最强反证和推翻条件。
 - `deep_explainer` 的 `Knowledge Map` 必须让非专业观众知道“先理解什么、为什么、证据在哪、它改变什么”；`Historical And Market Relation` 必须区分历史事实、市场叙事和编辑推断。
 - 每个核心判断能回指 evidence id；事实、推断和预测明确分开。
+- `content-collaboration.md` 中用户提出的关键疑问已经回应，未采纳的观点保留理由，不能只保留最终结论。
+- `check_content_collaboration.py --phase research` 能确认协作稿结构完整；进入母稿前必须改用 `--phase mother` 并通过双方收敛检查。
 - 若证据不足，只能降低结论强度并列出缺口；若批准问题本身失效，Scope Decision 必须为 `scope_change_required`。
 - 财报、公告或后续数据只作为验证条件，不得成为“以后再看”的空结论。
 

@@ -81,3 +81,24 @@
 - aitoearn_record_id: `6a9c2a47ec55e4d875a6726a`
 - platform_url: `https://www.douyin.com/video/7682063842764307630`（aweme_id 7682063842764307630）
 - cover_note: `抖音确认页已由用户确认并完成发布；实际封面状态以用户确认页为准`
+
+## 2026-09-07｜猪周期估值
+
+- status: `published`
+- title: `猪股的春天真的来了吗？`
+- published_title: `猪股的春天真的来了吗？`（创作者中心详情页实际标题）
+- platform: `douyin`
+- account: `账本两面`
+- published_at: `2026-09-07 07:00:00`（创作者中心详情页时间；发布回执提交时间为 2026-09-07 00:22）
+- topic: `生猪养殖周期：猪价回暖是否意味着猪股反转`
+- tags: `#猪周期 #周期股 #生猪养殖 #正常化利润 #投资常识`
+- video: `outputs/subjects/猪周期估值/2026-09-06-deep-v3/podcast/renders/final.mp4`
+- cover_4x3: `outputs/subjects/猪周期估值/2026-09-06-deep-v3/podcast/project/cover.png`
+- cover_3x4: `outputs/subjects/猪周期估值/2026-09-06-deep-v3/podcast/project/cover-3x4.png`
+- metadata: `outputs/subjects/猪周期估值/2026-09-06-deep-v3/publish/metadata.json`
+- duration: `474.00s`
+- report: `outputs/research/猪周期估值/2026-09-06-deep-v2/research-brief.md`
+- publish_receipt: `outputs/subjects/猪周期估值/2026-09-06-deep-v3/publish/phase4-execution.md`
+- platform_url: `https://www.douyin.com/video/7682459321708836091`
+- aweme_id: `7682459321708836091`
+- review_dir: `projects/video-publish-review/outputs/retrospectives/2026-09-07-pig-cycle/`
