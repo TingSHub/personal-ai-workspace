@@ -19,6 +19,10 @@ def main():
     parser.add_argument("--leads", required=True, type=Path)
     parser.add_argument("--candidate-pool", required=True, type=Path)
     parser.add_argument("--out-dir", required=True, type=Path)
+    parser.add_argument("--date", required=True, help="topic-forward date, e.g. 2026-09-09")
+    parser.add_argument("--run-id", required=True, help="run id within the date, e.g. run-01")
+    parser.add_argument("--topic-prefix", required=True, help="topic id prefix shown in the approval line, e.g. TOPIC-R3")
+    parser.add_argument("--resources", type=Path, help="optional JSON list of {resource,result,artifact,note} rows for the execution record")
     args = parser.parse_args()
 
     leads = json.loads(args.leads.read_text(encoding="utf-8"))
@@ -81,7 +85,7 @@ def main():
                 "captured_at": pool.get("captured_at"),
                 "source_file": str(args.candidate_pool),
                 "seeds": matrix_seeds,
-                "notes": ["Fresh 2026-09-08 run; each card has one content line and one audience task."],
+                "notes": [f"Fresh {args.date} run ({args.run_id}); each card has one content line and one audience task."],
             },
             ensure_ascii=False,
             indent=2,
@@ -91,8 +95,8 @@ def main():
     (args.out_dir / "topic-forward.json").write_text(
         json.dumps(
             {
-                "topic_forward_date": "2026-09-08",
-                "run_id": "rerun-01",
+                "topic_forward_date": args.date,
+                "run_id": args.run_id,
                 "status": "pending_approval",
                 "approved_topic_id": None,
                 "approved_at": None,
@@ -106,15 +110,15 @@ def main():
         encoding="utf-8",
     )
     lines = [
-        "# 2026-09-08 选题前瞻（全新重跑）",
+        f"# {args.date} 选题前瞻（{args.run_id}）",
         "",
-        "> 状态：`pending_approval`。本目录不是 2026-09-06 候选的复制；本轮重新发现并排除了上一轮的猪周期、软件数据基础设施、黄酒消费、包装和激光设备主题。",
+        "> 状态：`pending_approval`。本轮为全新发现，不复用上一批候选卡。",
         "",
         "## 执行摘要",
         "",
         f"- 新增有来源 discovery seeds：{len(cards)} 张；行情扫描错误保留在 `signals.json`。",
-        "- 本轮 `multi-search` 三组查询均因网络不可用返回空数组；候选事实使用公开原文检索结果并标注研究缺口，不把空结果解释为没有新闻。",
-        "- 每张卡只有一条 `content_line`；当前复盘候选只作为可选 C1 实验，不改变研究问题。",
+        "- 候选事实以公开原文检索结果为证据起点，并标注研究缺口。",
+        "- 每张卡只有一条 `content_line`；复盘实验只作为可选 C1，不改变研究问题。",
         "",
         "## 新的候选卡",
         "",
@@ -127,29 +131,31 @@ def main():
         "",
         "## 审批",
         "",
-        "请从 `TOPIC-R2-01` 至 `TOPIC-R2-12` 中选择一个。批准内容是“研究对象 + content_line + 核心问题”；批准前不进入 `topic-research` 和视频生产。",
+        f"请从 `{args.topic_prefix}-01` 至 `{args.topic_prefix}-{len(cards):02d}` 中选择一个。批准内容是“研究对象 + content_line + 核心问题”；批准前不进入 `topic-research` 和视频生产。",
     ]
     (args.out_dir / "topic-forward.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    resource_rows = [
+        "| Resource | 执行结果 | 产物 | 降级/边界 |",
+        "|---|---|---|---|",
+    ]
+    if args.resources:
+        for row in json.loads(args.resources.read_text(encoding="utf-8")):
+            resource_rows.append(
+                f"| `{row['resource']}` | {row['result']} | {row['artifact']} | {row['note']} |"
+            )
     (args.out_dir / "topic-forward-execution.md").write_text(
         "\n".join(
             [
-                "# topic-forward-lead 执行记录：2026-09-08 / rerun-01",
+                f"# topic-forward-lead 执行记录：{args.date} / {args.run_id}",
                 "",
                 "## 运行结论",
                 "",
-                "- 本轮为全新发现，不复用 2026-09-06-rerun-01 的候选卡。",
+                "- 本轮为全新发现，不复用上一批候选卡。",
                 f"- 生成 {len(cards)} 张候选卡，状态为 `pending_approval`；未启动研究、脚本、配音、渲染或发布。",
-                "- 旧题去重：猪周期、软件数据基础设施、黄酒消费、包装、激光设备不进入本轮卡片。",
                 "",
                 "## Required Resources",
                 "",
-                "| Resource | 执行结果 | 产物 | 降级/边界 |",
-                "|---|---|---|---|",
-                "| `topic-forward-signal-scanner` | 已执行 | `signals.json` | 涨停池与全量行情均 `ConnectionError`；保留 errors，不把空结果当无热点 |",
-                "| `multi-search` | 已执行 | `multi-search.json` | 三组查询均因网络不可用返回空数组；公开原文核验线索另存于 `editorial-leads-2026-09-08.json` |",
-                "| `finance-content-engineering` | 已应用 topic-gen 规则 | `editorial-leads-2026-09-08.json`、`topic-forward.json` | 角度先于标题，保留事实/推断边界 |",
-                "| `topic-angle-router-agent` | 已执行 | `topic-angle-matrix.json`、`topic-forward.json` | 每卡一条主线、一种深度和一个观众任务 |",
-                "| `boundary-rewrite` | 已应用 | `topic-forward.json`、本轮 cards 的 `review_constraints` | 删除交易指令、目标价和收益承诺，保留可验证冲突 |",
+                *resource_rows,
                 "",
                 "## 审批边界",
                 "",

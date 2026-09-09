@@ -39,7 +39,7 @@
 2. `POST /api/assets/uploadSign` 获取视频/封面签名地址；PUT 文件后调用 `POST /api/assets/{id}/confirm`。
 3. `POST /api/v2/channels/publish/flows` 创建一个多平台 Flow；默认使用排期或草稿，不把 Flow 创建成功当作平台发布成功。
 4. `GET /api/v2/channels/publish/records/{recordId}` 逐条轮询；记录 `status`、作品链接、错误和 `needs_user_action`。
-5. 抖音进入用户操作状态时，调用用户操作信息接口取得短链，由用户在手机端确认后继续轮询。
+5. 抖音进入用户操作状态（`status=8`）时，调用 `GET /api/v2/channels/publish/records/{recordId}/user-action`（**kebab-case**，写成 `userAction` 会 404）取得 `schemeUrl`、`shortLink`、`shareId` 与 `expiresAt`；短链有效期约 1 小时，过期需重新调用。用户手机端确认后继续轮询。
 
 中国版 API Key 只能配 `aitoearn.cn` 与 `assets.aitoearn.cn`；国际版只能配 `aitoearn.ai` 与 `assets.aitoearn.ai`。发布请求中只记录账号 ID、资源 ID、Flow/record ID 和结果，不写入 API Key。
 

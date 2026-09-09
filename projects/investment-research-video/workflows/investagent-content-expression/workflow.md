@@ -75,6 +75,7 @@ audio / visual / render
 | `editorial-director-agent` | agent | 必选 | internal v0.3 | 选择主张、叙事、开场、模块和结尾；不补研究 |
 | `financial-editor-agent` | agent | 必选 | internal | 依据研究包和协作稿生成/裁决母稿；不在没有证据时补写事实 |
 | `market-companion-editor-agent` | agent | 条件必选 | internal v0.1 | 仅 `content_line=market_pulse` 执行；提供行情陪伴主线的 viewer contract、证据顺序和观察变量 |
+| `toocoldcc-bagholder50` | skill | 可选 | github · toocoldcc/bagholder50 · `163f383` | 仅 `content_line=market_pulse` 且需要拥挤度旁证时使用；提供第三方散户拥挤度 Top50（`rank=1` 最拥挤），不能替代事件/公告/财务证据，引用须标注来源并说明它不是买入名单 |
 | `earnings-gap-translator-agent` | agent | 条件必选 | internal v0.1 | 仅 `content_line=earnings_gap` 执行；提供财报预期差主线的经营与预期落差结构 |
 | `company-industry-explainer-agent` | agent | 条件必选 | internal v0.1 | 仅 `content_line=company_industry` 执行；提供价值链、商业化和兑现条件结构 |
 | `valuation-mechanism-teacher-agent` | agent | 条件必选 | internal v0.2 | 仅 `content_line=valuation_mechanism` 执行；提供单一机制、知识路径、历史/市场关系案例和失效条件结构 |

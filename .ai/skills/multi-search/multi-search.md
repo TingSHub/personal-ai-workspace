@@ -14,7 +14,7 @@
 | 要求 | network；从 workspace 根 `.env` 注入 `TAVILY_API_KEY` / `BING_API_KEY`，不记录密钥值 |
 | 更新 | git · 从上游仓库获取到临时目录，对比后替换安装实体；验证：对同一查询返回至少一个可打开来源并标明实际使用引擎 |
 | 辅助脚本 | — |
-| 经验引用 | financial-report-workflow；multi-search-total-failover；company-intelligence-news-product-facts |
+| 经验引用 | financial-report-workflow；multi-search-total-failover；company-intelligence-news-product-facts；podcast-composition-input-contract |
 
 智能多引擎搜索：自动检测网络环境并按优先级切换引擎（DuckDuckGo → Tavily → Bing API → Bing 爬虫），支持自动配额管理与网络缓存。
 
@@ -30,6 +30,7 @@
 
 ### 补充规则
 
+- 本地适配器的网络检测会**误报 Tavily 不可用**（标记 ❌ 并最终回退 Bing 爬虫失败），而同一 `TAVILY_API_KEY` 直连 `api.tavily.com` 返回 200。判定适配器失败前，先用 `.env` 的 key 直连验证一次，不要据此判定“无网络搜索能力”。
 - 三引擎可能同时全挂（DuckDuckGo/Tavily 检测不可用 + Bing 爬虫缺 beautifulsoup4 依赖）：修复超过约 5 分钟即降级 WebSearch/WebFetch 直连，实测直连检索质量未受损、证据台账 opened 比例不受影响。
 - 本地调用必须通过 `.ai/skills/multi-search/scripts/run_multi_search.py` 或等价方式先加载 workspace 根 `.env`；直接 `import multi_search` 不会自动读取 `.env`。
 - 默认使用质量优先模式，让 Tavily 先于 DuckDuckGo/Bing；需要平衡模式时显式传 `--balanced`。

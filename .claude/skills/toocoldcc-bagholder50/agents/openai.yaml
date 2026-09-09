@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bagholder 50 Data"
+  short_description: "Fetch validated Bagholder 50 data with a compact Python client"
+  default_prompt: "Use $toocoldcc-bagholder50 to fetch and summarize the latest validated Bagholder 50 constituents."

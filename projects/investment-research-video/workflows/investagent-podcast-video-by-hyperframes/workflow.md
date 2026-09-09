@@ -118,3 +118,10 @@ Phase 2 已锁定的 `episode.json`、dialogue map、account profile、音色、
 ### Known Issues
 
 音色、TTS、HyperFrames、平台接口和渲染失败属于执行层问题；不要通过修改主张或口播文本来绕过技术故障。
+
+`build_podcast_composition.py` 的输入契约（2026-09-10 实测，详见已归档经验 `podcast-composition-input-contract`）：
+
+- `episode.topics` 必须是对象列表（含 `topic_id`/`title`/`claim`/`metrics`），`opening_visual` 必须是对象，`outro_summary` 必须是 `{label,headline,detail}` 对象列表——三者写成字符串/字符串列表会直接崩溃。
+- `cover.large_text` 用 `\n` 分行、每行 ≤4 字，第二行自动为酒红 accent；单行标题不符合 `design.md` 的两行结构。
+- **图表类型必须在渲染器白名单内**：`compare`/`timeline` 不在白名单，会产出**空白图表区且门禁不报错**；多步图必须补 `narration_beats`（≥2 条、绑定同 topic 真实 turn）才能通过 `check_podcast_visual_sync.py`。
+- 合成产物的 `index.html` 与 `assets/` 必须同目录，否则 `hyperframes check` 报 `audio_src_not_found`。

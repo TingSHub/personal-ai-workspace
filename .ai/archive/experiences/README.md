@@ -46,3 +46,4 @@
 ## 溯源说明
 
 本表为溯源/导航信息，不构成执行契约；语义以对应 Workflow SOP 与 skill.yaml/agent.yaml 为准。经验文件保留完整原文，不修改、不删除；回写条目的正文编辑与合并由 Resource Manager 执行或复核（写回分区约定，M5）。
+| `podcast-composition-input-contract` | `investagent-podcast-video-by-hyperframes` Phase 3 Known Issues（合成器输入契约、图表类型白名单、narration_beats、assets 同目录） | 2026-09-10 |
