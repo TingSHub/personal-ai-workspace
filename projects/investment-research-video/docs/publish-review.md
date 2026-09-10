@@ -1,10 +1,17 @@
-# video-publish-review
+# 复盘与选题前瞻
 
 对已发布视频做标准化复盘，并从事件、产业、公司实力、观众问题及可选行情线索生成下一批选题。选题先按 `market_pulse`、`earnings_gap`、`company_industry`、`valuation_mechanism` 四条内容主线分流，再生成候选卡。复盘只提供带适用条件的假设；用户批准的 topic card 先进入 `topic-research`，研究验收后再进入视频生产。
+
+> 本模块原为独立项目 `video-publish-review`，v0.2.4 起并入本项目：Workflow 位于 `workflows/publish-review/` 与 `workflows/topic-forward-lead/`，复盘与选题产物位于本项目 `outputs/`。
 
 ## Goal
 
 让账号逐步积累可复用经验，同时保留新选题的自由度：按曝光 → 点击/播放 → 2 秒/5 秒 → 平均观看/完播 → 互动 → 主页访问 → 关注诊断增长漏斗；指标定位现象，内容证据支持归因，单条复盘形成待验证假设，新视频按适用条件选择零或一个主要内容实验。
+
+## Workflows
+
+- publish-review（发布后数据复盘与改进候选，位于 `workflows/publish-review/workflow.md`）
+- topic-forward-lead（唯一选题入口：问题发现、轻量核验、增长契约与一次用户审批，位于 `workflows/topic-forward-lead/workflow.md`）
 
 ## 依赖资源
 
@@ -13,11 +20,6 @@
 - boundary-rewrite（改进项中争议性表达的合规改写）
 - video-hook-intro（改进项的钩子设计参考）
 - topic-forward-signal-scanner（选题前瞻的免费市场信号扫描）
-
-## Workflows
-
-- publish-review（发布后数据复盘与改进候选，位于 `workflows/publish-review/workflow.md`）
-- topic-forward-lead（唯一选题入口：问题发现、轻量核验、增长契约与一次用户审批）
 
 ## 复盘成果组织
 
@@ -36,33 +38,27 @@
 - 待补复盘队列：
   - 星网锐捷（2026-09-01 发布，T+7 数据待采集）
   - 猪周期估值（T+3/T+7 增量复采待做；评论原文按样本量决定不采集）
+  - 厄尔尼诺农业行情（2026-09-10 发布，复盘册待建，T+1/T+3/T+7 采集）
 
-## 注册位置说明
+## 目录说明
 
-Skill 资源注册在 workspace 的 `.ai/skills/`（如 `.ai/skills/douyin-creator-tools/`），仅作路径说明，引用一律 by-name。
+- `workflows/publish-review/`、`workflows/topic-forward-lead/`：本模块的工作流 SOP。
+- `outputs/account-rules.md`：账号级规律库。
+- `outputs/retrospectives/<date>-<slug>/`：每支已发布视频的复盘册。
+- `outputs/topic-forward/<date>/`：选题前瞻按日期归档，包含 `topic-forward.md` 阅读视图、`topic-forward.json` 结构化事实源、`signals.json` 与候选池产物。
+- `logs/`：运行日志，只保留项目执行证据。
 
-## Project 运行约束
-
-本目录是 `video-publish-review` 子项目，归属于 workspace 顶层 Git 仓库；不再维护独立的 `AGENTS.md`、`CLAUDE.md` 或 `project.yaml`。本 README 是项目目标、工作流、资源和运行约束的唯一项目说明。
-
-### 项目元数据
-
-- 名称：video-publish-review（视频发布复盘）
-- 目标：对每支已发布视频执行“流量数据采集 → 漏斗/比率诊断 → 归因 → 改进项 → 回写判定”，让下一支视频在发布策略与内容结构上可验证地变好。
-- 复盘结果按视频独立成册，并沉淀为可跨期对比的账号资产。
-- 当前状态：持续维护中。
-
-### 运行规则
+## 运行规则
 
 - 每支已发布视频一个独立复盘文件夹：`outputs/retrospectives/<published_date>-<slug>/`。
 - 已验收的结构化数据 JSON 是流量事实源；归因报告只引用已落盘数据，不引用记忆中的数字。
 - 采集通过 `douyin-creator-tools` 登录态自动化完成，遵守低频、不绕风控、失败即停的约束。
 - 复盘报告必须显式标注未验证项，并分离事实与推断。
-- 不在复盘项目内直接做经验回写；候选经用户确认后交给 `experience-curator`。
+- 不在复盘流程内直接做经验回写；候选经用户确认后交给 `experience-curator`。
 - 字段清单一律从 workspace 的 `.ai/templates/` 读取。
 - 项目执行记录写入 `logs/`，不直接进入资产库。
 
-### 必要资源
+## 必要资源
 
 - `douyin-creator-tools`：数据采集（publish-review P1/P2，必选）
 - `topic-forward-lead`：下一条视频的唯一选题入口，批准后移交 `topic-research`（必选）
@@ -72,6 +68,6 @@ Skill 资源注册在 workspace 的 `.ai/skills/`（如 `.ai/skills/douyin-creat
 - `video-hook-intro`：改进项的钩子设计参考（可选）
 - `topic-forward-signal-scanner`：选题前瞻的免费市场信号扫描
 
-### 已知限制
+## 已知限制
 
 当前可稳定生成官方详情导出 JSON 及其原始 Excel，覆盖内容吸引力、观众参与度、流量来源、观众分析；章节点击率、搜索关键词、留存曲线等按需通过详情页补充采集，中段流失定位仍依赖原视频对齐。归因、候选、规律库分别是后续条件产物，不要求每次都生成。

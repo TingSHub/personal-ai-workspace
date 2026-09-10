@@ -73,7 +73,7 @@ description: 管理 Skill/Agent 执行资源与可跨项目复用的媒体/设�
 
 ## view / modify / verify
 
-- `view`：读取资源元数据与本地说明；资源被哪些 Workflow 引用可从 workflow-registry 索引查询（索引含每 SOP 的 Required Resources by-name 列表）。
+- `view`：读取资源元数据与本地说明；资源被哪些 Workflow 引用可从 work-for-me 索引查询（索引含每 SOP 的 Required Resources by-name 列表）。
 - `modify`：仅修改资源职责内的信息，修改后验证模板和引用。
 - `verify`：检查安装实体、调用入口、依赖声明、辅助脚本和最小调用；Agent 额外检查模型、工具和权限兼容性。
 - 通用资源 `verify`：检查 `ASSET.md`、本体文件、许可证/来源、格式、指纹和最小打开/渲染/试听验证。

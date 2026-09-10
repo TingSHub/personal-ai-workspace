@@ -9,7 +9,7 @@
 | name | topic-forward-signal-scanner |
 | kind | skill |
 | description | 使用 AkShare 免费接口扫描涨停池与涨幅异动，为选题前瞻生成可追溯市场信号 JSON |
-| source | internal · 从 video-publish-review 项目脚本沉淀 |
+| source | internal · 从 investment-research-video 项目脚本沉淀 |
 | installed_ref | internal · v0.1 |
 | runtime | both |
 | invocation | `python3 .ai/skills/topic-forward-signal-scanner/scripts/fetch_market_signals.py --date YYYYMMDD --out <signals.json>` |

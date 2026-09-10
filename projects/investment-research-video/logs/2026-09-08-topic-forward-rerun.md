@@ -15,7 +15,7 @@
 
 ## 验收结果
 
-- 新目录：`projects/video-publish-review/outputs/topic-forward/2026-09-08-rerun-01/`
+- 新目录：`projects/investment-research-video/outputs/topic-forward/2026-09-08-rerun-01/`
 - 新卡数量：12；ID 全部为 `TOPIC-R2-*`；与旧 `TOPIC-R1-*` ID 重叠数为 0。
 - `check-topic-angle-routing.py`：`PASS topic-angle-routing cards=12`。
 - 状态：`pending_approval`；未进入 `topic-research`、脚本、配音、渲染或发布。

@@ -18,7 +18,7 @@
 - audio_backend: `VoxCPM2 continuation`
 - duration: `393.75s`
 - report: `outputs/companies/中科曙光/official-information/603019.SH_2026H1_semiannual-report_20260826.pdf`
-- traffic_dir: `projects/video-publish-review/outputs/retrospectives/2026-08-28-zhongke-shuguang/`（复盘册：流量快照与归因报告，workspace 相对路径）
+- traffic_dir: `projects/investment-research-video/outputs/retrospectives/2026-08-28-zhongke-shuguang/`（复盘册：流量快照与归因报告，workspace 相对路径）
 - platform_url: `https://www.douyin.com/video/7678744509554953522`（aweme_id 7678744509554953522）
 
 ## 2026-09-01｜星网锐捷
@@ -101,7 +101,7 @@
 - publish_receipt: `outputs/subjects/猪周期估值/2026-09-06-deep-v3/publish/phase4-execution.md`
 - platform_url: `https://www.douyin.com/video/7682459321708836091`
 - aweme_id: `7682459321708836091`
-- review_dir: `projects/video-publish-review/outputs/retrospectives/2026-09-07-pig-cycle/`
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-07-pig-cycle/`
 
 ## 2026-09-10｜厄尔尼诺农业行情
 
@@ -126,5 +126,5 @@
 - platform_url: `https://www.douyin.com/video/7683584403864642417`
 - aweme_id: `7683584403864642417`
 - cover_note: `抖音确认页由用户手动上传 3:4 封面后发布；实际封面状态以确认页为准`
-- review_dir: `projects/video-publish-review/outputs/retrospectives/2026-09-10-el-nino-agri/`（待建，T+1 采集）
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-10-el-nino-agri/`（待建，T+1 采集）
 

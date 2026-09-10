@@ -1,4 +1,4 @@
-# Workflow 库（v0.2.2）
+# Workflow 库（v0.2.4）
 
 ## 格式约定
 
@@ -17,10 +17,10 @@
 
 ## 索引
 
-- 由 workflow-registry 索引（`.claude/skills/workflow-registry/`）：只索引元数据（位置/分类/项目关联/每 SOP 的 Required Resources by-name 列表），不解释、不执行。
+- 由 work-for-me 索引与路由（`.claude/skills/work-for-me/`）：只索引元数据（位置/分类/项目关联/每 SOP 的 Required Resources by-name 列表）；路由为确定性查找与按 SOP 执行，不解释、不评分、不自动推荐。
 - 当前 Global Workflow：
   - `task/closeout-and-commit`：由显式 `$closeout` 启动，执行完成度与目录审查、逐项批准、经验回写和本地提交。
   - `task/video-content-extraction`：长视频内容提取。
   - `automation/voice-clone-from-tts`：从 TTS 参考音频生成可复用音色资产。
 - 其他分类可能只保留 `.gitkeep`，不代表不存在项目级 Workflow。
-- 项目级 Workflow 位于各自项目仓库 `projects/{project-name}/workflows/{name}/workflow.md`（例：investment-research-system 的 3 个 listed-company-* 生产 Workflow）。
+- 项目级 Workflow 位于各自项目 `projects/{project-name}/workflows/{name}/workflow.md`（例：`projects/investment-research-video/workflows/` 下的 8 个生产与复盘 Workflow，入口编排为 `investment-research-video-create`）。

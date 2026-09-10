@@ -1,4 +1,4 @@
-# Workspace 规则索引（V0.2.2）
+# Workspace 规则索引（V0.2.4）
 
 本文件是规则层的可读索引。权威关系：`CLAUDE.md`（Claude Code 入口）= `AGENTS.md`（Codex 入口镜像）> `.ai/system.yaml`（机器可读镜像）> 本索引。
 
@@ -17,7 +17,7 @@
 `Project → Workflow → Skill/Agent`
 
 - Workflow 是 Markdown SOP，是流程的唯一事实源：描述项目目标、输入/输出、原则和每个 Phase 的 Goal、Required Resources、Input、Output、Quality Criteria、Known Issues。
-- Workflow Phase 的 Required Resources 直接 by-name 列出 Skill/Agent，不再引用已退役的能力契约层；workflow-registry 只索引元数据，不解释流程。
+- Workflow Phase 的 Required Resources 直接 by-name 列出 Skill/Agent，不再引用已退役的能力契约层；work-for-me 只索引元数据并做确定性路由（定位项目 → 按名匹配 Workflow → 读 SOP → 逐 Phase 执行），不解释、不评分、不自动推荐。
 - Skill/Agent 是执行资源，只记录可靠调用所需信息和辅助脚本。
 - Workflow 阶段 Required Resources 必须真实执行并留下独立产物；下游只消费已验收产物，主 Agent 不得只读方法论后仿写结果。
 - 产物边界：下游步骤只消费已验收的独立产物，不消费私有推理或各资源自行生成的平行报告。
@@ -63,3 +63,5 @@
 - Helper / Adapter / Wrapper 分类体系。
 - 数据库、向量库、Web UI、多用户、权限、云同步或 Marketplace。
 - Experience 自动无限生成。
+
+work-for-me 的任务路由是 Agent 按 SOP 的确定性查找与顺序执行（真实执行留痕），不是 DAG 调度器、状态机或自动推荐系统。

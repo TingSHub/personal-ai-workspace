@@ -24,10 +24,6 @@ projects/*
 !projects/README.md
 !projects/investment-research-video/
 !projects/investment-research-video/**
-!projects/video-publish-review/
-!projects/video-publish-review/**
-projects/video-publish-review/.omc/
-projects/video-publish-review/outputs/
 projects/investment-research-video/outputs/
 projects/investment-research-video/logs/
 projects/investment-research-video/example/
@@ -69,7 +65,6 @@ external/
 .claude/skills/multi-search/quota.json
 
 # Project Python runtime caches.
-projects/video-publish-review/**/__pycache__/
 .skills_store_lock.json
 
 # Known large vendor/test assets.

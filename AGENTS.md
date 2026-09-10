@@ -9,7 +9,7 @@ A personal AI asset management and orchestration system. It manages reusable Wor
 - Before starting a task, look for an existing Workflow first (`.ai/workflows/`)
 - Do not recreate an existing Skill or Agent resource (`.ai/skills/`, `.ai/agents/`)
 - Manage Skill/Agent resources with Resource Manager (`.claude/skills/resource-manager/`)
-- Index Workflows with the Workflow Registry (`.claude/skills/workflow-registry/`)
+- Index and route Workflows with work-for-me (`.claude/skills/work-for-me/`): at task start, locate the project, match the Workflow, read its SOP, and execute phase by phase; indexing and navigation only — no scoring, no auto-recommendation
 - Create new projects with the Project Registry (`.claude/skills/project-registry/`)
 - Field lists always come from `.ai/templates/` templates; never inline field definitions
 - The workspace uses one Git repository: project source under `projects/*` is managed by this repository

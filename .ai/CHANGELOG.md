@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.4
+
+**项目合并与 Workflow 路由**：`video-publish-review` 并入 `investment-research-video`（Workflow 迁至 `projects/investment-research-video/workflows/`，复盘册/选题前瞻产物并入本项目 `outputs/`，复盘队列迁至 `docs/publish-review.md`；历史归档 `.ai/archive/**` 不动）。新增单入口编排 Workflow `investment-research-video-create`（阶段编排表：复盘 → 选题 → 研究 → 表达 → 制作发布 → 复盘闭环，只编排顺序不复制子 SOP）。`workflow-registry` 更名 `work-for-me` 并新增 route 能力（定位项目 → 匹配 Workflow → 读 SOP → 逐 Phase 真实执行；只索引与导航，不评分、不自动推荐），新增辅助脚本 `find-workflow.py`；全部引用与规则层同步。
+
 ## v0.2.3
 
 **资产管理单文件化（Markdown 文档格式）**：Skill/Agent 描述层从 skill.yaml + SKILL.md 双文件合并为单文件 `.ai/skills/<name>/<name>.md`——纯 Markdown 文档（`# 标题` + `> 位置引用` + `## 元数据` 表格 + 调用说明正文），非 frontmatter 拼接；Agent 实体层补齐至顶层 `.agents/<name>.md`；resource-manager 与模板同步更新为 md 文档流程。

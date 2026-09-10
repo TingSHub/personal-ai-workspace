@@ -4,6 +4,8 @@
 
 ## 主链路
 
+整支视频从单入口编排 Workflow `investment-research-video-create` 进入（阶段编排表：复盘 → 选题 → 研究 → 表达 → 制作发布 → 复盘闭环，见 `workflows/investment-research-video-create/workflow.md`）。各阶段对应 Workflow：
+
 1. `topic-forward-lead`：从事件、产业、公司、观众问题和可选行情线索生成选题卡；用户只确认“研究什么”。
 2. `topic-research`：围绕已批准问题定向研究，按 `content_depth` 区分标准机制课与深度解释型视频；后者额外交付知识地图、历史验证线、当前新闻事实和必要的市场预期关系；不重新选题。
 3. `investagent-podcast-video-by-hyperframes`：父 Workflow，只负责事实层、表达层和执行层的顺序与交接。
@@ -13,6 +15,10 @@
 4. `publish-review`：按曝光到关注的完整漏斗复盘，将观察、归因假设和下一轮实验分开；复盘只影响适用的新选题。
 
 研究若推翻选题前提，或必须改变主体范围、主问题，标记 `scope_change_required` 并返回 `topic-forward-lead`。标题、章节、叙事模式和口播措辞的调整由内容导演负责，不触发重复审批。
+
+## 复盘与选题前瞻
+
+`publish-review` 与 `topic-forward-lead` 构成复盘与选题闭环：前者按曝光到关注的完整漏斗复盘已发布视频并沉淀账号规律（`outputs/account-rules.md`），后者把复盘改进候选与多来源信号转为下一批选题。复盘册、选题前瞻产物与待补复盘队列见 `docs/publish-review.md`。
 
 ## 内容原则
 

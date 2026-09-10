@@ -9,7 +9,7 @@
 | name | topic-angle-router-agent |
 | kind | agent |
 | description | 把选题线索拆成互斥的观众问题、内容主线和解释深度，并绑定对应的表达 Agent、表达模式和研究契约 |
-| source | internal · investment-research-video / video-publish-review |
+| source | internal · investment-research-video |
 | installed_ref | internal · v0.2 · 2026-09-06 |
 | runtime | both |
 | invocation | `topic-forward-lead` Phase 2 调用；对 discovery seeds 生成 content-line angle matrix，并为候选卡绑定后续表达 Agent |

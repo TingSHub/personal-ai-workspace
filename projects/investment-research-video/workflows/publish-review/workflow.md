@@ -1,6 +1,6 @@
 # Workflow: publish-review
 
-> 位置: Project: projects/video-publish-review/workflows/publish-review/
+> 位置: Project: projects/investment-research-video/workflows/publish-review/
 
 ## Mission
 
@@ -8,7 +8,7 @@
 
 ## Input
 
-- 源项目发布登记：`projects/<source-project>/account-profile/published-works.md`（workspace 相对路径；当前源项目为 investment-research-video，多账号扩展时按账号对应各自源项目），取其发布条目（实际发布标题/平台/发布时间/视频路径/时长）
+- 发布登记：本项目 `account-profile/published-works.md`（workspace 相对路径 `projects/investment-research-video/account-profile/published-works.md`；本 Workflow 与源项目同库，多账号扩展时按账号对应各自源项目），取其发布条目（实际发布标题/平台/发布时间/视频路径/时长）
 - 复盘触发时点：T+3 首次归因，T+7 增量复采出终版
 - 账号规律先验：本项目 `outputs/account-rules.md`（Phase 7 维护；首次运行时可为空文件）
 - 原视频证据：最终成片、旁白稿/字幕、场景或章节 manifest、封面与发布标题（历史视频缺失时显式标注）
@@ -51,7 +51,7 @@
 
 ### Input
 
-源项目 published-works.md 的目标条目。
+本项目 `account-profile/published-works.md` 的目标条目。
 
 ### Output
 

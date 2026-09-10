@@ -1,6 +1,6 @@
 # Workflow: topic-forward-lead
 
-> 位置: Project: projects/video-publish-review/workflows/topic-forward-lead/
+> 位置: Project: projects/investment-research-video/workflows/topic-forward-lead/
 
 ## Mission
 

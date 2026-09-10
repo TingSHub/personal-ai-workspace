@@ -1,6 +1,6 @@
 name: personal-ai-workspace
 description: 服务项目交付的个人 AI 能力管理与编排系统
-version: 0.2.2
+version: 0.2.4
 paths:
   skills: .ai/skills
   agents: .ai/agents
@@ -15,7 +15,7 @@ rules:
   - 创建新项目用 Project Registry
   - 默认调用路径为 Project → Workflow → Skill/Agent；Workflow 是 Markdown SOP 唯一事实源，Phase 的 Required Resources 直接 by-name 列出 Skill/Agent
   - Workflow 阶段 Required Resources 必须真实执行并留下独立产物；下游只消费已验收产物，主 Agent 不得只读方法论后仿写结果
-  - Workflow / Skill / Agent / Experience 一律用 by-name 引用；workflow-registry 只索引不解释
+  - Workflow / Skill / Agent / Experience 一律用 by-name 引用；work-for-me 只索引不解释，路由为确定性查找与按 SOP 执行，不评分、不自动推荐
   - 采用 best_available_resource 而非 local first；按实际效果、输出质量、稳定性、依赖成本和维护成本选择（Workflow Phase 所需资源的任务级选择），候选发现覆盖 workspace、已安装外部资源、skill-hub、find-skills 和 agent repository
   - 缺少可安全补齐的配置时先补齐，确实无法使用或验收失败才回退；不维护综合评分、可用状态或配置成本模型
   - Skill/Agent 记录来源、已安装版本、调用、要求、更新方式、踩坑和辅助脚本；本地增强不修改外部安装实体；Agent 记录只存元信息，不复制 Agent 内部内容

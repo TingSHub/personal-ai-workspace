@@ -9,7 +9,7 @@
 - 执行任务前优先寻找已有 Workflow（`.ai/workflows/`）
 - 不重复创建已有 Skill/Agent 资源（`.ai/skills/`、`.ai/agents/`）
 - Skill/Agent 使用 Resource Manager 管理（`.claude/skills/resource-manager/`）
-- Workflow 使用 Workflow Registry 索引（`.claude/skills/workflow-registry/`）
+- Workflow 使用 work-for-me 索引与路由（`.claude/skills/work-for-me/`）：任务开始时定位项目、匹配 Workflow、读 SOP 并逐 Phase 真实执行；只索引与导航，不评分、不自动推荐
 - 创建新项目用 Project Registry（`.claude/skills/project-registry/`）
 - 字段清单一律从 `.ai/templates/` 模板读取填充，禁止内联字段定义
 - 工作区统一使用一个 Git 仓库，`projects/*` 下的项目源码由本仓库统一管理

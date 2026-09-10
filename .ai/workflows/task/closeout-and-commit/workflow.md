@@ -138,7 +138,7 @@
 | closeout | skill | 必选 | internal | 执行范围保护、结构复扫和 staged diff 门禁 |
 | experience-curator | skill | 按批准项 | internal | promote、回写并归档已批准 Experience |
 | resource-manager | skill | 按批准项 | internal | Skill/Agent 资源登记、修改、脚本和引用验证 |
-| workflow-registry | skill | 按批准项 | internal | Workflow SOP/索引与 Required Resources 解析验证 |
+| work-for-me | skill | 按批准项 | internal | Workflow SOP/索引与 Required Resources 解析验证 |
 | no-negative-echo | skill | 可选 | github · 2dfbefdc41f9f728984096850d90a61e20054923 | 对长迭代后的正式表面做清理；普通小提交无需固定调用 |
 
 ### Input

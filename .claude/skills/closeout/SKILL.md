@@ -32,7 +32,7 @@ Every directory proposal must state current path, proposed path, rationale, affe
 Require approval that maps to proposal item IDs. Apply no unlisted item. Treat move, merge, archive, delete, canonical knowledge write, and Git commit as distinct actions.
 
 - Preserve pre-existing changes and use an explicit task-owned file list.
-- Use `experience-curator` for Experience promotion, `resource-manager` for Skill/Agent records, and `workflow-registry` for Workflow indexing and validation.
+- Use `experience-curator` for Experience promotion, `resource-manager` for Skill/Agent records, and `work-for-me` for Workflow indexing and validation.
 - Prefer recoverable moves to deletion. Update identified path and by-name references in the same approved item.
 - Re-run structural scanning, reference checks, task tests, secret checks, and `git diff --cached --check` after mutation.
 - Stage only approved files, display the staged names and diff summary, and create one local commit for this workspace only when commit authorization is explicit. Never push or create a PR unless separately requested.
