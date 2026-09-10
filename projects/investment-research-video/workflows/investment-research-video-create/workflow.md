@@ -17,7 +17,7 @@
 
 | # | 阶段 | Workflow（by-name） | 进入条件/说明 |
 |---|---|---|---|
-| 1 | 复盘 | `publish-review` | 有待复盘视频（见 `docs/publish-review.md` 待补复盘队列）时先复盘 |
+| 1 | 复盘 | `publish-review` | 有待复盘视频（见 `account-profile/published-works.md` 各条目的 `review_status`）时先复盘 |
 | 2 | 话题采集 | `topic-forward-lead` | 唯一选题入口，产出获批 topic card |
 | 3 | 话题研究 | `topic-research` | 行 3–5 由父路由 `investagent-podcast-video-by-hyperframes` 按事实层→表达层→执行层顺序执行 |
 | 4 | 表达 | `investagent-content-expression` | 同上 |

@@ -18,7 +18,8 @@
 - audio_backend: `VoxCPM2 continuation`
 - duration: `393.75s`
 - report: `outputs/companies/中科曙光/official-information/603019.SH_2026H1_semiannual-report_20260826.pdf`
-- traffic_dir: `projects/investment-research-video/outputs/retrospectives/2026-08-28-zhongke-shuguang/`（复盘册：流量快照与归因报告，workspace 相对路径）
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-08-28-zhongke-shuguang/`（复盘册：流量快照与归因报告）
+- review_status: `T+3 首采与初版归因 ✓（2026-08-31）；T+7 复采与终版归因 ✗（计划 2026-09-04，已逾期）；改进项落地验证 ✗`
 - platform_url: `https://www.douyin.com/video/7678744509554953522`（aweme_id 7678744509554953522）
 
 ## 2026-09-01｜星网锐捷
@@ -37,6 +38,8 @@
 - audio_backend: `VoxCPM2 continuation`
 - duration: `384.633s`
 - report: `outputs/companies/星网锐捷/2026-09-01-audio-repair-v3/research-materials/research-intelligence.md`
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-01-xingwang-ruijie/`（复盘册待建）
+- review_status: `全部待采集（T+1/T+3/T+7 均未执行）`
 - platform_url: `https://www.douyin.com/video/7680355426122075392`（aweme_id 7680355426122075392）
 
 ## 2026-09-02｜协鑫能科
@@ -58,6 +61,8 @@
 - report: `outputs/companies/协鑫能科/2026-09-01/research-materials/findings-summary.md`
 - aitoearn_flow_id: `d4dbec23-9b1e-4517-b438-487741641e0f`
 - aitoearn_record_id: `6a983e02fe73016b35812130`
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-02-xiexin-nengke/`
+- review_status: `T+3 详情采集/官方导出/归因与改进候选 ✓（attribution-2026-09-06）；主候选选择与下支视频验证 ✗`
 - platform_url: `https://www.douyin.com/video/7680961320070873467`（aweme_id 7680961320070873467）
 - cover_note: `抖音确认页手动选择上传封面；AiToEarn App Scheme 未自动传入独立 cover URL`
 
@@ -79,6 +84,8 @@
 - report: `outputs/companies/数据基础设施/2026-09-05/research-materials/findings-summary.md`
 - aitoearn_flow_id: `05a18ac3-a3d0-4eed-8739-705fbf15e5fe`
 - aitoearn_record_id: `6a9c2a47ec55e4d875a6726a`
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-05-data-infrastructure/`
+- review_status: `T+3 详情页快照与初版归因 ✓（2026-09-08）；官方导出 ✗（补齐后更新为终版归因）`
 - platform_url: `https://www.douyin.com/video/7682063842764307630`（aweme_id 7682063842764307630）
 - cover_note: `抖音确认页已由用户确认并完成发布；实际封面状态以用户确认页为准`
 
@@ -102,6 +109,7 @@
 - platform_url: `https://www.douyin.com/video/7682459321708836091`
 - aweme_id: `7682459321708836091`
 - review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-07-pig-cycle/`
+- review_status: `T+1 官方详情导出 ✓（2026-09-08）；口播内容复盘 ✓（2026-09-09）；T+3 漏斗归因终稿 ✗；T+7 复采 ✗`
 
 ## 2026-09-10｜厄尔尼诺农业行情
 
@@ -126,5 +134,6 @@
 - platform_url: `https://www.douyin.com/video/7683584403864642417`
 - aweme_id: `7683584403864642417`
 - cover_note: `抖音确认页由用户手动上传 3:4 封面后发布；实际封面状态以确认页为准`
-- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-10-el-nino-agri/`（待建，T+1 采集）
+- review_dir: `projects/investment-research-video/outputs/retrospectives/2026-09-10-el-nino-agri/`（待建）
+- review_status: `复盘册待建；T+1/T+3/T+7 全部待采集`
 

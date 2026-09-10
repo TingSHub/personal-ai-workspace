@@ -18,7 +18,7 @@
 
 ## 复盘与选题前瞻
 
-`publish-review` 与 `topic-forward-lead` 构成复盘与选题闭环：前者按曝光到关注的完整漏斗复盘已发布视频并沉淀账号规律（`outputs/account-rules.md`），后者把复盘改进候选与多来源信号转为下一批选题。复盘册、选题前瞻产物与待补复盘队列见 `docs/publish-review.md`。
+`publish-review` 与 `topic-forward-lead` 构成复盘与选题闭环：前者按曝光到关注的完整漏斗复盘已发布视频并沉淀账号规律（`outputs/account-rules.md`），后者把复盘改进候选与多来源信号转为下一批选题。各视频生命周期与复盘状态（复盘册指针、T+1/T+3/T+7 进度与待补队列）以 `account-profile/published-works.md` 为唯一事实源；模块机制与运行规则见 `docs/publish-review.md`。
 
 ## 内容原则
 
