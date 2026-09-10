@@ -102,3 +102,29 @@
 - platform_url: `https://www.douyin.com/video/7682459321708836091`
 - aweme_id: `7682459321708836091`
 - review_dir: `projects/video-publish-review/outputs/retrospectives/2026-09-07-pig-cycle/`
+
+## 2026-09-10｜厄尔尼诺农业行情
+
+- status: `published`
+- title: `厄尔尼诺来了，农业这波是抢跑还是轮动？`
+- platform: `douyin`
+- account: `账本两面`
+- published_at: `2026-09-10 07:00:00`（用户设定的定时发布时间）
+- topic: `厄尔尼诺与农业板块行情：抢跑还是轮动`
+- content_line: `market_pulse`
+- tags: `#厄尔尼诺 #农业板块 #粮食安全 #周期股 #投资常识`
+- video: `outputs/subjects/厄尔尼诺农业行情/2026-09-10/podcast/renders/final.mp4`
+- cover_4x3: `outputs/subjects/厄尔尼诺农业行情/2026-09-10/podcast/project/cover.png`（1440×1080）
+- cover_3x4: `outputs/subjects/厄尔尼诺农业行情/2026-09-10/podcast/project/cover-3x4.png`（1080×1440）
+- metadata: `outputs/subjects/厄尔尼诺农业行情/2026-09-10/publish/metadata.json`
+- duration: `377.77s`
+- report: `outputs/research/厄尔尼诺农业行情/2026-09-09/research-brief.md`
+- mother_draft: `outputs/research/厄尔尼诺农业行情/2026-09-09/mother-draft-v2.pdf`
+- publish_receipt: `outputs/subjects/厄尔尼诺农业行情/2026-09-10/publish/phase4-execution.md`
+- aitoearn_flow_id: `el-nino-agri-2026-09-10`
+- aitoearn_record_id: `6aa1920b04185ddb4a9cc732`
+- platform_url: `https://www.douyin.com/video/7683584403864642417`
+- aweme_id: `7683584403864642417`
+- cover_note: `抖音确认页由用户手动上传 3:4 封面后发布；实际封面状态以确认页为准`
+- review_dir: `projects/video-publish-review/outputs/retrospectives/2026-09-10-el-nino-agri/`（待建，T+1 采集）
+
