@@ -114,6 +114,7 @@ Phase 2 已锁定的 `episode.json`、dialogue map、account profile、音色、
 - 音频、字幕和画面均从同一 manifest/真实音频时间轴派生；
 - 执行层发现内容事实、主张或对白问题时退回 Phase 2，不在执行层临时改稿；
 - 通过音频、视觉、证据、时间线和平台发布门禁。
+- `scene-manifest.json` 须直接承载讲解状态、衔接和可选声音事件；现有 `episode-qa.md` 验收最终成片。视觉参考和动态样片是按需使用的设计与迭代手段，不增加每期固定交付文件。
 
 ### Known Issues
 
@@ -123,5 +124,5 @@ Phase 2 已锁定的 `episode.json`、dialogue map、account profile、音色、
 
 - `episode.topics` 必须是对象列表（含 `topic_id`/`title`/`claim`/`metrics`），`opening_visual` 必须是对象，`outro_summary` 必须是 `{label,headline,detail}` 对象列表——三者写成字符串/字符串列表会直接崩溃。
 - `cover.large_text` 用 `\n` 分行、每行 ≤4 字，第二行自动为酒红 accent；单行标题不符合 `design.md` 的两行结构。
-- **图表类型必须在渲染器白名单内**：`compare`/`timeline` 不在白名单，会产出**空白图表区且门禁不报错**；多步图必须补 `narration_beats`（≥2 条、绑定同 topic 真实 turn）才能通过 `check_podcast_visual_sync.py`。
+- **图表类型必须在渲染器白名单内**：`compare`/`timeline` 等未知类型由基础生成器直接拒绝；多步图必须由 `scene-manifest.states` 提供至少两个绑定同 topic 真实 turn 的目标状态。
 - 合成产物的 `index.html` 与 `assets/` 必须同目录，否则 `hyperframes check` 报 `audio_src_not_found`。

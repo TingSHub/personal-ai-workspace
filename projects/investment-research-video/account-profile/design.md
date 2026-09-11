@@ -52,6 +52,32 @@ persistent_progress_opacity: 1
 
 Each component is driven by account/episode data, not by company-specific selectors or hardcoded text. If a claim has a valid chart spec, render a chart first; use a table only when the relationship is not chartable; use text only for context, caveats and conclusions. The persistent navigator is a root-level layer and must remain visible while page scenes change.
 
+## Visual reference and motion grammar
+
+- 视觉稿是账号级参考，不是每期生产文件。当前参考 `account-motion-study-v1`：<https://www.figma.com/design/T7XPzbAjUpUgsFSejr7BJP>。它用于统一时间区间图、机制拆解和场景衔接的构图方向，不作为待逐帧复刻的成片模板。
+- 日常视频从本文件的 token、组件契约和已验证的 HyperFrames 模式直接生成。只有新增一种视觉关系或整体品牌改版时，才补一张参考画面；在同一 Figma 文件内新增 frame，不新建一期一文件。
+- 一段讲解应保持一个主视觉，并通过 `scene-manifest.json` 的 `states` 推进：建立对象、揭示数据、连接关系、突出比较、显示反证、收束判断。标题入场和持续背景运动不能代替这些变化。
+- 图表几何必须表达数据关系：区间使用上下界，哑铃使用两端与连接差距，发散图共享零线，瀑布图表达累计起终点，系列比较共享可比尺度。组件名称不能替代语义验证。
+- 主衔接优先延续上一场的位置、颜色和运动方向；基础生成器使用定向推移、焦点转移、交叉淡化或硬切。更复杂的共享元素或遮罩转场只有专用 Composition 已实现并通过代表段验收后才能启用。音效只绑定关键状态或换章事件，保持少量、短促且不遮挡旁白。
+
+默认视觉旋钮为 `design_variance=6`、`motion_intensity=6`、`visual_density=5`。每期可因题型调整一档，但必须在 scene manifest 中记录；财经可信度、证据清晰度和手机可读性优先于风格强度。
+
+### 场景语法
+
+| 语法 | 观众认知变化 | 首选状态动作 | 典型视觉对象 |
+|---|---|---|---|
+| `thesis-reveal` | 从问题进入本期唯一判断 | establish → resolve | 冲突标题、关键数字、结论锚点 |
+| `evidence-compare` | 看清共同尺度下的差异 | establish → reveal → compare | 条形、哑铃、区间、同轴折线 |
+| `mechanism-chain` | 理解原因如何传导到结果 | establish → connect → resolve | 节点、路径、因果回路 |
+| `timeline-shift` | 理解事实、预期和价格的先后 | establish → reveal → connect | 时间轴、阶梯线、事件落点 |
+| `counterevidence-challenge` | 看到主判断最强反证与边界 | establish → challenge → resolve | 对照层、风险矩阵、证伪条件 |
+| `closing-synthesis` | 把分散证据重组为结论 | reveal → compare → resolve | 前文共享对象、结论与推翻条件 |
+
+- 每个 scene 明确 `viewer_question`、`cognitive_change` 和 `continuity_anchor`；缺少认知变化时不进入视觉制作。
+- 连续三个 scene 不得复用同一布局族；一个 scene 有三个及以上 state 时不得只有一种动作。
+- 背景动势、标题入场和进度条属于支持层，不计入语义 state。每个承担解释的 scene 至少有一次数据、关系、边界或焦点的真实变化。
+- `establish` 建立对象，`reveal` 揭示信息，`connect` 形成关系，`compare` 建立共同尺度，`challenge` 引入反证，`resolve` 收束焦点。动作名称必须对应实际几何或视觉变化。
+
 ## 平台封面规范（account-fixed, by-name: `account-cover-reference`）
 
 封面是独立平台资产，不属于正片 timeline；固定参考资产与模板见 `account-cover-reference`（`account-profile/cover-reference/`），风格事实源为 `reference-3x4.png`。后续视频封面均按此规则生成，允许 token 内的创意变体，不允许跳出边界。

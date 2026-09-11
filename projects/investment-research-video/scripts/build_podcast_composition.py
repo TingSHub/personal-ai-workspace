@@ -21,6 +21,7 @@ CSS += r''' .topic-nav{position:absolute;left:80px;right:80px;bottom:35px;height
 CSS += r''' .metric.pink{border-color:#e998be} .chart-title small{font-size:13px;font-weight:600;color:#6a778a}.chart-stage{position:absolute;inset:0}'''
 CSS += r''' .show,.title,.metric .value,.speaker,.caption{font-family:"__DISPLAY_FONT__","Source Han Serif SC","Songti SC","STSong",serif}.title{letter-spacing:.01em}.caption{-webkit-text-stroke:.18px currentColor}'''
 CSS += r''' .nav-state{position:absolute;inset:0;z-index:20;pointer-events:none}.persistent-nav{position:absolute;left:48px;right:48px;bottom:8px;height:34px;color:rgba(20,36,58,.72);font-size:12px}.chapter-strip{position:absolute;left:0;right:0;bottom:9px;height:18px;display:flex;overflow:hidden;border-radius:9px;background:rgba(255,255,255,.24);border:1px solid rgba(20,36,58,.14);backdrop-filter:blur(6px)}.chapter{display:flex;align-items:center;justify-content:center;min-width:1px;overflow:hidden;border-right:1px solid rgba(20,36,58,.14);white-space:nowrap}.chapter b{font-size:11px;font-weight:700;opacity:.72}.chapter.active{background:rgba(33,102,209,.18);color:#173d78}.persistent-progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(20,36,58,.16)}.persistent-progress-fill{height:100%;background:rgba(20,36,58,.52)}'''
+CSS += r''' .persistent-progress-fill{width:100%;transform:scaleX(0);transform-origin:left center}.flow-node:not(:last-child):after{content:none}.flow-arrow{display:block}'''
 CSS += r''' .caption-line{position:absolute;left:160px;right:160px;bottom:84px;text-align:center;font-size:31px;font-weight:900;color:var(--speaker-accent,#6e43b5);text-shadow:1px 1px #fff}.caption,.turn .caption{bottom:84px}
 .cover-scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;background:inherit}
 .cover-company{font-size:52px;font-weight:900;letter-spacing:6px;margin-bottom:40px}
@@ -215,13 +216,19 @@ def number(value):
         return 0.0
 
 
+def dom_id(value):
+    return re.sub(r'[^a-zA-Z0-9_-]+', '-', str(value or 'chart')).strip('-') or 'chart'
+
+
 def chart_markup(specs, style='default'):
     if not specs:
         return ''
     palette = STYLE_PALETTES.get(style, STYLE_PALETTES['default'])
     if len(specs)>1:
         return f'<div class="chart-stack">{"".join(chart_markup([spec], style) for spec in specs[:2])}</div>'
-    spec=specs[0]; rows=spec.get('data',[]); chart_type=spec.get('type','horizontal-bar')
+    spec=specs[0]; rows=spec.get('data',[]); chart_type=spec.get('type','horizontal-bar'); chart_id=dom_id(spec.get('chart_id'))
+    if not isinstance(rows, list) or not rows:
+        raise SystemExit(f'{chart_id} chart requires non-empty data')
     # Keep semantic chart names in manifest while mapping them to the
     # renderer's proven primitives. This prevents valid subject-specific
     # scene plans from silently producing empty chart zones.
@@ -236,15 +243,44 @@ def chart_markup(specs, style='default'):
     claim=html.escape(str(spec.get('claim', '')))
     unit=html.escape(str(spec.get('unit', '')))
     title=f'{claim} <small>（{unit}）</small>' if unit else claim
-    if chart_type in ('dumbbell','diverging-bar','horizontal-bar','bar'):
+    if chart_type in ('horizontal-bar','bar'):
         maximum=max([abs(number(r.get('value',0))) for r in rows] or [1])
         items=[]
         for index,row in enumerate(rows):
             value=number(row.get('value',0)); width=max(4,round(abs(value)/maximum*100,1)); label=html.escape(str(row.get('label',''))); val=html.escape(str(row.get('value','')))
             color=palette['down'] if value < 0 else palette['up']
-            items.append(f'<div class="chart-row"><span>{label}</span><div class="chart-track"><i style="--chart-color:{color};width:{width}%"></i></div><b>{val}</b></div>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div>{"".join(items)}</div>'
+            items.append(f'<div id="chart-row-{chart_id}-{index}" class="chart-row"><span>{label}</span><div class="chart-track"><i id="chart-bar-{chart_id}-{index}" style="--chart-color:{color};width:{width}%"></i></div><b>{val}</b></div>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div>{"".join(items)}</div>'
+    if chart_type=='dumbbell':
+        if any('low' not in row or 'high' not in row for row in rows):
+            raise SystemExit(f'{chart_id} dumbbell requires low and high for every row')
+        if any(number(row['low']) > number(row['high']) for row in rows):
+            raise SystemExit(f'{chart_id} dumbbell requires low <= high for every row')
+        low_all=min([number(row['low']) for row in rows] or [0]); high_all=max([number(row['high']) for row in rows] or [1]); span=max(high_all-low_all,1)
+        items=[]
+        for index,row in enumerate(rows):
+            low=number(row['low']); high=number(row['high']); left=(low-low_all)/span*100; width=(high-low)/span*100
+            items.append(f'<div id="chart-row-{chart_id}-{index}" class="chart-row"><span>{html.escape(str(row.get("label","")))}</span><div class="chart-track"><i id="chart-bar-{chart_id}-{index}" style="margin-left:{left:.2f}%;width:{max(width,1):.2f}%"></i><em style="left:{left:.2f}%"></em><em style="left:{left+width:.2f}%"></em></div><b>{html.escape(str(row["low"]))}–{html.escape(str(row["high"]))}</b></div>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div>{"".join(items)}</div>'
+    if chart_type=='diverging-bar':
+        maximum=max([abs(number(row.get('value',0))) for row in rows] or [1]); items=[]
+        for index,row in enumerate(rows):
+            value=number(row.get('value',0)); half=abs(value)/maximum*48; x=50-half if value<0 else 50
+            color=palette['down'] if value<0 else palette['up']
+            items.append(f'<g id="chart-row-{chart_id}-{index}"><text x="4" y="{24+index*28}" font-size="18" fill="#211d18">{html.escape(str(row.get("label","")))}</text><rect x="{x:.2f}%" y="{8+index*28}" width="{half:.2f}%" height="18" fill="{color}"/><text x="96%" y="{24+index*28}" text-anchor="end" font-size="18" fill="#211d18">{html.escape(str(row.get("value","")))}</text></g>')
+        height=max(90,18+len(rows)*28)
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 {height}" preserveAspectRatio="none"><line x1="50%" y1="0" x2="50%" y2="{height}" stroke="{palette["grid"]}" stroke-width="2"/>{"".join(items)}</svg></div>'
     if chart_type in ('line','multiline','step-line'):
+        all_values=[
+            number(point.get('value',point) if isinstance(point,dict) else point)
+            for row in rows if isinstance(row,dict)
+            for point in (row.get('values', row.get('data', [])) or ([row] if 'value' in row else []))
+        ]
+        low_all=min(all_values or [0]); high_all=max(all_values or [1]); span=max(high_all-low_all,1)
+        max_points=max([
+            len(row.get('values', row.get('data', [])) or ([row] if 'value' in row else []))
+            for row in rows if isinstance(row,dict)
+        ] or [1])
         series=[]
         legend_items=[]
         for index,row in enumerate(rows):
@@ -253,49 +289,64 @@ def chart_markup(specs, style='default'):
             points=[]
             for point_index,point in enumerate(values):
                 value=number(point.get('value',point) if isinstance(point,dict) else point)
-                x=60 + (point_index * 106)
-                y=88 - (value / max([number(p.get('value',p) if isinstance(p,dict) else p) for p in values] or [1])) * 58
+                x=60 + (point_index / max(max_points-1,1) * 630)
+                y=88 - ((value-low_all)/span) * 58
+                if chart_type == 'step-line' and points:
+                    previous_y=points[-1].split(',')[1]
+                    points.append(f'{x:.1f},{previous_y}')
                 points.append(f'{x:.1f},{y:.1f}')
                 if index == 0 and isinstance(point, dict):
                     legend_items.append(f'<div class="chart-legend-item"><b>{html.escape(str(point.get("value", "")))}</b><span>{html.escape(str(point.get("label", "")))}</span></div>')
             if points:
                 color=palette['secondary'] if index else palette['primary']
-                series.append(f'<polyline points="{" ".join(points)}" fill="none" stroke="{color}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>')
+                series.append(f'<polyline id="chart-series-{chart_id}-{index}" points="{" ".join(points)}" fill="none" stroke="{color}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>')
         legend=''.join(legend_items)
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="45" y1="88" x2="690" y2="88" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(series)}</svg><div class="chart-legend">{legend}</div></div>'
-    if chart_type in ('waterfall','stacked-bar'):
-        maximum=max([abs(number(r.get('value',0))) for r in rows] or [1])
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="45" y1="88" x2="690" y2="88" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(series)}</svg><div class="chart-legend">{legend}</div></div>'
+    if chart_type=='waterfall':
+        cumulative=0.0; totals=[]
+        for row in rows:
+            start=cumulative; cumulative += number(row.get('value',0)); totals.append((start,cumulative))
+        bounds=[value for pair in totals for value in pair] or [0,1]; low_all=min(bounds+[0]); high_all=max(bounds+[0]); span=max(high_all-low_all,1)
         items=[]
         for index,row in enumerate(rows):
-            value=number(row.get('value',0)); height=max(8,round(abs(value)/maximum*75,1)); color=palette['positive'] if value>=0 else palette['negative']
+            value=number(row.get('value',0)); start,end=totals[index]; top=max(start,end); bottom=min(start,end); height=max(5,(top-bottom)/span*72); y=86-(top-low_all)/span*72; color=palette['positive'] if value>=0 else palette['negative']
             left=50 + index*165
-            items.append(f'<rect x="{left}" y="{90-height}" width="58" height="{height}" rx="2" fill="{color}"/><text x="{left+29}" y="108" text-anchor="middle" font-size="22" fill="{palette["secondary"]}">{html.escape(str(row.get("label","")))}</text><text x="{left+29}" y="{max(28,84-height)}" text-anchor="middle" font-size="30" fill="#211d18">{html.escape(str(row.get("value","")))}</text>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="20" y1="90" x2="700" y2="90" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(items)}</svg></div>'
+            items.append(f'<g id="chart-row-{chart_id}-{index}"><rect x="{left}" y="{y:.2f}" width="58" height="{height:.2f}" rx="2" fill="{color}"/><text x="{left+29}" y="108" text-anchor="middle" font-size="22" fill="{palette["secondary"]}">{html.escape(str(row.get("label","")))}</text><text x="{left+29}" y="{max(22,y-4):.2f}" text-anchor="middle" font-size="24" fill="#211d18">{html.escape(str(row.get("value","")))}</text></g>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div><svg class="svg-chart" viewBox="0 0 720 115" preserveAspectRatio="xMidYMid meet"><line x1="20" y1="86" x2="700" y2="86" stroke="{palette["grid"]}" stroke-width="3"/>{"".join(items)}</svg></div>'
+    if chart_type=='stacked-bar':
+        raise SystemExit(f'{chart_id} stacked-bar requires a dedicated composition component')
     if chart_type=='range-band':
+        if any('low' not in row or 'high' not in row for row in rows):
+            raise SystemExit(f'{chart_id} range-band requires low and high for every row')
+        if any(number(row['low']) > number(row['high']) for row in rows):
+            raise SystemExit(f'{chart_id} range-band requires low <= high for every row')
+        if any('estimate' in row and not number(row['low']) <= number(row['estimate']) <= number(row['high']) for row in rows):
+            raise SystemExit(f'{chart_id} range-band estimate must stay inside low/high')
+        low_all=min([number(row.get('low',0)) for row in rows] or [0]); high_all=max([number(row.get('high',0)) for row in rows] or [1]); span=max(high_all-low_all,1)
         items=[]
-        for row in rows:
-            low=number(row.get('low',0)); high=number(row.get('high',0)); estimate=number(row.get('estimate', (low+high)/2)); scale=max(high,1)
-            items.append(f'<div class="chart-row"><span>{html.escape(str(row.get("label","")))}</span><div class="chart-track"><i style="width:{max(6,round(high/scale*100,1))}%;background:{palette["neutral"]}"></i><em style="left:{round(estimate/scale*100,1)}%;background:{palette["secondary"]}"></em></div><b>{html.escape(str(row.get("estimate", "")))}</b></div>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div>{"".join(items)}</div>'
+        for index,row in enumerate(rows):
+            low=number(row.get('low',0)); high=number(row.get('high',0)); estimate=number(row.get('estimate', (low+high)/2)); left=(low-low_all)/span*100; width=(high-low)/span*100; marker=(estimate-low_all)/span*100
+            items.append(f'<div id="chart-row-{chart_id}-{index}" class="chart-row"><span>{html.escape(str(row.get("label","")))}</span><div class="chart-track"><i id="chart-bar-{chart_id}-{index}" style="margin-left:{left:.2f}%;width:{max(width,1):.2f}%;background:{palette["neutral"]}"></i><em style="left:{marker:.2f}%;background:{palette["secondary"]}"></em></div><b>{html.escape(str(row.get("low", "")))}–{html.escape(str(row.get("high", "")))}</b></div>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div>{"".join(items)}</div>'
     if chart_type=='risk-matrix':
         items=[]
-        for row in rows:
+        for index,row in enumerate(rows):
             x=max(5,min(95,number(row.get('likelihood',50)))); y=max(5,min(95,100-number(row.get('impact',50))))
-            items.append(f'<span style="left:{x}%;top:{y}%;background:{palette["primary"]}" title="{html.escape(str(row.get("label","")))}"></span>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><div class="risk-matrix"><i></i>{"".join(items)}</div></div>'
+            items.append(f'<span id="chart-point-{chart_id}-{index}" style="left:{x}%;top:{y}%;background:{palette["primary"]}" title="{html.escape(str(row.get("label","")))}"></span>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div><div class="risk-matrix"><i></i>{"".join(items)}</div></div>'
     if chart_type=='flow-map':
         items=[]
         for index,row in enumerate(rows[:4]):
             if index:
-                items.append('<span class="flow-arrow" aria-hidden="true">→</span>')
-            items.append(f'<div class="flow-node">{html.escape(str(row.get("label",row.get("name",""))))}</div>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><div class="flow-map">{"".join(items)}</div></div>'
+                items.append(f'<span id="chart-connector-{chart_id}-{index-1}" class="flow-arrow" aria-hidden="true">→</span>')
+            items.append(f'<div id="chart-node-{chart_id}-{index}" class="flow-node">{html.escape(str(row.get("label",row.get("name",""))))}</div>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div><div class="flow-map">{"".join(items)}</div></div>'
     if chart_type=='validation-dashboard':
         items=[]
-        for row in rows:
-            items.append(f'<div class="validation-item"><b>{html.escape(str(row.get("label","")))}</b><span>{html.escape(str(row.get("status","待验证")))}</span></div>')
-        return f'<div class="chart-zone"><div class="chart-title">{title}</div><div class="validation">{ "".join(items) }</div></div>'
-    return ''
+        for index,row in enumerate(rows):
+            items.append(f'<div id="chart-node-{chart_id}-{index}" class="validation-item"><b>{html.escape(str(row.get("label","")))}</b><span>{html.escape(str(row.get("status","待验证")))}</span></div>')
+        return f'<div id="chart-{chart_id}" class="chart-zone"><div class="chart-title">{title}</div><div class="validation">{ "".join(items) }</div></div>'
+    raise SystemExit(f'{chart_id} uses unsupported chart type: {chart_type}')
 
 
 def split_caption_text(text, max_chars=28):
@@ -404,28 +455,26 @@ def visual_layout(topic_id, chart_specs, metrics):
     return 'signal' if len(metrics) <= 1 else 'metrics'
 
 
-def motion_script(runs, total):
-    lines=["const tl=window.__timelines.main;", "const add=(target,from,to,at)=>{if(!target || (target.length!==undefined && target.length===0)) return; tl.fromTo(target,from,to,at);};", "const countFormat=(value,decimals,suffix)=>value.toFixed(decimals)+suffix;", "document.querySelectorAll('[data-count-target]').forEach(el=>{el.textContent='0'+el.dataset.countSuffix;});"]
+def motion_script(runs, total, scene_manifest):
+    lines=["const tl=window.__timelines.main;", "const add=(target,from,to,at)=>{if(!target || (target.length!==undefined && target.length===0)) return; tl.fromTo(target,from,to,at);};", "const countFormat=(value,decimals,suffix)=>value.toFixed(decimals)+suffix;"]
     for index,group in enumerate(runs):
         topic_id=group[0]['topic_id']; start=float(group[0]['start']); end=float(group[-1]['end'])
         selector=f"#topic-{topic_id}-run-{index}"
         lines.append(f"{{const scene=document.querySelector({json.dumps(selector)}); if(scene){{")
         lines.append(f"add(scene.querySelector('.title'),{{y:24,opacity:0}},{{y:0,opacity:1,duration:.55,ease:'power3.out'}},{start+.12});")
         lines.append(f"add(scene.querySelector('.subtitle'),{{x:-18,opacity:0}},{{x:0,opacity:1,duration:.4,ease:'power2.out'}},{start+.28});")
-        # Keep metric cards in their fixed bounds while fading them in.  A
-        # translated/scaled flex child expands the scroll box and creates a
-        # false overflow on the phone-readability QA pass.
-        lines.append(f"add(scene.querySelectorAll('.metric'),{{opacity:0}},{{opacity:1,duration:.48,stagger:.08,ease:'power3.out'}},{start+.35});")
-        lines.append(f"scene.querySelectorAll('[data-count-target]').forEach(el=>{{const target=Number(el.dataset.countTarget),decimals=Number(el.dataset.countDecimals||0),suffix=el.dataset.countSuffix||''; tl.fromTo(el,{{textContent:'0'+suffix}},{{textContent:target,duration:.72,ease:'power2.out',snap:{{textContent:decimals?0.1:1}},onUpdate:()=>{{const raw=Number(el.textContent)||0; el.textContent=countFormat(raw,decimals,suffix);}}}},{start+.48});}});")
-        lines.append(f"add(scene.querySelectorAll('.chart-row i'),{{scaleX:0}},{{scaleX:1,duration:.72,stagger:.09,ease:'power3.out'}},{start+.62});")
-        lines.append(f"add(scene.querySelectorAll('.flow-node'),{{x:-24,opacity:0}},{{x:0,opacity:1,duration:.42,stagger:.12,ease:'power3.out'}},{start+.62});")
-        lines.append(f"add(scene.querySelectorAll('.validation-item'),{{y:24,opacity:0}},{{y:0,opacity:1,duration:.42,stagger:.1,ease:'power3.out'}},{start+.62});")
-        lines.append(f"add(scene.querySelectorAll('.summary-card'),{{opacity:0}},{{opacity:1,duration:.42,stagger:.1,ease:'power3.out'}},{start+.62});")
-        lines.append(f"add(scene.querySelectorAll('polyline'),{{strokeDasharray:1200,strokeDashoffset:1200}},{{strokeDashoffset:0,duration:.9,ease:'power2.out'}},{start+.62});")
-        lines.append(f"add(scene.querySelectorAll('rect'),{{scaleY:0,transformOrigin:'center bottom'}},{{scaleY:1,duration:.6,stagger:.08,ease:'back.out(1.2)'}},{start+.68});")
         lines.append("}}")
+    for scene in scene_manifest.get('scenes', []):
+        for state in scene.get('states') or []:
+            target_ids=state.get('target_ids') or []; at=float(state.get('at',0)); action=state.get('action','reveal')
+            targets=json.dumps(target_ids,ensure_ascii=False)
+            lines.append(f"{{const targets={targets}.map(id=>document.getElementById(id)).filter(Boolean);const action={json.dumps(action)};if(action==='establish') add(targets,{{opacity:0,scale:.94}},{{opacity:1,scale:1,duration:.58,ease:'expo.out'}},{at});else if(action==='reveal') add(targets,{{opacity:0,y:22}},{{opacity:1,y:0,duration:.46,ease:'power3.out'}},{at});else if(action==='connect') add(targets,{{opacity:.2,scaleX:.2,transformOrigin:'left center'}},{{opacity:1,scaleX:1,duration:.52,ease:'power2.out'}},{at});else if(action==='compare') add(targets,{{opacity:.3,x:(i)=>i%2?-34:34}},{{opacity:1,x:0,duration:.5,ease:'power3.out',stagger:.06}},{at});else if(action==='challenge') add(targets,{{opacity:.25,x:-28,rotation:-1.2}},{{opacity:1,x:0,rotation:0,duration:.44,ease:'back.out(1.15)'}},{at});else if(action==='resolve') add(targets,{{opacity:.45,scale:1.06}},{{opacity:1,scale:1,duration:.62,ease:'expo.out'}},{at});const counters=[...new Set(targets.flatMap(el=>el.matches('[data-count-target]')?[el]:[...el.querySelectorAll('[data-count-target]')]))];counters.forEach(el=>{{const target=Number(el.dataset.countTarget),decimals=Number(el.dataset.countDecimals||0),suffix=el.dataset.countSuffix||'';tl.fromTo(el,{{textContent:'0'+suffix}},{{textContent:target,duration:.72,ease:'power2.out',snap:{{textContent:decimals?0.1:1}},onUpdate:()=>{{const raw=Number(el.textContent)||0;el.textContent=countFormat(raw,decimals,suffix);}}}},{at});}});}}")
+        transition=scene.get('transition_out') or {}; transition_type=transition.get('type','cut'); duration=float(transition.get('duration',0) or 0); end=float(scene.get('end',0) or 0)
+        if transition_type != 'cut' and duration > 0:
+            scene_topic=json.dumps(str(scene.get('topic_id','')))
+            lines.append(f"{{const roots=[...document.querySelectorAll('.topic-layer')].filter(el=>el.dataset.topicId==={scene_topic});const targets=roots.flatMap(root=>[...root.querySelectorAll('.title,.subtitle,.metrics,.chart-zone,.agenda-zone')]);const type={json.dumps(transition_type)};if(type==='push') add(targets,{{x:0,opacity:1}},{{x:-70,opacity:.12,duration:{duration},ease:'power2.in'}},{max(0,end-duration)});else if(type==='focus-pull') add(targets,{{scale:1,opacity:1}},{{scale:1.035,opacity:.12,duration:{duration},ease:'power2.in'}},{max(0,end-duration)});else add(targets,{{opacity:1}},{{opacity:0,duration:{duration},ease:'power1.inOut'}},{max(0,end-duration)});}}")
     # Caption lines use data-start/data-duration for hyperframes visibility
-    lines.append(f"tl.to('.persistent-progress-fill',{{width:'100%',duration:{total},ease:'none'}},0);")
+    lines.append(f"tl.to('.persistent-progress-fill',{{scaleX:1,duration:{total},ease:'none'}},0);")
     return ''.join(lines)
 
 
@@ -445,11 +494,11 @@ def persistent_nav_markup(runs, topic_order, topics, topic_number, total):
     for index,group in enumerate(runs):
         topic_id=group[0]['topic_id']; start=group[0]['start']; end=group[-1]['end']
         items=''.join(f'<span class="chapter {"active" if chapter_id==topic_id else ""}" style="width:{width}%"><b>{html.escape(label)}</b></span>' for chapter_id,label,width in chapters)
-        states.append(f'<div id="persistent-nav-{index}" class="nav-state clip" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="500"><div class="persistent-nav"><div class="chapter-strip">{items}</div><div class="persistent-progress"><div class="persistent-progress-fill" style="width:0%"></div></div></div></div>')
+        states.append(f'<div id="persistent-nav-{index}" class="nav-state clip" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="500"><div class="persistent-nav"><div class="chapter-strip">{items}</div><div class="persistent-progress"><div class="persistent-progress-fill"></div></div></div></div>')
     return ''.join(states)
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--episode',type=Path,required=True); ap.add_argument('--segments',type=Path,required=True); ap.add_argument('--charts',type=Path); ap.add_argument('--visual-plan',type=Path); ap.add_argument('--style',choices=sorted(STYLE_PALETTES),default='editorial-paper'); ap.add_argument('--account-media-dir',type=Path,default=Path(__file__).resolve().parents[1]/'account-profile/account'); ap.add_argument('--cover-reference-dir',type=Path); ap.add_argument('--font-dir',type=Path,default=Path(__file__).resolve().parents[3]/'.ai/assets/fonts/noto-serif-sc'); ap.add_argument('--font-family',default='Noto Serif SC'); ap.add_argument('--font-regular',default='NotoSerifSC-Regular.otf'); ap.add_argument('--font-bold',default='NotoSerifSC-Bold.otf'); ap.add_argument('--out',type=Path,required=True); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--episode',type=Path,required=True); ap.add_argument('--segments',type=Path,required=True); ap.add_argument('--charts',type=Path); ap.add_argument('--visual-plan',type=Path); ap.add_argument('--scene-manifest',type=Path,required=True); ap.add_argument('--style',choices=sorted(STYLE_PALETTES),default='editorial-paper'); ap.add_argument('--account-media-dir',type=Path,default=Path(__file__).resolve().parents[1]/'account-profile/account'); ap.add_argument('--cover-reference-dir',type=Path); ap.add_argument('--font-dir',type=Path,default=Path(__file__).resolve().parents[3]/'.ai/assets/fonts/noto-serif-sc'); ap.add_argument('--font-family',default='Noto Serif SC'); ap.add_argument('--font-regular',default='NotoSerifSC-Regular.otf'); ap.add_argument('--font-bold',default='NotoSerifSC-Bold.otf'); ap.add_argument('--out',type=Path,required=True); args=ap.parse_args()
     if args.cover_reference_dir is None:
         args.cover_reference_dir = args.account_media_dir.parent / 'cover-reference'
     cover_template = args.cover_reference_dir / 'cover-template.html'
@@ -467,6 +516,18 @@ def main():
             if isinstance(topic.get('chart'), dict) and topic.get('chart')
         ]}
     visual_plan=json.loads(args.visual_plan.read_text(encoding='utf-8')) if args.visual_plan else {'version':'v2','agenda':{'mode':'grid','columns':3}}
+    scene_manifest=json.loads(args.scene_manifest.read_text(encoding='utf-8'))
+    if scene_manifest.get('version') != 'v3':
+        raise SystemExit('scene manifest must use investment-video-scene-manifest v3')
+    scenes=scene_manifest.get('scenes') or []
+    expected_topics={segment.get('topic_id') for segment in segs if segment.get('topic_id')}
+    covered_topics={scene.get('topic_id') for scene in scenes if scene.get('topic_id')}
+    missing_topics=sorted(expected_topics-covered_topics)
+    if not scenes or missing_topics:
+        detail=', '.join(missing_topics) if missing_topics else 'no scenes'
+        raise SystemExit(f'scene manifest does not cover the rendered episode: {detail}')
+    if any(scene.get('audio_cues') for scene in scenes):
+        raise SystemExit('scene manifest audio_cues require a mixed-audio assembly; the base compositor only supports narration')
     charts_by_topic={}
     for chart in chart_data.get('charts',[]): charts_by_topic.setdefault(chart.get('topic_id'),[]).append(chart)
     topics={t['topic_id']:t for t in episode.get('topics',[])}
@@ -552,7 +613,7 @@ def main():
         metric_html=metric_cards(metrics) if layout in {'hook','metrics','signal'} else ''
         title_prefix=f'<span class="index">{title_index}</span>' if title_index else ''
         title_density=' title-dense' if len(title) > 24 else (' title-compact' if len(title) > 18 else '')
-        layers.append(f'<div id="topic-{topic_id}-run-{index}" class="topic-layer {layout} clip" data-layout="{layout}" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="{index+2}"><div class="title{title_density}">{title_prefix}{html.escape(title)}</div><div class="subtitle">{html.escape(subtitle)}</div><div class="metrics" data-layout-ignore>{metric_html}</div>{chart_html}{agenda}</div>')
+        layers.append(f'<div id="topic-{topic_id}-run-{index}" class="topic-layer {layout} clip" data-topic-id="{html.escape(str(topic_id))}" data-layout="{layout}" data-start="{start}" data-duration="{max(0.1,end-start)}" data-track-index="{index+2}"><div class="title{title_density}">{title_prefix}{html.escape(title)}</div><div class="subtitle">{html.escape(subtitle)}</div><div class="metrics" data-layout-ignore>{metric_html}</div>{chart_html}{agenda}</div>')
     turns=[]
     for i,s in enumerate(segs):
         speaker=s['speaker']; meta=speaker_meta.get(speaker,{'display_name':speaker,'color':'#e4a33d','accent':'#9a5c00'})
@@ -584,7 +645,12 @@ def main():
     has_logo=logo_source.exists()
     logo_tag=f'<img class="account-logo" src="assets/{logo_file}" alt="" data-layout-ignore>' if has_logo else ''
     avatar_tag='<img class="account-avatar" src="assets/account-avatar.png" alt="" data-layout-ignore>' if has_avatar else ''
-    doc=f'''<!doctype html><html lang="zh-CN" data-resolution="landscape"><head><meta charset="UTF-8"><meta name="viewport" content="width=1920,height=1080"><script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script><style>{font_css}</style></head><body><div id="root" data-visual-style="{html.escape(args.style)}" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1920" data-height="1080"><div class="header"><div class="header-brand">{logo_tag}<div class="show">{html.escape(subject_label)}<small>{html.escape(account_name)}</small></div></div><div class="disclaimer">{avatar_tag}财经研究内容｜不构成投资建议<br>信息以已核验来源为准</div></div>{''.join(layers)}{''.join(turns)}{persistent_nav}<audio id="narration" src="assets/narration-full.mp3" data-start="0" data-duration="{total}" data-track-index="1"></audio></div><script>window.__timelines=window.__timelines||{{}};window.__timelines.main=gsap.timeline({{paused:true}});{motion_script(runs,total)}</script></body></html>'''
+    doc=f'''<!doctype html><html lang="zh-CN" data-resolution="landscape"><head><meta charset="UTF-8"><meta name="viewport" content="width=1920,height=1080"><script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script><style>{font_css}</style></head><body><div id="root" data-visual-style="{html.escape(args.style)}" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1920" data-height="1080"><div class="header"><div class="header-brand">{logo_tag}<div class="show">{html.escape(subject_label)}<small>{html.escape(account_name)}</small></div></div><div class="disclaimer">{avatar_tag}财经研究内容｜不构成投资建议<br>信息以已核验来源为准</div></div>{''.join(layers)}{''.join(turns)}{persistent_nav}<audio id="narration" src="assets/narration-full.mp3" data-start="0" data-duration="{total}" data-track-index="1"></audio></div><script>window.__timelines=window.__timelines||{{}};window.__timelines.main=gsap.timeline({{paused:true}});{motion_script(runs,total,scene_manifest)}</script></body></html>'''
+    if scene_manifest:
+        rendered_ids=set(re.findall(r'\bid="([^"]+)"',doc))
+        missing=sorted({target for scene in scene_manifest.get('scenes',[]) for state in (scene.get('states') or []) for target in (state.get('target_ids') or []) if target not in rendered_ids})
+        if missing:
+            raise SystemExit(f'scene manifest targets are missing from rendered composition: {", ".join(missing)}')
     # Treat chart internals and the disclaimer as authored composite visuals so
     # HyperFrames checks the scene bounds without misreading their nested text
     # line boxes as accidental overlaps. Remove the body <br> as required by

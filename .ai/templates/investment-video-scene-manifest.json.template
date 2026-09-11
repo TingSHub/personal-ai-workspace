@@ -1,0 +1,62 @@
+{
+  "version": "v3",
+  "episode_id": "{episode_id}",
+  "composition": "podcast/project/index.html",
+  "audio": "podcast/audio/narration-full.wav",
+  "captions": "podcast/qa/captions.json",
+  "timing_source": "podcast/audio/segments.json",
+  "visual_system": {
+    "profile_ref": "account-profile/design.md",
+    "reference_ids": [],
+    "design_dials": {
+      "design_variance": 6,
+      "motion_intensity": 6,
+      "visual_density": 5
+    }
+  },
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "mobile_first": true
+  },
+  "scenes": [
+    {
+      "scene_id": "{scene_id}",
+      "topic_id": "{topic_id}",
+      "start": 0,
+      "end": 0,
+      "purpose": "{establish|explain|compare|challenge|conclude}",
+      "visual_pattern": "{pattern_id}",
+      "viewer_question": "{这一段回答的观众问题}",
+      "cognitive_change": "{观众看完后新增或改变的理解}",
+      "continuity_anchor": "{从上一场继承的对象、位置、颜色或运动；无则为none}",
+      "evidence_ids": [],
+      "states": [
+        {
+          "state_id": "{state_id}",
+          "turn_id": "{turn_id}",
+          "at": 0,
+          "action": "{establish|reveal|connect|compare|challenge|resolve}",
+          "target_ids": [],
+          "hold_until": 0,
+          "evidence_ids": []
+        }
+      ],
+      "transition_out": {
+        "type": "{push|focus-pull|crossfade|cut}",
+        "duration": 0.5,
+        "to_scene_id": "{next_scene_id_or_none}"
+      },
+      "audio_cues": [
+        {
+          "cue_id": "{cue_id}",
+          "state_id": "{state_id}",
+          "asset_ref": "{local_asset_or_by_name_ref}",
+          "gain_db": 0,
+          "ducking_db": 0
+        }
+      ]
+    }
+  ]
+}
