@@ -1,3 +1,4 @@
+# 历史模板：当前项目以 projects/<name>/project.yaml 为元数据入口，Project Registry 不再生成此重复登记记录。
 # 项目登记记录模板（V0.1.5）
 # 字段清单一律从此模板读取填充，禁止内联字段定义
 # 位置：.ai/projects/{project-name}.yaml（登记索引，元数据；物理项目在 projects/{project-name}/）

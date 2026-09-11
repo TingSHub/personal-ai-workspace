@@ -1,4 +1,5 @@
 # Workspace-wide local and generated state.
+/.tmp/
 .omc/
 **/.omc/
 .env

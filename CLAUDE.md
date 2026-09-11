@@ -4,6 +4,8 @@
 
 这是一个服务项目交付的个人 AI 能力管理与编排系统：管理 Workflow（Markdown SOP）、Skill/Agent 资源和经验证的 Experience，让真实项目质量更高、执行更快、重复利用更多。Claude、Codex 或其他 Agent 负责执行，本仓库不是 Agent Runtime。
 
+项目同时用于开发和验证未来可封装为 Skill 的能力。实际交付优先；封装由用户按需发起，项目无需最终成为 Skill。
+
 ## Rules
 
 - 执行任务前优先寻找已有 Workflow（`.ai/workflows/`）
@@ -11,6 +13,7 @@
 - Skill/Agent 使用 Resource Manager 管理（`.claude/skills/resource-manager/`）
 - Workflow 使用 work-for-me 索引与路由（`.claude/skills/work-for-me/`）：任务开始时定位项目、匹配 Workflow、读 SOP 并逐 Phase 真实执行；只索引与导航，不评分、不自动推荐
 - 创建新项目用 Project Registry（`.claude/skills/project-registry/`）
+- 按项目 README 模板为可选 Skill 封装保留必要信息：明确入口、可替换输入与配置、可追溯依赖，以及主流程跑通后的最小复跑案例。随真实任务逐步补齐，不以 Skill 包、新架构层或跨环境适配作为项目交付前提；既有项目在相关工作触及时渐进采用。
 - 字段清单一律从 `.ai/templates/` 模板读取填充，禁止内联字段定义
 - 工作区统一使用一个 Git 仓库，`projects/*` 下的项目源码由本仓库统一管理
 - 引用 Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径

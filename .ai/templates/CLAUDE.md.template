@@ -1,32 +1,9 @@
-# {Project Name} — Project Context
+# {Project Name} — Project Instructions
 
-## Project
+<!-- 可选模板：仅在需要项目专属 Agent 指令时生成；默认使用 README 与顶层规则。 -->
 
-{项目名称}
+遵循工作区顶层 CLAUDE.md。项目入口、配置、依赖与复跑方式见本项目 README；执行契约以所引用的 Workflow SOP 为准。
 
-## Goal
+## 项目专属指令
 
-{项目目标}
-
-## Current Status
-
-{当前状态: planned / in_progress / done}
-
-## Workflow
-
-{引用的 Workflow by-name，例如 {workflow by-name}}
-
-## Required Resources
-
-{Workflow Phase 实际使用的 Skill/Agent by-name}
-
-## Development Rules
-
-- {规则 1}
-- Workflow Phase 的 Required Resources 必须真实执行并留下独立产物，下游只消费已验收产物
-- 字段清单一律从 workspace 的 `.ai/templates/` 读取填充
-- 项目执行记录写入 `logs/`，不直接进入资产库；项目结束时将可复用候选交给 Experience Curator
-
-## Known Issues
-
-- {已知问题}
+{仅填写本项目必需的补充指令；不复制顶层规则、README、阶段进度或完整资源表。无专属指令时无需创建本文件}

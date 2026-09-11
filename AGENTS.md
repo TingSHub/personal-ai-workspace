@@ -4,6 +4,8 @@
 
 A personal AI asset management and orchestration system. It manages reusable Workflows (Markdown SOPs), Skill/Agent resources, and validated Experience so real projects can deliver higher-quality results with less repeated work. Claude, Codex, or another Agent performs execution; this repository is not an Agent runtime.
 
+Projects also provide a place to develop and validate capabilities that can later be packaged as Skills. Packaging is optional and user-requested; project delivery remains the primary goal.
+
 ## Rules
 
 - Before starting a task, look for an existing Workflow first (`.ai/workflows/`)
@@ -11,6 +13,7 @@ A personal AI asset management and orchestration system. It manages reusable Wor
 - Manage Skill/Agent resources with Resource Manager (`.claude/skills/resource-manager/`)
 - Index and route Workflows with work-for-me (`.claude/skills/work-for-me/`): at task start, locate the project, match the Workflow, read its SOP, and execute phase by phase; indexing and navigation only — no scoring, no auto-recommendation
 - Create new projects with the Project Registry (`.claude/skills/project-registry/`)
+- Keep projects ready for optional Skill packaging through the project README template: a clear entrypoint, replaceable inputs/configuration, traceable dependencies, and a minimal replay example after the main flow works. Fill these in during real work; do not require a Skill package, new abstraction layers, or cross-environment support before delivery. Existing projects adopt this incrementally when relevant work touches them.
 - Field lists always come from `.ai/templates/` templates; never inline field definitions
 - The workspace uses one Git repository: project source under `projects/*` is managed by this repository
 - Reference Workflows / Skills / Agents / Experiences by name, never by relative path

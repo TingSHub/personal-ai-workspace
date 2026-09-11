@@ -13,6 +13,7 @@ rules:
   - 不重复创建已有 Skill/Agent 资源
   - Skill/Agent 使用 Resource Manager 管理
   - 创建新项目用 Project Registry
+  - 项目以真实交付为目标，按项目 README 模板渐进维护入口、配置、依赖与复跑依据，为用户按需封装 Skill 做准备；转换完全可选，打包和跨环境适配留到转换时执行
   - 默认调用路径为 Project → Workflow → Skill/Agent；Workflow 是 Markdown SOP 唯一事实源，Phase 的 Required Resources 直接 by-name 列出 Skill/Agent
   - Workflow 阶段 Required Resources 必须真实执行并留下独立产物；下游只消费已验收产物，主 Agent 不得只读方法论后仿写结果
   - Workflow / Skill / Agent / Experience 一律用 by-name 引用；work-for-me 只索引不解释，路由为确定性查找与按 SOP 执行，不评分、不自动推荐

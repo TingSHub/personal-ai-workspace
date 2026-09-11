@@ -1,32 +1,9 @@
-# {Project Name} — Project Context
+# {Project Name} — Project Instructions
 
-## Project
+<!-- 可选模板：仅在需要项目专属 Agent 指令时生成；默认使用 README 与顶层规则。 -->
 
-{project name}
+遵循工作区顶层 AGENTS.md。项目入口、配置、依赖与复跑方式见本项目 README；执行契约以所引用的 Workflow SOP 为准。
 
-## Goal
+## 项目专属指令
 
-{project goal}
-
-## Current Status
-
-{planned / in_progress / done}
-
-## Workflow
-
-{referenced workflow by name, e.g. {workflow by-name}}
-
-## Required Resources
-
-{Skill/Agent used by the workflow Phases, by name}
-
-## Development Rules
-
-- {rule 1}
-- Workflow Phase Required Resources must actually run and leave independent artifacts; downstream phases consume only accepted artifacts
-- Field lists always come from the workspace `.ai/templates/`
-- Project execution records go to `logs/` and never enter the asset library directly; at completion, send reusable candidates to Experience Curator
-
-## Known Issues
-
-- {known issue}
+{仅填写本项目必需的补充指令；不复制顶层规则、README、阶段进度或完整资源表。无专属指令时无需创建本文件}

@@ -8,7 +8,7 @@
 
 ## Input
 
-{input 契约：本 Workflow 启动所需的全部输入字段，含必填/可选语义}
+{input 契约：启动所需输入及必填/可选语义；字段来自对应模板。变化的业务对象、路径、账号与素材作为输入或配置提供，明确默认值和仍依赖的环境条件}
 
 ## Output
 
@@ -20,6 +20,7 @@
 - 真实执行留痕：Phase 的 Required Resources 必须真实执行并留下独立产物（含资源 by-name、验证时 installed_ref、该资源原生或结构化执行产物）；未执行资源不得写成已执行
 - 只消费已验收产物：下游 Phase 只消费已通过 Quality Criteria 的上游产物，不消费私有推理或平行报告
 - by-name 引用：Workflow / Skill / Agent / Experience 一律用 by-name 标识符，不用相对路径；Experience 结论只能合并到现有章节，不新增“回写条目”章节
+- 可复跑：执行所需信息落实在 SOP、配置或所引用资源中，不依赖原聊天；主流程验证后在项目 README 关联最小复跑案例与验收依据。此准备不要求项目转成 Skill。
 
 ## Phase {N}: {step-id} — {purpose 一句话}
 
